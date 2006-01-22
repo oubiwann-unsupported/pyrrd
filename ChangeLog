@@ -1,0 +1,15 @@
+2006.01.22
+
+* Added old rrdtool sandbox code from CoyMon repository.
+* Added Unfinished CoyMon rrd lib dir to PyRRD lib dir.
+* Added ChangeLog.
+* Added some basic library files with stubbs.
+* Added most of the class documentation for pyrrd.graph.* and the beginnings
+of some implementation.
+
+[From the CoyMon ChangeLog]
+
+2004.11.01
+
+* Reorganized RRD libs in adytum.app.coymon.rrd.
+* Copied the RRD wrapper in my sandbox to adytum.app.coymon.rrd.graphs.
