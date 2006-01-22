@@ -1,0 +1,68 @@
+# These are the subnets in our network
+# These are used only to determine whether a packet is inbound our 
+# outbound
+Subnet 10.0.0.0/16
+
+# These are networks we are particularly interested in, and want to
+# get separate rrd's for their aggregate traffic
+Network 10.0.1.0/24 routers
+
+# Where to put the rrd's
+# Make sure this is the same as $rrddir in CUGrapher.pl
+OutputDir /cflow/reports/rrds
+
+# Track multicast traffic
+Multicast
+
+# Keep top N lists 
+# Show the top ten talkers, storing reports in /cflow/flows/reports
+# and keeping the current report in /etc/httpd/data/reports/topten.html
+Scoreboard 10 /cflow/reports/scoreboard /var/www/html/topten.html
+
+# Same, but build an over-time average top N list
+AggregateScore 10 /cflow/reports/scoreboard/agg.dat /var/www/html/overall.html
+
+# Our two netflow exporters. Produce service and protocol reports for the
+# total, and each of these.
+Router 10.0.1.1 router1
+Router 10.0.1.2 router2
+
+# Services we are interested in
+Service 20-21/tcp ftp
+Service 22/tcp ssh
+Service 23/tcp telnet
+Service 25/tcp smtp
+Service 53/udp,53/tcp dns
+Service 80/tcp http
+Service 110/tcp pop3
+Service 119/tcp nntp
+Service 143/tcp imap
+Service 412/tcp,412/udp dc
+Service 443/tcp https
+Service 1214/tcp kazaa
+Service 4661-4662/tcp,4665/udp edonkey
+Service 5190/tcp aim
+Service 6346-6347/tcp gnutella
+Service 6665-6669/tcp irc
+Service 54320/tcp bo2k
+Service 7070/tcp,554/tcp,6970-7170/udp real
+
+# protocols we are interested in
+Protocol 1 icmp
+Protocol 4 ipinip
+Protocol 6 tcp
+Protocol 17 udp
+Protocol 47 gre
+Protocol 50 esp
+Protocol 51 ah
+Protocol 57 skip
+Protocol 88 eigrp
+Protocol 169
+Protocol 255
+
+# ToS bit percentages to graph
+TOS 0 normal
+TOS 1-255 other
+
+# Interested in traffic to/from AS 1
+ASNumber 1 Genuity
