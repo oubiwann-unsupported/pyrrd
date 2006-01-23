@@ -2,6 +2,10 @@
 
 * Added code for VDEF.
 * Added TODO.
+* Added code for CDEF.
+* Created external.py for using the command-line rrdtool binary.
+* Added create, update and fetch (with doctests) to external.py.
+* Moved old files into an 'old' dir.
 
 2006.01.22
 
