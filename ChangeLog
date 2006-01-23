@@ -1,11 +1,13 @@
 2006.01.22
 
 * Added old rrdtool sandbox code from CoyMon repository.
-* Added Unfinished CoyMon rrd lib dir to PyRRD lib dir.
+* Added unfinished CoyMon rrd lib dir to PyRRD lib dir.
 * Added ChangeLog.
 * Added some basic library files with stubbs.
 * Added most of the class documentation for pyrrd.graph.* and the beginnings
 of some implementation.
+* Created graph.validateVName and graph.GraphDefinition, a.k.a. graph.DEF and
+added doctests to each.
 
 [From the CoyMon ChangeLog]
 
