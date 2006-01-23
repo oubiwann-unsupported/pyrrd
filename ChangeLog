@@ -6,6 +6,13 @@
 * Created external.py for using the command-line rrdtool binary.
 * Added create, update and fetch (with doctests) to external.py.
 * Moved old files into an 'old' dir.
+* Added graph (with doctests) to external.py.
+* Added a place-holder file for supporting the rrdtool python bindings.
+* Added a backends.py module for selecting which backend to use.
+* Added an rrd.py module for abstracting the database aspect of RRD.
+* Added a utils module with a funtion for getting the epoch date of a datetime
+object.
+* Finished most of rrd.py.
 
 2006.01.22
 
