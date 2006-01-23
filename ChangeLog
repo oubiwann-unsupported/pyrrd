@@ -1,3 +1,8 @@
+2006.01.23
+
+* Added code for VDEF.
+* Added TODO.
+
 2006.01.22
 
 * Added old rrdtool sandbox code from CoyMon repository.
@@ -8,6 +13,8 @@
 of some implementation.
 * Created graph.validateVName and graph.GraphDefinition, a.k.a. graph.DEF and
 added doctests to each.
+* Added escaping for colons in timedata.
+* Added checks for required attributes.
 
 [From the CoyMon ChangeLog]
 

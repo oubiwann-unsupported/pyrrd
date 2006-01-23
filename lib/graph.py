@@ -5,6 +5,7 @@ def validateVName(name):
     RRDTool vnames must be made up strings of the following characters:
          A-Z, a-z, 0-9, -,_ 
     and have a maximum length of 255 characters.
+
     >>> vname = validateVName('Zaphod Beeble-Brox!')
     Traceback (most recent call last):
     ValueError: Names must consist only of the characters A-Z, a-z, 0-9, -, _
@@ -22,6 +23,20 @@ def validateVName(name):
     if len(name) > 255:
         raise ValueError, "Names must be shorter than 255 characters"
     return name
+
+def escapeColons(timedata):
+    '''
+    Time data in RRD parameters that have colons need to escape
+    them, due to the fact that RRDTool uses colons as separators.
+
+    >>> print escapeColons('now')
+    now
+    >>> print escapeColons('end-8days8hours')
+    end-8days8hours
+    >>> print escapeColons('13:00')
+    13\:00
+    '''
+    return re.sub(':', '\:', timedata)
 
 class DataDefinition(object):
     '''
@@ -51,8 +66,8 @@ class DataDefinition(object):
     phase.
     
     >>> def1 = DataDefinition(vname='ds0a', 
-    ... rrdfile='/home/rrdtool/data/router1.rrd', ds_name='ds0',
-    ... cdef='AVERAGE')
+    ...   rrdfile='/home/rrdtool/data/router1.rrd', ds_name='ds0',
+    ...   cdef='AVERAGE')
     >>> def1
     DEF:ds0a=/home/rrdtool/data/router1.rrd:ds0:AVERAGE
     >>> def1.__repr__()
@@ -70,6 +85,21 @@ class DataDefinition(object):
     >>> def3.rrdfile = '/home/rrdtool/data/router1.rrd'
     >>> def3
     DEF:ds0c=/home/rrdtool/data/router1.rrd:ds0:AVERAGE:step=7200
+    >>> def4 = DEF()
+    >>> def4
+    Traceback (most recent call last):
+    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
+    >>> def4.rrdfile = '/home/rrdtool/data/router2.rrd'
+    >>> def4
+    Traceback (most recent call last):
+    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
+    >>> def4.vname = 'ds1a'
+    >>> def4
+    Traceback (most recent call last):
+    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
+    >>> def4.ds_name = 'ds1'
+    >>> def4
+    DEF:ds1a=/home/rrdtool/data/router2.rrd:ds1:AVERAGE
     '''
     def __init__(self, vname='', rrdfile='', ds_name='', cdef='AVERAGE',
         step=None, start=None, end=None, reduce=None):
@@ -90,14 +120,19 @@ class DataDefinition(object):
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
         '''
-        main = 'DEF:%(vname)s=%(rrdfile)s:%(ds_name)s:%(cdef)s' % self.__dict__
+        if not (self.vname and self.rrdfile and self.ds_name and 
+            self.cdef):
+            raise ValueError, "vname, rrdfile, ds_name, and cdef " + \
+                "are all required attributes and cannot be None."
+        main = 'DEF:%(vname)s=%(rrdfile)s:%(ds_name)s:%(cdef)s' % (
+            self.__dict__)
         tail = ''
         if self.step:
             tail += ':step=%s' % self.step
         if self.start:
-            tail += ':start=%s' % self.start
+            tail += ':start=%s' % escapeColons(self.start)
         if self.end:
-            tail += ':end=%s' % self.end
+            tail += ':end=%s' % escapeColons(self.end)
         if self.reduce:
             tail += ':reduce=%s' % self.reduce
         return main+tail
@@ -120,7 +155,44 @@ class VariableDefinition(object):
 
     Note that currently only agregation functions work in VDEF rpn
     expressions (a limitation of RRDTool, not PyRRD).
+
+    >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
+    ...   vname='ds0a', ds_name='ds0')
+    >>> def2 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
+    ...   vname='ds1a', ds_name='ds1')
+    >>> rpnmax = '%s,MAXIMUM'
+    >>> rpnmin = '%s,MINIMUM'
+    >>> rpnavg = '%s,AVERAGE'
+    >>> rpnpct = '%s,%s,PERCENT'
+    >>> vdef1 = VariableDefinition(vname='ds0max', 
+    ...   rpn=rpnmax % def1.ds_name)
+    >>> vdef1
+    VDEF:ds0max=ds0,MAXIMUM
+    >>> vdef2 = VDEF(vname='ds0avg', rpn=rpnavg % def1.ds_name)
+    >>> vdef2
+    VDEF:ds0avg=ds0,AVERAGE
+    >>> vdef3 = VDEF(vname='ds0min', rpn=rpnmin % def1.ds_name)
+    >>> vdef3
+    VDEF:ds0min=ds0,MINIMUM
+    >>> vdef4 = VDEF(vname='ds1pct', rpn=rpnpct % (def2.ds_name, 95))
+    >>> vdef4
+    VDEF:ds1pct=ds1,95,PERCENT
     '''
+    def __init__(self, vname, rpn):
+        self.vname = validateVName(vname)
+        self.rpn = rpn
+
+    def __repr__(self):
+        '''
+	We override this method for preparing the class's data for
+	use with RRDTool.
+
+        Time representations must have their ':'s escaped, since
+        the colon is the RRDTool separator for parameters.
+        '''
+        main = 'VDEF:%(vname)s=%(rpn)s' % (
+            self.__dict__)
+        return main
 VDEF = VariableDefinition
 
 class CalculationDefinition(object):
