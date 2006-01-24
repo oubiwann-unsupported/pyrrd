@@ -4,8 +4,8 @@ from pyrrd.graph import DEF, CDEF, VDEF
 from pyrrd.graph import LINE, AREA, GPRINT
 from pyrrd.graph import ColorAttributes, Graph
 
-filename = 'example1.rrd'
-graphfile = 'example1.png'
+filename = 'example2.rrd'
+graphfile = 'example2.png'
 
 dss = []
 rras = []
@@ -46,8 +46,20 @@ area2 = AREA(def_obj=cdef2, color='#CC6633', legend='Too Fast')
 line2 = LINE(def_obj=vdef2, color='#000099', legend='My Average', stack=True)
 gprint1 = GPRINT(vdef2, '%6.2lf kph')
 
+# Let's configure some custom colors for the graph
+ca = ColorAttributes()
+ca.back = '#333333'
+ca.canvas = '#333333'
+ca.shadea = '#000000'
+ca.shadeb = '#111111'
+ca.mgrid = '#CCCCCC'
+ca.axis = '#FFFFFF'
+ca.frame = '#AAAAAA'
+ca.font = '#FFFFFF'
+ca.arrow = '#FFFFFF'
+
 # Now that we've got everything set up, let's make a graph
-g = Graph(graphfile, start=920805000, end=920810000, vertical_label='km/h')
+g = Graph(graphfile, start=920805000, end=920810000, vertical_label='km/h', color=ca)
 g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1, area2, line2, gprint1])
 g.write()
 os.path.exists(graphfile)

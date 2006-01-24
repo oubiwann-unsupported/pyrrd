@@ -10,6 +10,8 @@
 * Added graph.ColorAttributes class for easy OOP-configuration of a graph's
 overall color attributes.
 * As a first example, added the graph-generating code from the doctests.
+* Split the first example into two in order to show the color differences as a
+separate example.
 
 2006.01.23
 
