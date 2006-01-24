@@ -781,11 +781,11 @@ class Graph(object):
             pass
         self.data = []
 
-    def write(self):
+    def write(self, debug=False):
         '''
         '''
         data = rrdbackend.prepareObject('graph', self)
-        #print data
+        if debug: print data
         rrdbackend.graph(*data)
 
 def _test():

@@ -107,18 +107,31 @@ class RRD(object):
         data = rrdbackend.prepareObject('create', self)
         rrdbackend.create(*data)
 
-    def bufferValue(self, time, values):
+    def bufferValue(self, time, *values):
         '''
-        The parameter 'values' can be many values; they will be
-        colon-delimited.
+        The parameter 'values' can either be a an n-tuple, but it
+        is assumed that the order in which the values are sent is
+        the order in which they will be applied to the DSs (i.e.,
+        respectively... i.e., in the order that the DSs were added
+        to the RRD).
+        
+        >>> my_rrd = RRD('somefile')
+        >>> my_rrd.bufferValue('sometime', 'value')
+        >>> my_rrd.values
+        [('sometime', 'value')]
+        >>> my_rrd.bufferValue('sometime', 'value1', 'value2')
+        >>> my_rrd.values
+        [('sometime', 'value'), ('sometime', 'value1:value2')]
         '''
+        values = ':'.join([ str(x) for x in values ])
         self.values.append((time, values))
+    bufferValues = bufferValue
 
     def update(self, debug=False):
         '''
         '''
-	# XXX this needs a lot more testing with different data
-	# sources and values
+        # XXX this needs a lot more testing with different data
+        # sources and values
         if self.values:
             data = rrdbackend.prepareObject('update', self)
             if debug: print data

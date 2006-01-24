@@ -13,6 +13,10 @@ overall color attributes.
 * Split the first example into two in order to show the color differences as a
 separate example.
 * Added a third example.
+* Updated rrd.RRD.bufferValue() to handle multiple values per line (for
+instances where more than one DS is getting updated in an RRD).
+* Added debug options to graph.Graph.write() and rrd.RRD.update().
+* Added a fourth example with a little more math for additional data sets.
 
 2006.01.23
 
