@@ -27,7 +27,7 @@ def validateDSType(dstype):
     'COUNTER'
     >>> validateDSType('ford prefect')
     Traceback (most recent call last):
-    ValueError: A data source type must be one of the  following: GAUGE COUNTER DERIVE ABSOLUTE COMPUTE
+    ValueError: A data source type must be one of the following: GAUGE COUNTER DERIVE ABSOLUTE COMPUTE
     '''
     dstype = dstype.upper()
     valid = ['GAUGE', 'COUNTER', 'DERIVE', 'ABSOLUTE', 'COMPUTE']
@@ -36,7 +36,7 @@ def validateDSType(dstype):
     else:
         valid = ' '.join(valid)
         raise ValueError, 'A data source type must be one of the ' + \
-            ' following: %s' % valid
+            'following: %s' % valid
 
 def validateRRACF(consolidation_function):
     '''
@@ -88,6 +88,9 @@ class RRD(object):
     >>> my_rrd.update()
     >>> len(my_rrd.values)
     0
+    >>> os.unlink(filename)
+    >>> os.path.exists(filename)
+    False
     '''
     #>>> os.unlink(filename)
     def __init__(self, filename, start=None, step=300, ds=[], rra=[]):

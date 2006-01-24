@@ -4,14 +4,6 @@ import sys
 from subprocess import call, Popen, PIPE
 
 def _cmd(command, args):
-    #if isinstance(args, str):
-    #    args = re.split('\s+', args.strip())
-    #elif isinstance(args, tuple):
-    #    args = list(args)
-    #args = ['rrdtool', command] + args
-    #if command == 'graph':
-    #    print ' '.join(args)
-    #args = [' '.join(args)]
     args = 'rrdtool %s %s' % (command, args)
 
     p = Popen([args], shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
@@ -166,6 +158,16 @@ def graph(filename, parameters):
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)
 
+def buildParameters(obj, valid_list):
+    param_template = ' --%s %s'
+    params = ''
+    for param in valid_list:
+        attr = getattr(obj, param)
+        if attr:
+            param = param.replace('_', '-')
+            params += param_template % (param, attr)
+    return params.strip()
+        
 def prepareObject(function, obj):
     '''
     This is a funtion that serves to make interacting with the
@@ -181,16 +183,30 @@ def prepareObject(function, obj):
     will call this function. In graph, Pretty much only the method 
     pyrrd.graph.Graph.write() will call this function.
     '''
-    param_template = '--%s %s'
     if function == 'create':
-        params = param_template % ('start', obj.start)
-        params += ' ' + ' '.join([ str(x) for x in obj.ds ])
-        params += ' ' + ' '.join([ str(x) for x in obj.rra ])
-        return (obj.filename, params)
+        valid_params = ['start']
+        params = buildParameters(obj, valid_params)
+        data = ' '.join([ str(x) for x in obj.ds ])
+        data += ' ' + ' '.join([ str(x) for x in obj.rra ])
+        return (obj.filename, "%s %s" % (params, data))
     if function == 'update':
         params = ' '.join([ '%s:%s' % (time, values) 
             for time, values in obj.values ])
         return (obj.filename, params)
+    if function == 'fetch':
+        pass
+    if function == 'graph':
+        valid_params = ['start', 'end', 'step', 'title',
+            'vertical_label', 'width', 'height', 'only_graph',
+            'upper_limit', 'lower_limit', 'rigid', 'alt_autoscale',
+            'alt_autoscale_max', 'no_gridfit', 'x_grid', 'y_grid',
+            'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
+            'font', 'font_render_mode', 'interlaced', 'no_legend',
+            'force_rules_legend', 'tabwidth', 'base']
+        
+        params = buildParameters(obj, valid_params)
+        data = ' '.join([ str(x) for x in obj.data ])
+        return (obj.filename, "%s %s" % (params, data))
 
 def _test():
     import doctest, external

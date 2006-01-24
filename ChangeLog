@@ -1,3 +1,13 @@
+2006.01.24
+
+* Setup all graph.Graph parameters to be initialized.
+* Added code for graph.Print and graph.GraphPrint.
+* Added code for graph.Comment.
+* Added an examples directory.
+* Added code for graph.Line
+* Added code for graph.Area.
+* Finised graph.Graph.
+
 2006.01.23
 
 * Added code for VDEF.
@@ -13,6 +23,7 @@
 * Added a utils module with a funtion for getting the epoch date of a datetime
 object.
 * Finished most of rrd.py.
+* Added LICENSE, VERSION, setup.py and ez_setup.py.
 
 2006.01.22
 
