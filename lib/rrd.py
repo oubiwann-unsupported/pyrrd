@@ -109,18 +109,19 @@ class RRD(object):
 
     def bufferValue(self, time, values):
         '''
-	The parameter 'values' can be many values; they will be
-	colon-delimited.
+        The parameter 'values' can be many values; they will be
+        colon-delimited.
         '''
         self.values.append((time, values))
 
-    def update(self):
+    def update(self, debug=False):
         '''
         '''
 	# XXX this needs a lot more testing with different data
 	# sources and values
         if self.values:
             data = rrdbackend.prepareObject('update', self)
+            if debug: print data
             rrdbackend.update(*data)
             self.values = []
 

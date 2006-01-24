@@ -1,12 +1,13 @@
-# Let's create and RRD file and dump some data in it
 from pyrrd.rrd import RRD, RRA, DS
 from pyrrd.graph import DEF, CDEF, VDEF
 from pyrrd.graph import LINE, AREA, GPRINT
 from pyrrd.graph import ColorAttributes, Graph
 
-filename = 'example2.rrd'
-graphfile = 'example2.png'
+example_no = 2
+filename = 'example%s.rrd' % example_no
+graphfile = 'example%s.png' % example_no
 
+# Let's create and RRD file and dump some data in it
 dss = []
 rras = []
 ds1 = DS(ds_name='speed', ds_type='COUNTER', heartbeat=600)
@@ -16,9 +17,6 @@ rra2 = RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10)
 rras.extend([rra1, rra2])
 my_rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
 my_rrd.create()
-import os
-os.path.exists(filename)
-True
 my_rrd.bufferValue('920805600', '12363')
 my_rrd.bufferValue('920805900', '12363')
 my_rrd.bufferValue('920806200', '12373')
@@ -62,5 +60,3 @@ ca.arrow = '#FFFFFF'
 g = Graph(graphfile, start=920805000, end=920810000, vertical_label='km/h', color=ca)
 g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1, area2, line2, gprint1])
 g.write()
-os.path.exists(graphfile)
-True
