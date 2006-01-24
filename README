@@ -1,0 +1,6 @@
+For installation instructions, see INSTALL.
+
+For docs, see the docstrings at the beginning of each class (and
+many of the functions). They not only contain many of the standard
+RRDTool docs, but they contain doctests which give you a hands-on,
+how-it-works understanding of actual usage.

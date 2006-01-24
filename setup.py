@@ -20,7 +20,12 @@ setup(name="PyRRD",
     package_dir = {
         'pyrrd': 'lib',
     },
-
+    include_package_data = False,
+    exclude_package_data = { 
+        '': ['*.sh', 'lib/old/*', 'sandbox/*'],
+        #'sandbox': [''],
+        #'': [''],
+    },
 )
 '''
     classifiers = [f.strip() for f in """

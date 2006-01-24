@@ -17,6 +17,9 @@ separate example.
 instances where more than one DS is getting updated in an RRD).
 * Added debug options to graph.Graph.write() and rrd.RRD.update().
 * Added a fourth example with a little more math for additional data sets.
+* Added INSTALL and README files.
+* Removed cruft from sandbox and removed "old" from lib.
+* Updated to newest ez_setup.py.
 
 2006.01.23
 
