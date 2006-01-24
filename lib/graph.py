@@ -590,6 +590,51 @@ class GraphYGrid(object):
     option is to automatically select sensible values.
     '''
 
+class ColorAttributes(object):
+    '''
+    This class is repr'ed without a leading '--color' because that
+    will be provided by the graph class when it's color attribute
+    is set to an instance of this class.
+
+    >>> ColorAttributes(background='#000000', axis='#FFFFFF')
+    AXIS#FFFFFF --color BACK#000000
+    >>> ca = ColorAttributes()
+    >>> ca.back = '#333333'
+    >>> ca.canvas = '#333333'
+    >>> ca.shadea = '#000000'
+    >>> ca.shadeb = '#111111'
+    >>> ca.mgrid = '#CCCCCC'
+    >>> ca.axis = '#FFFFFF'
+    >>> ca.frame = '#AAAAAA'
+    >>> ca.font = '#FFFFFF'
+    >>> ca.arrow = '#FFFFFF'
+    >>> ca
+    ARROW#FFFFFF --color AXIS#FFFFFF --color BACK#333333 --color CANVAS#333333 --color FONT#FFFFFF --color FRAME#AAAAAA --color MGRID#CCCCCC --color SHADEA#000000 --color SHADEB#111111
+    '''
+    def __init__(self, background=None, canvas=None, 
+        lefttop_border=None, rightbottom_border=None, major_grid=None,
+        font=None, axis=None, frame=None, arrow=None):
+        '''
+        Each of the parameters that gets pass when initializing
+        this class take only a hexidecimal color as a value.
+        '''
+        self.back = background
+        self.canvas = canvas
+        self.shadea = lefttop_border
+        self.shadeb = rightbottom_border
+        self.mgrid = major_grid
+        self.font = font
+        self.axis = axis
+        self.frame = frame
+        self.arror = arrow
+
+    def __repr__(self):
+        joiner = ' --color '
+        params = self.__dict__.items()
+        params.sort()
+        attrs = [ name.upper()+color for name,color in params if color ]
+        return joiner.join(attrs)
+                
 class Graph(object):
     '''
     rrdtool graph needs data to work with, so you must use one or
@@ -662,10 +707,22 @@ class Graph(object):
     >>> line2 = LINE(def_obj=vdef2, color='#000099', legend='My Average', stack=True)
     >>> gprint1 = GPRINT(vdef2, '%6.2lf kph')
 
+    # Let's configure some custom colors for the graph
+    >>> ca = ColorAttributes()
+    >>> ca.back = '#333333'
+    >>> ca.canvas = '#333333'
+    >>> ca.shadea = '#000000'
+    >>> ca.shadeb = '#111111'
+    >>> ca.mgrid = '#CCCCCC'
+    >>> ca.axis = '#FFFFFF'
+    >>> ca.frame = '#AAAAAA'
+    >>> ca.font = '#FFFFFF'
+    >>> ca.arrow = '#FFFFFF'
+
     # Now that we've got everything set up, let's make a graph
     >>> graphfile = '/tmp/myspeed.png'
     >>> g = Graph(graphfile, start=920805000, end=920810000,
-    ...   vertical_label='km/h')
+    ...   vertical_label='km/h', color=ca)
     >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1,
     ...   area1, area2, line2, gprint1])
     >>> g.write()
@@ -709,6 +766,7 @@ class Graph(object):
         self.alt_y_grid = alt_y_grid
         self.logarithmic = logarithmic
         self.units_exponent = units_exponent
+        self.color = color
         self.zoom = zoom
         self.font = font
         self.font_render_mode = font_render_mode
