@@ -26,7 +26,7 @@ start_time = 1138259700
 end_time = 1138573200
 max_steps = int((end_time-start_time)/step)
 
-# Let's create and RRD file and dump some data in it
+# Let's setup some data sources for our RRD
 dss = []
 ds1 = DS(ds_name='ds_in_pkts', ds_type='ABSOLUTE', heartbeat=900)
 ds2 = DS(ds_name='ds_in_bits', ds_type='ABSOLUTE', heartbeat=900)
@@ -34,15 +34,17 @@ ds3 = DS(ds_name='ds_out_pkts', ds_type='ABSOLUTE', heartbeat=900)
 ds4 = DS(ds_name='ds_out_bits', ds_type='ABSOLUTE', heartbeat=900)
 dss.extend([ds1, ds2, ds3, ds4])
 
+# An now let's setup how our RRD will archive the data
 rras = []
 # 1 days-worth of one-minute samples --> 60/1 * 24
 rra1 = RRA(cf='AVERAGE', xff=0, steps=1, rows=1440) 
-# 3 days-worth of five-minute samples --> 60/5 * 24 * 3
-rra2 = RRA(cf='AVERAGE', xff=0, steps=5, rows=864)
+# 7 days-worth of five-minute samples --> 60/5 * 24 * 7
+rra2 = RRA(cf='AVERAGE', xff=0, steps=5, rows=2016)
 # 30 days-worth of five-minute samples --> 60/60 * 24 * 30
 rra3 = RRA(cf='AVERAGE', xff=0, steps=60, rows=720)
 rras.extend([rra1, rra2, rra3])
 
+# With those setup, we can now created the RRD
 my_rrd = RRD(filename, step=step, ds=dss, rra=rras, start=start_time)
 my_rrd.create(debug=False)
 
@@ -86,7 +88,7 @@ def1 = DEF(rrdfile=my_rrd.filename, vname='in', ds_name=ds1.name)
 def2 = DEF(rrdfile=my_rrd.filename, vname='out', ds_name=ds2.name)
 # Here we're just going to mulitply the in bits by 100, solely for
 # the purpose of display
-cdef1 = CDEF(vname='tenin', rpn='%s,%s,*' % (def1.vname, 100))
+cdef1 = CDEF(vname='hundredin', rpn='%s,%s,*' % (def1.vname, 100))
 cdef2 = CDEF(vname='negout', rpn='%s,-1,*' % def2.vname)
 area1 = AREA(def_obj=cdef1, color='#FFA902', legend='Bits In')
 area2 = AREA(def_obj=cdef2, color='#A32001', legend='Bits Out')
@@ -107,6 +109,8 @@ ca.arrow = '#FFFFFF'
 g = Graph('dummy.png', end=end_time, vertical_label='Bits', 
     color=ca)
 g.data.extend([def1, def2, cdef1, cdef2, area2, area1])
+g.title = '"In- and Out-bound Traffic Across Local Router"'
+#g.logarithmic = ' '
 
 # Iterate through the different resoltions for which we want to 
 # generate graphs.

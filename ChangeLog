@@ -2,6 +2,9 @@
 
 * Added code to example5.py for generating RRD files and graphs from the
 sample data.
+* Updated the commends in example5.py and extended the 3-day archive to a
+7-day archive.
+* Corrected the vname in cdef1 of example5.py.
 
 2006.01.28
 
