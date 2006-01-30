@@ -36,7 +36,7 @@ def create(filename, parameters):
     parameters = '%s %s' % (filename, parameters)
     output = _cmd('create', parameters)
 
-def update(filename, data):
+def update(filename, data, debug=False):
     '''
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
@@ -58,7 +58,10 @@ def update(filename, data):
     False
     '''
     parameters = '%s %s' % (filename, data)
-    output = _cmd('update', parameters)
+    if debug:
+        _cmd('updatev', parameters)
+    else:
+         _cmd('update', parameters)
 
 def fetchRaw(filename, query):
     parameters = '%s %s' % (filename, query)
@@ -184,17 +187,30 @@ def prepareObject(function, obj):
     pyrrd.graph.Graph.write() will call this function.
     '''
     if function == 'create':
-        valid_params = ['start']
+        valid_params = ['start', 'step']
         params = buildParameters(obj, valid_params)
         data = ' '.join([ str(x) for x in obj.ds ])
         data += ' ' + ' '.join([ str(x) for x in obj.rra ])
         return (obj.filename, "%s %s" % (params, data))
+
     if function == 'update':
-        params = ' '.join([ '%s:%s' % (time, values) 
-            for time, values in obj.values ])
-        return (obj.filename, params)
+        valid_params = ['template']
+        params = buildParameters(obj, valid_params)
+       
+        FIRST_VALUE = 0
+        DATA = 1
+        TIME_OR_DATA = 0 
+        if obj.values[FIRST_VALUE][DATA]:
+            data = ' '.join([ '%s:%s' % (time, values) 
+                for time, values in obj.values ])
+        else:
+            data = ' '.join([ data for data, nil in obj.values ])
+        return (obj.filename, "%s %s" % (params, data))
+
     if function == 'fetch':
+        # XXX add support
         pass
+
     if function == 'graph':
         valid_params = ['start', 'end', 'step', 'title',
             'vertical_label', 'width', 'height', 'only_graph',
@@ -203,7 +219,6 @@ def prepareObject(function, obj):
             'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
             'font', 'font_render_mode', 'interlaced', 'no_legend',
             'force_rules_legend', 'tabwidth', 'base', 'color']
-        
         params = buildParameters(obj, valid_params)
         data = ' '.join([ str(x) for x in obj.data ])
         return (obj.filename, "%s %s" % (params, data))

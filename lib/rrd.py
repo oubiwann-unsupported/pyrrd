@@ -102,12 +102,14 @@ class RRD(object):
         self.ds = ds
         self.rra = rra
         self.values = []
+        self.step = step
 
-    def create(self):
+    def create(self, debug=False):
         data = rrdbackend.prepareObject('create', self)
+        if debug: print data
         rrdbackend.create(*data)
 
-    def bufferValue(self, time, *values):
+    def bufferValue(self, time_or_data, *values):
         '''
         The parameter 'values' can either be a an n-tuple, but it
         is assumed that the order in which the values are sent is
@@ -117,26 +119,51 @@ class RRD(object):
         
         >>> my_rrd = RRD('somefile')
         >>> my_rrd.bufferValue('sometime', 'value')
-        >>> my_rrd.values
-        [('sometime', 'value')]
+        >>> my_rrd.update(debug=True, dry_run=True)
+        ('somefile', ' sometime:value')
+        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        ('somefile', '--template ds0 sometime:value')
+        >>> my_rrd.values = []
+
+        >>> my_rrd.bufferValue('sometime:value')
+        >>> my_rrd.update(debug=True, dry_run=True)
+        ('somefile', ' sometime:value')
+        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        ('somefile', '--template ds0 sometime:value')
+        >>> my_rrd.values = []
+
         >>> my_rrd.bufferValue('sometime', 'value1', 'value2')
-        >>> my_rrd.values
-        [('sometime', 'value'), ('sometime', 'value1:value2')]
+        >>> my_rrd.bufferValue('anothertime', 'value3', 'value4')
+        >>> my_rrd.update(debug=True, dry_run=True)
+        ('somefile', ' sometime:value1:value2 anothertime:value3:value4')
+        >>> my_rrd.update(template='ds1:ds0', debug=True, dry_run=True)
+        ('somefile', '--template ds1:ds0 sometime:value1:value2 anothertime:value3:value4')
+        >>> my_rrd.values = []
+
+        >>> my_rrd.bufferValue('sometime:value')
+        >>> my_rrd.bufferValue('anothertime:anothervalue')
+        >>> my_rrd.update(debug=True, dry_run=True)
+        ('somefile', ' sometime:value anothertime:anothervalue')
+        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        ('somefile', '--template ds0 sometime:value anothertime:anothervalue')
+        >>> my_rrd.values = []
         '''
         values = ':'.join([ str(x) for x in values ])
-        self.values.append((time, values))
+        self.values.append((time_or_data, values))
     bufferValues = bufferValue
 
-    def update(self, debug=False):
+    def update(self, debug=False, template=None, dry_run=False):
         '''
         '''
         # XXX this needs a lot more testing with different data
         # sources and values
+        self.template = template
         if self.values:
             data = rrdbackend.prepareObject('update', self)
             if debug: print data
-            rrdbackend.update(*data)
-            self.values = []
+            if not dry_run:
+                rrdbackend.update(debug=debug, *data)
+                self.values = []
 
     def fetch(self):
         '''

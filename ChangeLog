@@ -1,3 +1,18 @@
+2006.01.29
+
+* Added code to example5.py for generating RRD files and graphs from the
+sample data.
+
+2006.01.28
+
+* Added a couple doctests to the utils module.
+* Added template support to rrd.RRD.update().
+* Added a data file for the 5th example.
+* Extended the flexibility of rrd.RRD.bufferValue() such that it can now take
+a single parameter, and if so, that parameter will be considered a "data
+chunk", i.e., a group of one or more time:data strings.
+* Added missing step attribute in rrd.RRD.__init__().
+
 2006.01.24
 
 * Setup all graph.Graph parameters to be initialized.
