@@ -22,6 +22,7 @@ environments.
 * Fixed a missed var in rrd.DataSource, a test in graph, and updated example2.
 * Updated example3.
 * Updated example4.
+* Updated example5.
 
 2006.01.29
 
