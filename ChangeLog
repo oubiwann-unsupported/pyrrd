@@ -19,6 +19,7 @@ environments.
 * Cleaned up testmod call.
 * Cleaned up vars in rrd and graph modules.
 * Fixed example1 to accord with var name changes.
+* Fixed a missed var in rrd.DataSource, a test in graph, and updated example2.
 
 2006.01.29
 
