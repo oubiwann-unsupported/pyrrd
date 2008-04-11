@@ -18,16 +18,40 @@ def _cmd(command, args):
     else:
         return output
 
-def generateResultLines(lines):
+def iterParse(lines):
+    """
+    >>> lines = [' 920804700: nan',
+    ...  ' 920805000: 4.0000000000e-02',
+    ...  ' 920805300: 2.0000000000e-02',
+    ...  ' 920805600: 0.0000000000e+00',
+    ...  ' 920805900: 0.0000000000e+00',
+    ...  ' 920806200: 3.3333333333e-02',
+    ...  ' 920806500: 3.3333333333e-02',
+    ...  ' 920806800: 3.3333333333e-02',
+    ...  ' 920807100: 2.0000000000e-02',
+    ...  ' 920807400: 2.0000000000e-02',
+    ...  ' 920807700: 2.0000000000e-02',
+    ...  ' 920808000: 1.3333333333e-02',
+    ...  ' 920808300: 1.6666666667e-02',
+    ...  ' 920808600: 6.6666666667e-03',
+    ...  ' 920808900: 3.3333333333e-03',
+    ...  ' 920809200: nan']
+    >>> g = iterParse(lines)
+    >>> g.next()
+    (920804700, None)
+    >>> g.next()
+    (920805000, 0.040000000000000001)
+    >>> len(list(g)) == len(lines) - 2
+    True
+    """
     for line in lines:
         line = line.strip()
-        time, value = re.split(':\s+', line)
-        value = value.strip()
+        time, value = [x.strip() for x in re.split(':\s+', line)]
         if value.lower() in ['nan', 'unkn', 'u']:
             value = None
         else:
             value = float(value)
-        yield (int(time.strip()), value)
+        yield (int(time), value)
 
 def buildParameters(obj, validList):
     paramTemplate = ' --%s %s'
@@ -123,7 +147,7 @@ def fetch(filename, query, iterResults=True):
     lines = output.split('\n')
     dsName = lines[0]
     # lines[1] is blank
-    results = generateResultLines(lines[2:])
+    results = iterParse(lines[2:])
     if iterResults:
         return (dsName, results)
     else:

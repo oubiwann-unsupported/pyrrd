@@ -15,6 +15,7 @@ environments.
 * Updated date in LICENSE.
 * Updated vars in example 1.
 * Fixed var names in rrd.external.
+* Renamed generateResultLines to iterParse and added some unit tests.
 
 2006.01.29
 
