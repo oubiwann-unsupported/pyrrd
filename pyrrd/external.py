@@ -248,8 +248,8 @@ def prepareObject(function, obj):
         return (obj.filename, "%s %s" % (params, data))
 
 def _test():
-    import doctest, external
-    return doctest.testmod(external)
+    from doctest import testmod
+    return testmod()
 
 if __name__ == '__main__':
     _test()
