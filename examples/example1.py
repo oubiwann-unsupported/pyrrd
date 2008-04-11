@@ -10,7 +10,7 @@ graphfile = 'example%s.png' % exampleNum
 # Let's create and RRD file and dump some data in it
 dss = []
 rras = []
-ds1 = DS(ds_name='speed', ds_type='COUNTER', heartbeat=600)
+ds1 = DS(dsName='speed', ds_type='COUNTER', heartbeat=600)
 dss.append(ds1)
 rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24)
 rra2 = RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10)
@@ -32,16 +32,16 @@ myRRD.bufferValue('920808900', '12423')
 myRRD.update()
 
 # Let's set up the objects that will be added to the graph
-def1 = DEF(rrdfile=myRRD.filename, vname='myspeed', ds_name=ds1.name)
+def1 = DEF(rrdfile=myRRD.filename, vname='myspeed', dsName=ds1.name)
 cdef1 = CDEF(vname='kmh', rpn='%s,3600,*' % def1.vname)
 cdef2 = CDEF(vname='fast', rpn='kmh,100,GT,kmh,0,IF')
 cdef3 = CDEF(vname='good', rpn='kmh,100,GT,0,kmh,IF')
 vdef1 = VDEF(vname='mymax', rpn='%s,MAXIMUM' % def1.vname)
 vdef2 = VDEF(vname='myavg', rpn='%s,AVERAGE' % def1.vname)
 line1 = LINE(value=100, color='#990000', legend='Maximum Allowed')
-area1 = AREA(def_obj=cdef3, color='#006600', legend='Good Speed')
-area2 = AREA(def_obj=cdef2, color='#CC6633', legend='Too Fast')
-line2 = LINE(def_obj=vdef2, color='#000099', legend='My Average', stack=True)
+area1 = AREA(defObj=cdef3, color='#006600', legend='Good Speed')
+area2 = AREA(defObj=cdef2, color='#CC6633', legend='Too Fast')
+line2 = LINE(defObj=vdef2, color='#000099', legend='My Average', stack=True)
 gprint1 = GPRINT(vdef2, '%6.2lf kph')
 
 # Now that we've got everything set up, let's make a graph

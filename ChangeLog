@@ -18,6 +18,7 @@ environments.
 * Renamed generateResultLines to iterParse and added some unit tests.
 * Cleaned up testmod call.
 * Cleaned up vars in rrd and graph modules.
+* Fixed example1 to accord with var name changes.
 
 2006.01.29
 
