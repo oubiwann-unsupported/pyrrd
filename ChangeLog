@@ -1,4 +1,10 @@
 2006.01.29
+* Moved sandbox.
+* Created admin directory.
+* Moved stat script into admin directory.
+* Added commit script.
+
+2006.01.29
 
 * Added code to example5.py for generating RRD files and graphs from the
 sample data.
