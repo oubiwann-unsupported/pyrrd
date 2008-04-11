@@ -1,3 +1,4 @@
 * Add an RPN class.
 * Add a DS collection class that has a get() method for getting a
 particular DS by name.
+* Finish support for fetch().
