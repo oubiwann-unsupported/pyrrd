@@ -18,6 +18,27 @@ def _cmd(command, args):
     else:
         return output
 
+def generateResultLines(lines):
+    for line in lines:
+        line = line.strip()
+        time, value = re.split(':\s+', line)
+        value = value.strip()
+        if value.lower() in ['nan', 'unkn', 'u']:
+            value = None
+        else:
+            value = float(value)
+        yield (int(time.strip()), value)
+
+def buildParameters(obj, validList):
+    paramTemplate = ' --%s %s'
+    params = ''
+    for param in validList:
+        attr = getattr(obj, param)
+        if attr:
+            param = param.replace('_', '-')
+            params += paramTemplate % (param, attr)
+    return params.strip()
+
 def create(filename, parameters):
     '''
     >>> filename = '/tmp/test.rrd'
@@ -67,7 +88,7 @@ def fetchRaw(filename, query):
     parameters = '%s %s' % (filename, query)
     return _cmd('fetch', parameters).strip()
 
-def fetch(filename, query, results_as_generator=True):
+def fetch(filename, query, iterResults=True):
     '''
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
@@ -84,13 +105,13 @@ def fetch(filename, query, results_as_generator=True):
     >>> update('/tmp/test.rrd', '920807400:12405 920807700:12411 920808000:12415')
     >>> update('/tmp/test.rrd', '920808300:12420 920808600:12422 920808900:12423')
 
-    >>> ds_name, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200')
-    >>> ds_name
+    >>> dsName, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200')
+    >>> dsName
     'speed'
     >>> results.next()
     (920804700, None)
-    >>> ds_name, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200',
-    ...   results_as_generator=False)
+    >>> dsName, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200',
+    ...   iterResults=False)
     >>> len(results)
     16
 
@@ -100,24 +121,13 @@ def fetch(filename, query, results_as_generator=True):
     '''
     output = fetchRaw(filename, query)
     lines = output.split('\n')
-    ds_name = lines[0]
+    dsName = lines[0]
     # lines[1] is blank
     results = generateResultLines(lines[2:])
-    if results_as_generator:
-        return (ds_name, results)
+    if iterResults:
+        return (dsName, results)
     else:
-        return (ds_name, list(results))
-
-def generateResultLines(lines):
-    for line in lines:
-        line = line.strip()
-        time, value = re.split(':\s+', line)
-        value = value.strip()
-        if value.lower() in ['nan', 'unkn', 'u']:
-            value = None
-        else:
-            value = float(value)
-        yield (int(time.strip()), value)
+        return (dsName, list(results))
 
 def graph(filename, parameters):
     '''
@@ -161,16 +171,6 @@ def graph(filename, parameters):
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)
 
-def buildParameters(obj, valid_list):
-    param_template = ' --%s %s'
-    params = ''
-    for param in valid_list:
-        attr = getattr(obj, param)
-        if attr:
-            param = param.replace('_', '-')
-            params += param_template % (param, attr)
-    return params.strip()
-        
 def prepareObject(function, obj):
     '''
     This is a funtion that serves to make interacting with the
@@ -187,15 +187,15 @@ def prepareObject(function, obj):
     pyrrd.graph.Graph.write() will call this function.
     '''
     if function == 'create':
-        valid_params = ['start', 'step']
-        params = buildParameters(obj, valid_params)
+        validParams = ['start', 'step']
+        params = buildParameters(obj, validParams)
         data = ' '.join([ str(x) for x in obj.ds ])
         data += ' ' + ' '.join([ str(x) for x in obj.rra ])
         return (obj.filename, "%s %s" % (params, data))
 
     if function == 'update':
-        valid_params = ['template']
-        params = buildParameters(obj, valid_params)
+        validParams = ['template']
+        params = buildParameters(obj, validParams)
        
         FIRST_VALUE = 0
         DATA = 1
@@ -212,14 +212,14 @@ def prepareObject(function, obj):
         pass
 
     if function == 'graph':
-        valid_params = ['start', 'end', 'step', 'title',
+        validParams = ['start', 'end', 'step', 'title',
             'vertical_label', 'width', 'height', 'only_graph',
             'upper_limit', 'lower_limit', 'rigid', 'alt_autoscale',
             'alt_autoscale_max', 'no_gridfit', 'x_grid', 'y_grid',
             'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
             'font', 'font_render_mode', 'interlaced', 'no_legend',
             'force_rules_legend', 'tabwidth', 'base', 'color']
-        params = buildParameters(obj, valid_params)
+        params = buildParameters(obj, validParams)
         data = ' '.join([ str(x) for x in obj.data ])
         return (obj.filename, "%s %s" % (params, data))
 

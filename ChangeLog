@@ -14,6 +14,7 @@ environments.
 * Updated setup.py.
 * Updated date in LICENSE.
 * Updated vars in example 1.
+* Fixed var names in rrd.external.
 
 2006.01.29
 
