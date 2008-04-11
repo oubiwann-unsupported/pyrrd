@@ -5,6 +5,9 @@
 * Added commit script.
 * Fixed date in ChangeLog.
 * Commented out sync code in commit.sh.
+* Renamed lib directory to pyrrd for easier use with non-installed
+environments.
+* Incremented micro version number.
 
 2006.01.29
 

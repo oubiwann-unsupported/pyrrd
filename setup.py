@@ -17,9 +17,6 @@ setup(name="PyRRD",
     packages=[
         'pyrrd',
     ],
-    package_dir = {
-        'pyrrd': 'lib',
-    },
     include_package_data = False,
     exclude_package_data = { 
         '': ['*.sh', 'lib/old/*', 'sandbox/*'],
