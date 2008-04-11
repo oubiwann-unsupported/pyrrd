@@ -4,13 +4,13 @@ from setuptools import setup
 
 version = open('VERSION').read().strip()
 
-setup(name="PyRRD",
+setup(name='PyRRD',
     version=version,
-    description="An Object-Oriented Python Interface for RRD",
-    author="Duncan McGreggor",
-    author_email="duncan@adytum.us",
-    url="http://projects.adytum.us/tracs/PyRRD",
-    license="BSD",
+    description='An Object-Oriented Python Interface for RRD',
+    author='Duncan McGreggor',
+    author_email='duncan@adytum.us',
+    url='http://code.google.com/p/pyrrd/',
+    license='BSD',
     long_description='''PyRRD is a module that wraps RRDTool to
         allow for the greatest possible programmatic ease in creating,
         updating, querying and graphing RRD data.''',
@@ -19,9 +19,7 @@ setup(name="PyRRD",
     ],
     include_package_data = False,
     exclude_package_data = { 
-        '': ['*.sh', 'lib/old/*', 'sandbox/*'],
-        #'sandbox': [''],
-        #'': [''],
+        '': ['*.sh', 'pyrrd/old/*'],
     },
 )
 '''

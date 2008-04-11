@@ -11,6 +11,8 @@ environments.
 * Added test runner.
 * Fixed bad unit test result in pyrrd.utils.
 * Adjusted stat.sh script.
+* Updated setup.py.
+* Updated date in LICENSE.
 
 2006.01.29
 
