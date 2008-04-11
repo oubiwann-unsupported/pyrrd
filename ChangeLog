@@ -8,6 +8,9 @@
 * Renamed lib directory to pyrrd for easier use with non-installed
 environments.
 * Incremented micro version number.
+* Added test runner.
+* Fixed bad unit test result in pyrrd.utils.
+* Adjusted stat.sh script.
 
 2006.01.29
 

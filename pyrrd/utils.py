@@ -5,7 +5,7 @@ def epoch(dt_obj=None):
     '''
     >>> dt = datetime(1972, 8, 17)
     >>> epoch(dt)
-    82879200
+    82875600
     >>> now = epoch()
     >>> type(now)
     <type 'int'>
