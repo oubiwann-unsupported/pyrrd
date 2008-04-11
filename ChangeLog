@@ -1,8 +1,10 @@
-2006.01.29
+2008.04.11
 * Moved sandbox.
 * Created admin directory.
 * Moved stat script into admin directory.
 * Added commit script.
+* Fixed date in ChangeLog.
+* Commented out sync code in commit.sh.
 
 2006.01.29
 

@@ -8,10 +8,10 @@ function error {
 
 function succeed {
     rm commit-msg
-    echo -n "Commit succeeded; sync Google and SourceForge? [y/n] "; read CHECK
-    if [[ "$CHECK" == "y" ]]; then
-        ./admin/syncRepos.sh
-    fi
+    #echo -n "Commit succeeded; sync Google and SourceForge? [y/n] "; read CHECK
+    #if [[ "$CHECK" == "y" ]]; then
+    #    ./admin/syncRepos.sh
+    #fi
 }
 
 svn diff ChangeLog | \
