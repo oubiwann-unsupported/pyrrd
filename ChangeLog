@@ -17,6 +17,7 @@ environments.
 * Fixed var names in rrd.external.
 * Renamed generateResultLines to iterParse and added some unit tests.
 * Cleaned up testmod call.
+* Cleaned up vars in rrd and graph modules.
 
 2006.01.29
 

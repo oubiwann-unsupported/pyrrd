@@ -43,7 +43,7 @@ def escapeColons(data):
     '''
     return re.sub(':', '\:', data)
 
-def validateObjectType(instance, obj_type):
+def validateObjectType(instance, objType):
     '''
     >>> my_list = [1,2,3,4,5]
     >>> validateObjectType(my_list, list)
@@ -52,10 +52,10 @@ def validateObjectType(instance, obj_type):
     Traceback (most recent call last):
     TypeError: list instance is not of type dict
     '''
-    if isinstance(instance, obj_type):
+    if isinstance(instance, objType):
         return instance
     raise TypeError, "%s instance is not of type %s" % (
-        type(instance).__name__, obj_type.__name__)
+        type(instance).__name__, objType.__name__)
 
 def validateImageFormat(format):
     '''
@@ -105,7 +105,7 @@ class DataDefinition(object):
     phase.
     
     >>> def1 = DataDefinition(vname='ds0a', 
-    ...   rrdfile='/home/rrdtool/data/router1.rrd', ds_name='ds0',
+    ...   rrdfile='/home/rrdtool/data/router1.rrd', dsName='ds0',
     ...   cdef='AVERAGE')
     >>> def1
     DEF:ds0a=/home/rrdtool/data/router1.rrd:ds0:AVERAGE
@@ -114,37 +114,37 @@ class DataDefinition(object):
 
     >>> def2 = DataDefinition(rrdfile='/home/rrdtool/data/router1.rrd')
     >>> def2.vname = 'ds0b'
-    >>> def2.ds_name = 'ds0'
+    >>> def2.dsName = 'ds0'
     >>> def2.cdef = 'AVERAGE'
     >>> def2.step = 1800
     >>> def2
     DEF:ds0b=/home/rrdtool/data/router1.rrd:ds0:AVERAGE:step=1800
 
-    >>> def3 = DEF(vname='ds0c', ds_name='ds0', step=7200)
+    >>> def3 = DEF(vname='ds0c', dsName='ds0', step=7200)
     >>> def3.rrdfile = '/home/rrdtool/data/router1.rrd'
     >>> def3
     DEF:ds0c=/home/rrdtool/data/router1.rrd:ds0:AVERAGE:step=7200
     >>> def4 = DEF()
     >>> def4
     Traceback (most recent call last):
-    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
+    ValueError: vname, rrdfile, dsName, and cdef are all required attributes and cannot be None.
     >>> def4.rrdfile = '/home/rrdtool/data/router2.rrd'
     >>> def4
     Traceback (most recent call last):
-    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
+    ValueError: vname, rrdfile, dsName, and cdef are all required attributes and cannot be None.
     >>> def4.vname = 'ds1a'
     >>> def4
     Traceback (most recent call last):
-    ValueError: vname, rrdfile, ds_name, and cdef are all required attributes and cannot be None.
-    >>> def4.ds_name = 'ds1'
+    ValueError: vname, rrdfile, dsName, and cdef are all required attributes and cannot be None.
+    >>> def4.dsName = 'ds1'
     >>> def4
     DEF:ds1a=/home/rrdtool/data/router2.rrd:ds1:AVERAGE
     '''
-    def __init__(self, vname='', rrdfile='', ds_name='', cdef='AVERAGE',
+    def __init__(self, vname='', rrdfile='', dsName='', cdef='AVERAGE',
         step=None, start=None, end=None, reduce=None):
         self.vname = validateVName(vname)
         self.rrdfile = rrdfile
-        self.ds_name = ds_name
+        self.dsName = dsName
         self.cdef = cdef
         self.step = step
         self.start = start
@@ -153,17 +153,18 @@ class DataDefinition(object):
 
     def __repr__(self):
         '''
-	We override this method for preparing the class's data for
-	use with RRDTool.
+        We override this method for preparing the class's data for use with
+        RRDTool.
 
-        Time representations must have their ':'s escaped, since
-        the colon is the RRDTool separator for parameters.
+        Time representations must have their ':'s escaped, since the colon is
+        the RRDTool separator for parameters.
         '''
-        if not (self.vname and self.rrdfile and self.ds_name and 
+        if not (self.vname and self.rrdfile and self.dsName and 
             self.cdef):
-            raise ValueError, "vname, rrdfile, ds_name, and cdef " + \
-                "are all required attributes and cannot be None."
-        main = 'DEF:%(vname)s=%(rrdfile)s:%(ds_name)s:%(cdef)s' % (
+            msg = ("vname, rrdfile, dsName, and cdef " +
+                "are all required attributes and cannot be None.")
+            raise ValueError, msg
+        main = 'DEF:%(vname)s=%(rrdfile)s:%(dsName)s:%(cdef)s' % (
             self.__dict__)
         tail = ''
         if self.step:
@@ -196,24 +197,24 @@ class VariableDefinition(object):
     expressions (a limitation of RRDTool, not PyRRD).
 
     >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', ds_name='ds0')
+    ...   vname='ds0a', dsName='ds0')
     >>> def2 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds1a', ds_name='ds1')
+    ...   vname='ds1a', dsName='ds1')
     >>> rpnmax = '%s,MAXIMUM'
     >>> rpnmin = '%s,MINIMUM'
     >>> rpnavg = '%s,AVERAGE'
     >>> rpnpct = '%s,%s,PERCENT'
     >>> vdef1 = VariableDefinition(vname='ds0max', 
-    ...   rpn=rpnmax % def1.ds_name)
+    ...   rpn=rpnmax % def1.dsName)
     >>> vdef1
     VDEF:ds0max=ds0,MAXIMUM
-    >>> vdef2 = VDEF(vname='ds0avg', rpn=rpnavg % def1.ds_name)
+    >>> vdef2 = VDEF(vname='ds0avg', rpn=rpnavg % def1.dsName)
     >>> vdef2
     VDEF:ds0avg=ds0,AVERAGE
-    >>> vdef3 = VDEF(vname='ds0min', rpn=rpnmin % def1.ds_name)
+    >>> vdef3 = VDEF(vname='ds0min', rpn=rpnmin % def1.dsName)
     >>> vdef3
     VDEF:ds0min=ds0,MINIMUM
-    >>> vdef4 = VDEF(vname='ds1pct', rpn=rpnpct % (def2.ds_name, 95))
+    >>> vdef4 = VDEF(vname='ds1pct', rpn=rpnpct % (def2.dsName, 95))
     >>> vdef4
     VDEF:ds1pct=ds1,95,PERCENT
     '''
@@ -233,6 +234,7 @@ class VariableDefinition(object):
         main = self.abbr+':%(vname)s=%(rpn)s' % (
             self.__dict__)
         return main
+
 VDEF = VariableDefinition
 
 class CalculationDefinition(VariableDefinition):
@@ -249,14 +251,15 @@ class CalculationDefinition(VariableDefinition):
     on in the script, just as if it were generated by a DEF
     instruction.
     
-    >>> some_dsn = 'mydata'
-    >>> cdef1 = CDEF(vname='mydatabits', rpn='%s,8,*' % some_dsn)
+    >>> someDSN = 'mydata'
+    >>> cdef1 = CDEF(vname='mydatabits', rpn='%s,8,*' % someDSN)
     >>> cdef1
     CDEF:mydatabits=mydata,8,*
     '''
     def __init__(self, vname, rpn):
         super(CalculationDefinition, self).__init__(vname, rpn)
         self.abbr = 'CDEF'
+
 CDEF = CalculationDefinition
 
 class Print(object):
@@ -324,17 +327,17 @@ class Print(object):
     the generated graphs.
 
     >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', ds_name='ds0')
+    ...   vname='ds0a', dsName='ds0')
     >>> vdef1 = VariableDefinition(vname='ds0max', 
-    ...   rpn='%s,MAXIMUM' % def1.ds_name)
-    >>> prn_fmt = "%6.2lf %Sbps"
-    >>> prn = Print(vdef1, prn_fmt)
+    ...   rpn='%s,MAXIMUM' % def1.dsName)
+    >>> prnFmt = "%6.2lf %Sbps"
+    >>> prn = Print(vdef1, prnFmt)
     >>> prn
     PRINT:ds0max:"%6.2lf %Sbps"
     '''
-    def __init__(self, vdef_obj, format):
-        vdef_obj = validateObjectType(vdef_obj, VariableDefinition)
-        self.vname = vdef_obj.vname
+    def __init__(self, vdefObj, format):
+        vdefObj = validateObjectType(vdefObj, VariableDefinition)
+        self.vname = vdefObj.vname
         self.format = format
         self.abbr = 'PRINT'
 
@@ -349,6 +352,7 @@ class Print(object):
         main = self.abbr+':%(vname)s:"%(format)s"' % (
             self.__dict__)
         return main 
+
 PRINT = Print
 
 class GraphPrint(Print):
@@ -356,17 +360,18 @@ class GraphPrint(Print):
     This is the same as PRINT, but printed inside the graph.
 
     >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', ds_name='ds0')
+    ...   vname='ds0a', dsName='ds0')
     >>> vdef1 = VariableDefinition(vname='ds0max', 
-    ...   rpn='%s,MAXIMUM' % def1.ds_name)
-    >>> prn_fmt = '%6.2lf %Sbps'
-    >>> prn = GraphPrint(vdef1, prn_fmt)
+    ...   rpn='%s,MAXIMUM' % def1.dsName)
+    >>> prnFmt = '%6.2lf %Sbps'
+    >>> prn = GraphPrint(vdef1, prnFmt)
     >>> prn
     GPRINT:ds0max:"%6.2lf %Sbps"
     '''
-    def __init__(self, vdef_obj, format):
-        super(GraphPrint, self).__init__(vdef_obj, format)
+    def __init__(self, vdefObj, format):
+        super(GraphPrint, self).__init__(vdefObj, format)
         self.abbr = 'GPRINT'
+
 GPRINT = GraphPrint
 
 class GraphComment(object):
@@ -379,14 +384,14 @@ class GraphComment(object):
     >>> cmt = GraphComment('95th percentile')
     >>> len(str(cmt))
     26
-    >>> cmt = GraphComment('95th percentile', auto_newline=False)
+    >>> cmt = GraphComment('95th percentile', autoNewline=False)
     >>> len(str(cmt))
     25
     >>> print cmt
     COMMENT:"95th percentile"
     '''
-    def __init__(self, comment, auto_newline=True):
-        self.auto_newline = auto_newline
+    def __init__(self, comment, autoNewline=True):
+        self.autoNewline = autoNewline
         self.comment = comment
 
     def __repr__(self):
@@ -397,11 +402,12 @@ class GraphComment(object):
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
         '''
-        new_line = '\n'
-        if not self.auto_newline:
-            new_line = ''
-        main = 'COMMENT:"%s%s"' % ( self.comment, new_line)
+        newLine = '\n'
+        if not self.autoNewline:
+            newLine = ''
+        main = 'COMMENT:"%s%s"' % ( self.comment, newLine)
         return main
+
 COMMENT = GraphComment
 
 class GraphVerticalLine(object):
@@ -436,18 +442,18 @@ class Line(object):
     form.
 
     >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', ds_name='ds0')
+    ...   vname='ds0a', dsName='ds0')
     >>> vdef1 = VariableDefinition(vname='ds0max', 
-    ...   rpn='%s,MAXIMUM' % def1.ds_name)
+    ...   rpn='%s,MAXIMUM' % def1.dsName)
 
     # Now let's do some lines...
     >>> line = Line(1, value='ds0max', color='#00ff00',
     ...   legend="Max")
     >>> line
     LINE1:ds0max#00ff00:"Max"
-    >>> LINE(2, def_obj=def1, color='#0000ff')
+    >>> LINE(2, defObj=def1, color='#0000ff')
     LINE2:ds0a#0000ff
-    >>> LINE(1, def_obj=vdef1, color='#ff0000')
+    >>> LINE(1, defObj=vdef1, color='#ff0000')
     LINE1:ds0max#ff0000
     >>> LINE(1, color='#ff0000')
     Traceback (most recent call last):
@@ -456,7 +462,7 @@ class Line(object):
     Traceback (most recent call last):
     ValueError: The parameter 'value' must be either a string or an integer.
     '''
-    def __init__(self, width=None, value=None, def_obj=None, color=None,
+    def __init__(self, width=None, value=None, defObj=None, color=None,
         legend='', stack=False):
         '''
         If a DEF, VDEF, or CDEF object as passed, the vname will
@@ -471,11 +477,11 @@ class Line(object):
                 raise ValueError, "The parameter 'value' must be " + \
                     "either a string or an integer."
         else:
-            if not def_obj:
+            if not defObj:
                 raise Exception, "You must provide either a value " + \
                     "or a definition object."
             else:
-                value = def_obj.vname
+                value = defObj.vname
         self.vname = value
         self.abbr = 'LINE'
 
@@ -503,24 +509,24 @@ class Area(Line):
     be filled.
 
     >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', ds_name='ds0')
+    ...   vname='ds0a', dsName='ds0')
     >>> vdef1 = VariableDefinition(vname='ds0max', 
-    ...   rpn='%s,MAXIMUM' % def1.ds_name)
+    ...   rpn='%s,MAXIMUM' % def1.dsName)
 
     # Now let's do some areas...
     >>> Area(value='ds0a', color='#cccccc', legend='Raw Router Data')
     AREA:ds0a#cccccc:"Raw Router Data"
-    >>> AREA(def_obj=vdef1, color='#cccccc', legend='Max Router Data',
+    >>> AREA(defObj=vdef1, color='#cccccc', legend='Max Router Data',
     ...   stack=True)
     AREA:ds0max#cccccc:"Max Router Data":STACK
     '''
-    def __init__(self, width=None, value=None, def_obj=None, color=None,
+    def __init__(self, width=None, value=None, defObj=None, color=None,
         legend='', stack=False):
         '''
         If a DEF, VDEF, or CDEF object as passed, the vname will
         be automatically extraced from the object and used.
         '''
-        super(Area, self).__init__(value=value, def_obj=def_obj, 
+        super(Area, self).__init__(value=value, defObj=defObj, 
             color=color, legend=legend, stack=stack)
         self.abbr = 'AREA'
 
@@ -669,7 +675,7 @@ class Graph(object):
     >>> dss = []
     >>> rras = []
     >>> filename = '/tmp/test.rrd'
-    >>> ds1 = DS(ds_name='speed', ds_type='COUNTER', heartbeat=600)
+    >>> ds1 = DS(dsName='speed', ds_type='COUNTER', heartbeat=600)
     >>> dss.append(ds1)
     >>> rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24)
     >>> rra2 = RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10)
@@ -695,16 +701,16 @@ class Graph(object):
     >>> my_rrd.update()
 
     # Let's set up the objects that will be added to the graph
-    >>> def1 = DEF(rrdfile=my_rrd.filename, vname='myspeed', ds_name=ds1.name)
+    >>> def1 = DEF(rrdfile=my_rrd.filename, vname='myspeed', dsName=ds1.name)
     >>> cdef1 = CDEF(vname='kmh', rpn='%s,3600,*' % def1.vname)
     >>> cdef2 = CDEF(vname='fast', rpn='kmh,100,GT,kmh,0,IF')
     >>> cdef3 = CDEF(vname='good', rpn='kmh,100,GT,0,kmh,IF')
     >>> vdef1 = VDEF(vname='mymax', rpn='%s,MAXIMUM' % def1.vname)
     >>> vdef2 = VDEF(vname='myavg', rpn='%s,AVERAGE' % def1.vname)
     >>> line1 = LINE(value=100, color='#990000', legend='Maximum Allowed')
-    >>> area1 = AREA(def_obj=cdef3, color='#006600', legend='Good Speed')
-    >>> area2 = AREA(def_obj=cdef2, color='#CC6633', legend='Too Fast')
-    >>> line2 = LINE(def_obj=vdef2, color='#000099', legend='My Average', stack=True)
+    >>> area1 = AREA(defObj=cdef3, color='#006600', legend='Good Speed')
+    >>> area2 = AREA(defObj=cdef2, color='#CC6633', legend='Too Fast')
+    >>> line2 = LINE(defObj=vdef2, color='#000099', legend='My Average', stack=True)
     >>> gprint1 = GPRINT(vdef2, '%6.2lf kph')
 
     # Let's configure some custom colors for the graph
@@ -729,6 +735,9 @@ class Graph(object):
     >>> os.path.exists(graphfile)
     True
     '''
+    # Note that we don't use the Twisted camel case convention for the
+    # parameters in the following method signature due to the fact that these
+    # are what is used by RRDTool. Stuff will break if we don't.
     def __init__(self, filename, start=None, end=None, step=None, 
         title='', vertical_label='', width=None, height=None,
         only_graph=None, upper_limit=None, lower_limit=None,
@@ -789,8 +798,8 @@ class Graph(object):
         rrdbackend.graph(*data)
 
 def _test():
-    import doctest, graph
-    return doctest.testmod(graph)
+    from doctest import testmod
+    return testmod()
 
 if __name__ == '__main__':
     _test()

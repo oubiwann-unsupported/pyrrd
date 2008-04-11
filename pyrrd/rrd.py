@@ -64,7 +64,7 @@ class RRD(object):
     >>> dss = []
     >>> rras = []
     >>> filename = '/tmp/test.rrd'
-    >>> dss.append(DataSource(ds_name='speed', ds_type='COUNTER', heartbeat=600))
+    >>> dss.append(DataSource(dsName='speed', ds_type='COUNTER', heartbeat=600))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
     >>> my_rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
@@ -193,13 +193,13 @@ class DataSource(object):
 
         DS:ds-name:COMPUTE:rpn-expression
 
-    >>> ds = DataSource(ds_name='speed', ds_type='COUNTER', heartbeat=600)
+    >>> ds = DataSource(dsName='speed', ds_type='COUNTER', heartbeat=600)
     >>> ds
     DS:speed:COUNTER:600:U:U
     '''
-    def __init__(self, ds_name, ds_type, heartbeat=None, minval='U', 
+    def __init__(self, dsName, ds_type, heartbeat=None, minval='U', 
         maxval='U', rpn=None):
-        self.name = ds_name
+        self.name = dsName
         self.type = ds_type
         self.heartbeat = int(heartbeat)
         self.min = minval
