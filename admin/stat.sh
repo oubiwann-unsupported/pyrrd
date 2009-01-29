@@ -1,1 +1,5 @@
-svn stat|egrep -v '.swp|.pyc|build|dist|egg-info'
+. ./admin/defs.sh
+echo "Changes:"
+getDiff ChangeLog
+echo
+bzr stat

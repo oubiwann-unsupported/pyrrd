@@ -1,4 +1,11 @@
+2009.01.28
+
+* Updated the old admin scripts to use bazaar.
+* Added more scripts, including definitions for pushing back up to Google Code
+(Subversion).
+
 2008.04.11
+
 * Moved sandbox.
 * Created admin directory.
 * Moved stat script into admin directory.
