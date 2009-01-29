@@ -1,6 +1,8 @@
 2009.01.29
 
 * Updated the TODO with thoughts/plans for implementing an info method.
+* Started stubbing out the code that will support loading data from files (and
+thus an info method).
 
 2009.01.28
 

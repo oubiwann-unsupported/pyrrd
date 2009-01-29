@@ -6,7 +6,7 @@ from backend import rrdbackend
 
 
 def validateDSName(name):
-    '''
+    """
     >>> vname = validateDSName('Zaphod Beeble-Brox!')
     Traceback (most recent call last):
     ValueError: Names must consist only of the characters A-Z, a-z, 0-9, _
@@ -15,7 +15,7 @@ def validateDSName(name):
     >>> vname = validateDSName('a'*19)
     Traceback (most recent call last):
     ValueError: Names must be shorter than 19 characters
-    '''
+    """
     if name != re.sub('[^A-Za-z0-9_]', '', name):
         raise ValueError, "Names must consist only of the characters " + \
             "A-Z, a-z, 0-9, _"
@@ -24,13 +24,13 @@ def validateDSName(name):
 
 
 def validateDSType(dstype):
-    '''
+    """
     >>> validateDSType('counter')
     'COUNTER'
     >>> validateDSType('ford prefect')
     Traceback (most recent call last):
     ValueError: A data source type must be one of the following: GAUGE COUNTER DERIVE ABSOLUTE COMPUTE
-    '''
+    """
     dstype = dstype.upper()
     valid = ['GAUGE', 'COUNTER', 'DERIVE', 'ABSOLUTE', 'COMPUTE']
     if dstype in valid:
@@ -42,7 +42,7 @@ def validateDSType(dstype):
 
 
 def validateRRACF(consolidation_function):
-    '''
+    """
     >>> validateRRACF('Max')
     'MAX'
     >>> validateRRACF('Maximum')
@@ -51,7 +51,7 @@ def validateRRACF(consolidation_function):
     >>> validateRRACF('Trisha MacMillan')
     Traceback (most recent call last):
     ValueError: An RRA's consolidation function must be one of the following: AVERAGE MIN MAX LAST HWPREDICT SEASONAL DEVSEASONAL DEVPREDICT FAILURES
-    '''
+    """
     cf = consolidation_function.upper()
     valid = ['AVERAGE', 'MIN', 'MAX', 'LAST', 'HWPREDICT', 'SEASONAL',
         'DEVSEASONAL', 'DEVPREDICT', 'FAILURES']
@@ -64,7 +64,7 @@ def validateRRACF(consolidation_function):
 
 
 class RRD(object):
-    '''
+    """
     >>> dss = []
     >>> rras = []
     >>> filename = '/tmp/test.rrd'
@@ -95,7 +95,7 @@ class RRD(object):
     >>> os.unlink(filename)
     >>> os.path.exists(filename)
     False
-    '''
+    """
     def __init__(self, filename=None, start=None, step=300, ds=[], rra=[]):
         if filename == None:
             raise ValueError, "You must provide a filename."
@@ -115,7 +115,7 @@ class RRD(object):
         rrdbackend.create(*data)
 
     def bufferValue(self, time_or_data, *values):
-        '''
+        """
         The parameter 'values' can either be a an n-tuple, but it
         is assumed that the order in which the values are sent is
         the order in which they will be applied to the DSs (i.e.,
@@ -152,7 +152,7 @@ class RRD(object):
         >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
         ('somefile', '--template ds0 sometime:value anothertime:anothervalue')
         >>> my_rrd.values = []
-        '''
+        """
         values = ':'.join([ str(x) for x in values ])
         self.values.append((time_or_data, values))
 
@@ -160,8 +160,8 @@ class RRD(object):
     bufferValues = bufferValue
 
     def update(self, debug=False, template=None, dry_run=False):
-        '''
-        '''
+        """
+        """
         # XXX this needs a lot more testing with different data
         # sources and values
         self.template = template
@@ -173,20 +173,84 @@ class RRD(object):
                 self.values = []
 
     def fetch(self):
-        '''
-        '''
+        """
+        """
         # XXX obviously, we need to imnplement this
         raise NotImplementedError
 
     def info(self):
-        '''
-        '''
+        """
+        {'ds': {'dementia': {'ds_name': 'dementia',
+                             'last_ds': '-348',
+                             'max': None,
+                             'min': None,
+                             'minimal_heartbeat': 900,
+                             'type': 'GAUGE',
+                             'unknown_sec': 0,
+                             'value': -0.0},
+                'insanity': {'ds_name': 'insanity',
+                             'last_ds': '-373',
+                             'max': None,
+                             'min': None,
+                             'minimal_heartbeat': 900,
+                             'type': 'GAUGE',
+                             'unknown_sec': 0,
+                             'value': -0.0},
+                'silliness': {'ds_name': 'silliness',
+                              'last_ds': '-120',
+                              'max': None,
+                              'min': None,
+                              'minimal_heartbeat': 900,
+                              'type': 'GAUGE',
+                              'unknown_sec': 0,
+                              'value': -0.0},
+                'speed': {'ds_name': 'speed',
+                          'last_ds': '-997',
+                          'max': None,
+                          'min': None,
+                          'minimal_heartbeat': 900,
+                          'type': 'GAUGE',
+                          'unknown_sec': 0,
+                          'value': -0.0}},
+         'filename': 'example4.rrd',
+         'last_update': 1136012400,
+         'rra': [{'cdp_prep': [{'unknown_datapoints': 0, 'value': 378.0},
+                               {'unknown_datapoints': 0, 'value': -2.0},
+                               {'unknown_datapoints': 0, 'value': 594.0},
+                               {'unknown_datapoints': 0, 'value': -448.0}],
+                  'cf': 'AVERAGE',
+                  'pdp_per_row': 24,
+                  'rows': 1460,
+                  'xff': 0.5}],
+         'rrd_version': '0003',
+         'step': 300}
+        """
         # XXX obviously, we need to imnplement this
+        # XXX this needs to present the same output format as the python
+        # bindings' info output
         raise NotImplementedError
+
+    # XXX maybe this should be "load"?
+    def read(filename=None):
+        """
+        """
+        if filename:
+            self.filename = filename
+        # regardless of backend, will need to use the _cmd call in order to get
+        # the dump, since the python bindings don't support it
+
+        # call the "load" function from the "external" module (needs to be
+        # written; it will use ElementTree)
+
+        # will reset all attributes of this object (self) based on what is
+        # ready in from the dump
+
+        # will create data source objects, RRA objects, and all sub-objects of
+        # those objects
 
 
 class DataSource(object):
-    '''
+    """
     A single RRD can accept input from several data sources (DS),
     for example incoming and outgoing traffic on a specific
     communication line. With the DS configuration option you must
@@ -211,7 +275,7 @@ class DataSource(object):
     >>> ds = DataSource(dsName='speed', dsType='COUNTER', heartbeat=600)
     >>> ds
     DS:speed:COUNTER:600:U:U
-    '''
+    """
     def __init__(self, dsName=None, dsType=None, heartbeat=None, minval='U',
         maxval='U', rpn=None):
         if dsName == None:
@@ -226,13 +290,13 @@ class DataSource(object):
         self.rpn = rpn
 
     def __repr__(self):
-        '''
+        """
         We override this method for preparing the class's data for
         use with RRDTool.
 
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
-        '''
+        """
         main = 'DS:%(name)s:%(type)s' % self.__dict__
         tail = ''
         if self.type == 'COMPUTE':
@@ -245,8 +309,42 @@ class DataSource(object):
 DS = DataSource
 
 
+# XXX the following may want to go in a "mapper" module
+class RowValue(object):
+    """
+    """
+
+class Row(object):
+    """
+    """
+    v = None
+
+
+class Database(object):
+    """
+    """
+    rows = []
+
+
+# XXX maybe make this a dict with slots defined
+class CDPrepDS(object):
+    """
+    """
+    primary_value = None
+    secondary_value = None
+    value = None
+    unknown_datapoints = None
+
+
+# XXX maybe just make this a list subclass
+class CDPPrep(object):
+    """
+    """
+    ds = []
+
+
 class RRA(object):
-    '''
+    """
     The purpose of an RRD is to store data in the round robin
     archives (RRA). An archive consists of a number of data values
     or statistics for each of the defined data-sources (DS) and is
@@ -281,10 +379,11 @@ class RRA(object):
     >>> rra2 = RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10)
     >>> rra2
     RRA:AVERAGE:0.5:6:10
-    '''
+    """
     def __init__(self, cf=None, xff=None, steps=None, rows=None, alpha=None,
         beta=None, seasonal_period=None, rra_num=None, gamma=None,
-        threshold=None, window_length=None):
+        threshold=None, window_length=None, cdpPrepObject=None,
+        databaseObject=None):
         if cf == None:
             msg = "You must provide a value for the consolidation function."
             raise ValueError, msg
@@ -299,15 +398,18 @@ class RRA(object):
         self.rra_num = rra_num
         self.threshold = threshold
         self.window_length = window_length
+        # for object mapping
+        self.cdp_prep = cdpPrepObject
+        self.database = databaseObject
 
     def __repr__(self):
-        '''
+        """
         We override this method for preparing the class's data for
         use with RRDTool.
 
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
-        '''
+        """
         main = 'RRA:%(cf)s' % self.__dict__
         tail = ''
         if self.cf in ['AVERAGE', 'MIN', 'MAX', 'LAST']:
