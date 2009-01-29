@@ -3,6 +3,7 @@
 * Updated the TODO with thoughts/plans for implementing an info method.
 * Started stubbing out the code that will support loading data from files (and
 thus an info method).
+* Added a reference directory with the dump dtd in it.
 
 2009.01.28
 
