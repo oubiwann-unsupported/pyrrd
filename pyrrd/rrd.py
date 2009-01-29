@@ -197,8 +197,12 @@ class DataSource(object):
     >>> ds
     DS:speed:COUNTER:600:U:U
     '''
-    def __init__(self, dsName, dsType, heartbeat=None, minval='U',
+    def __init__(self, dsName=None, dsType=None, heartbeat=None, minval='U',
         maxval='U', rpn=None):
+        if dsName == None:
+            raise ValueError, "You must provide a name for the data source."
+        if dsType == None:
+            raise ValueError, "You must provide a type for the data source."
         self.name = dsName
         self.type = dsType
         self.heartbeat = int(heartbeat)

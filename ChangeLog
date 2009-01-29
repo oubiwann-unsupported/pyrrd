@@ -6,6 +6,8 @@
 * Added a fix for Windows users. Fixes: http://code.google.com/p/pyrrd/issues/detail?id=1
 * Cleaned up the backend module a tiny bit.
 * White space cleanup.
+* Added a fix for named parameters in the DataSource class. 
+  Fixes: http://code.google.com/p/pyrrd/issues/detail?id=2
 
 2008.04.11
 
