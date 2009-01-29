@@ -1,8 +1,9 @@
 """
-Utility functions for rtf-ng.
+Utility functions for testing.
 """
 import os
-from unittest import TestCase
+import unittest
+import doctest
 from StringIO import StringIO
 
 def importModule(name):
@@ -32,20 +33,42 @@ def find(start, func, skip=[]):
 def findTests(startDir, skipFiles=[]):
     return find(startDir, fileIsTest, skipFiles)
 
-class RRDTestCase(TestCase):
+def buildDoctestSuite(modules):
+    suite = unittest.TestSuite()
+    for modname in modules:
+        mod = importModule(modname)
+        suite.addTest(doctest.DocTestSuite(mod))
+    return suite
 
-    def setUp(self):
-        base = ('test', 'sources')
-        self.sourceDir = os.path.join(*base)
+def buildUnittestSuites(paths=[], skip=[]):
+    """
+    paths: a list of directories to search
+    skip: a list of file names to skip
+    """
+    suites = []
+    loader = unittest.TestLoader()
+    for startDir in paths:
+        for testFile in findTests(startDir, skip):
+            modBase = os.path.splitext(testFile)[0]
+            name = modBase.replace(os.path.sep, '.')
+            # import the testFile as a module
+            mod = importModule(name)
+            # iterate through module objects, checking for TestCases
+            for objName in dir(mod):
+                if not objName.endswith('TestCase'):
+                    continue
+                obj = getattr(mod, objName)
+                if not issubclass(obj, unittest.TestCase):
+                    continue
+                # create a suite from any test cases
+                suite = loader.loadTestsFromTestCase(obj)
+                # append to suites list
+                suites.append(suite)
+    return suites
 
-    def getReferenceData(self, name):
-        fh = open(os.path.join(self.sourceDir, name + '.rrd'))
-        data = fh.read()
-        fh.close()
-        return data
+class BaseTestCase(unittest.TestCase):
 
     def getTestName(self):
-        #import pdb;pdb.set_trace()
         if hasattr(self, '_testMethodName'):
             return self._testMethodName.split('test_')[1]
         return self._TestCase__testMethodName.split('test_')[1]
@@ -60,14 +83,4 @@ class RRDTestCase(TestCase):
     def callMake(self):
         return getattr(self, 'make_%s' % self.getTestName())()
 
-    def getData(self):
-        name = self.getTestName()
-        doc = self.callMake()
-        testData = self.getTestData(doc)
-        refData = self.getReferenceData(name)
-        return (testData, refData)
-
-    def doTest(self):
-        testData, refData = self.getData()
-        self.assertEqual(testData, refData)
 

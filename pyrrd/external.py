@@ -140,7 +140,7 @@ def fetch(filename, query, iterResults=True):
     >>> dsName, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200',
     ...   iterResults=False)
     >>> len(results)
-    16
+    17
 
     >>> os.unlink(filename)
     >>> os.path.exists(filename)

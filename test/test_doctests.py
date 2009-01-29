@@ -1,24 +1,24 @@
-import unittest
-import doctest
+from doctest import DocFileSuite
 
-from utils import importModule
+from utils import buildDoctestSuite
+
 
 # to add a new module to the test runner, simply include is in the list below:
 modules = [
-    'pyrrd.rrd',
-    'pyrrd.external',
-    'pyrrd.graph',
-    'pyrrd.utils',
+    "pyrrd.external",
+    "pyrrd.graph",
+    "pyrrd.rrd",
+    "pyrrd.utils",
 ]
 
-suite = unittest.TestSuite()
+suites = [DocFileSuite("../README")]
+if modules:
+    suites.append(buildDoctestSuite(modules))
 
-for modname in modules:
-    mod = importModule(modname)
-    suite.addTest(doctest.DocTestSuite(mod))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    import unittest
     runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
+    runner.run(unittest.TestSuite(suites))
 
 

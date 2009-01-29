@@ -3,4 +3,3 @@
 particular DS by name.
 * Finish support for fetch().
 * Add support for rrdtool info
-* Add test runner for doctests

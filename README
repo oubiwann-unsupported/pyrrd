@@ -4,3 +4,9 @@ For docs, see the docstrings at the beginning of each class (and
 many of the functions). They not only contain many of the standard
 RRDTool docs, but they contain doctests which give you a hands-on,
 how-it-works understanding of actual usage.
+
+You can also view the wiki here:
+  http://code.google.com/p/pyrrd/wiki/FrontPage?tm=6
+
+And be sure not to miss the examples (images and source code!) here:
+  http://code.google.com/p/pyrrd/wiki/FullWorkingExamples
