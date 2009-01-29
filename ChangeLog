@@ -8,6 +8,7 @@
 * White space cleanup.
 * Added a fix for named parameters in the DataSource class. 
   Fixes: http://code.google.com/p/pyrrd/issues/detail?id=2
+* Added Google Code to the admin push script.
 
 2008.04.11
 
