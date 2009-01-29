@@ -93,7 +93,9 @@ class RRD(object):
     False
     '''
     #>>> os.unlink(filename)
-    def __init__(self, filename, start=None, step=300, ds=[], rra=[]):
+    def __init__(self, filename=None, start=None, step=300, ds=[], rra=[]):
+        if filename == None:
+            raise ValueError, "You must provide a filename."
         self.filename = filename
         if not start or isinstance(start, datetime):
             self.start = epoch(start)
@@ -169,6 +171,7 @@ class RRD(object):
         '''
         '''
         # XXX obviously, we need to imnplement this
+        raise NotImplementedError
 
 class DataSource(object):
     '''

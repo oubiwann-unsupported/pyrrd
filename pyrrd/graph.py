@@ -218,7 +218,11 @@ class VariableDefinition(object):
     >>> vdef4
     VDEF:ds1pct=ds1,95,PERCENT
     '''
-    def __init__(self, vname, rpn):
+    def __init__(self, vname=None, rpn=None):
+        if vname == None:
+            raise ValueError, "You must provide a variable definition name."
+        if rpn == None:
+            raise ValueError, "You must provide an RPN statement(s)."
         self.vname = validateVName(vname)
         self.rpn = rpn
         self.abbr = 'VDEF'
