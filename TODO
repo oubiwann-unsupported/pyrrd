@@ -2,6 +2,54 @@ Near Term
 =========
 
 * Add support for rrdtool info
+  - this is going to be something like an object-RRD-mapper...
+  - will return an object
+  - the object should repr like the cli output
+  - if we were to go by the printout from "rrdtool info", we'd have an
+    attribute mapping something like the following:
+    . filename
+    . rrd_version
+    . step
+    . last_update
+    . dss (ds list)
+    . rras (rra list)
+  - each element of the ds list would have the following attributes
+    . type
+    . min
+    . max
+    . last_ds
+    . value
+    . unknown_sec
+  - each element of the rra list would have the following attributes
+    . cf
+    . pdp_per_row
+    . cdp_preps (cdp_rep list)
+  - each element of the cdp_prep would have the following attributes
+    . value
+    . unknown_datapoints
+  - we already have the following objects:
+    . RRD
+    . DataSource/DS
+    . RRA
+  - as such, if we can get all the information about an RRD (including DSs and
+    RRAs) we would be able to rebuild full objects representing actual RRD
+    files (we'd nee to add a "read" method to the RRD class)
+  - in order to pull in as much details as possible, it might be more useful to
+    use "rrdtool dump" and parse the XML
+  - with that in place, calling info() would essentially just be a method that
+    displays data stored in the RRD object itself
+  - even if we don't support something that pretends to be an atomic operation,
+    we should still check state before an overwrite... maybe something like
+    this:
+    . create tempfile and update to it
+    . save it
+    . get its checksum
+    . get the checksum of the original
+    . if they are different, raise an inconsistent state exception
+    . also provide a means of forcing an overwrite... 'cause sometimes people
+      just like to smack shit around
+    . if no exception is raised, move the tempfile over the original (there's
+      still a race condition there)
 
 * Write up a good README, taking examples from the wiki/docstrings so that it
   will look good (and be informative) on PyPI, and then upload to PyPI
@@ -29,3 +77,4 @@ Future
 
 * Finish support for fetch().
 
+* Add support for atomic operations.

@@ -96,7 +96,6 @@ class RRD(object):
     >>> os.path.exists(filename)
     False
     '''
-    #>>> os.unlink(filename)
     def __init__(self, filename=None, start=None, step=300, ds=[], rra=[]):
         if filename == None:
             raise ValueError, "You must provide a filename."
@@ -156,6 +155,8 @@ class RRD(object):
         '''
         values = ':'.join([ str(x) for x in values ])
         self.values.append((time_or_data, values))
+
+    # for backwards compatibility
     bufferValues = bufferValue
 
     def update(self, debug=False, template=None, dry_run=False):
