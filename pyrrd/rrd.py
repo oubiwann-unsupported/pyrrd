@@ -264,9 +264,12 @@ class RRA(object):
     >>> rra2
     RRA:AVERAGE:0.5:6:10
     '''
-    def __init__(self, cf, xff=None, steps=None, rows=None, alpha=None,
+    def __init__(self, cf=None, xff=None, steps=None, rows=None, alpha=None,
         beta=None, seasonal_period=None, rra_num=None, gamma=None,
         threshold=None, window_length=None):
+        if cf == None:
+            msg = "You must provide a value for the consolidation function."
+            raise ValueError, msg
         self.cf = cf
         self.xff = xff
         self.steps = steps

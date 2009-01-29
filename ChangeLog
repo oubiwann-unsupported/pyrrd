@@ -9,6 +9,7 @@
 * Added a fix for named parameters in the DataSource class. 
   Fixes: http://code.google.com/p/pyrrd/issues/detail?id=2
 * Added Google Code to the admin push script.
+* Fixed missing named parameter in RRA class.
 
 2008.04.11
 
