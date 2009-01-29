@@ -4,6 +4,7 @@ from datetime import datetime
 from utils import epoch
 from backend import rrdbackend
 
+
 def validateDSName(name):
     '''
     >>> vname = validateDSName('Zaphod Beeble-Brox!')
@@ -21,6 +22,7 @@ def validateDSName(name):
     if len(name) > 18:
         raise ValueError, "Names must be shorter than 19 characters"
 
+
 def validateDSType(dstype):
     '''
     >>> validateDSType('counter')
@@ -37,6 +39,7 @@ def validateDSType(dstype):
         valid = ' '.join(valid)
         raise ValueError, 'A data source type must be one of the ' + \
             'following: %s' % valid
+
 
 def validateRRACF(consolidation_function):
     '''
@@ -58,6 +61,7 @@ def validateRRACF(consolidation_function):
         valid = ' '.join(valid)
         raise ValueError, "An RRA's consolidation function must be " + \
             "one of the following: %s" % valid
+
 
 class RRD(object):
     '''
@@ -173,6 +177,13 @@ class RRD(object):
         # XXX obviously, we need to imnplement this
         raise NotImplementedError
 
+    def info(self):
+        '''
+        '''
+        # XXX obviously, we need to imnplement this
+        raise NotImplementedError
+
+
 class DataSource(object):
     '''
     A single RRD can accept input from several data sources (DS),
@@ -228,7 +239,10 @@ class DataSource(object):
         else:
             tail += ':%(heartbeat)s:%(min)s:%(max)s' % self.__dict__
         return main+tail
+
+
 DS = DataSource
+
 
 class RRA(object):
     '''
@@ -313,12 +327,15 @@ class RRA(object):
             tail += ':%(window_length)s:%(rra_num)s' % self.__dict__
         return main+tail
 
+
 class Query(object):
     pass
 
+
 def _test():
-    import doctest, rrd
-    return doctest.testmod(rrd)
+    from doctest import testmod
+    testmod()
+
 
 if __name__ == '__main__':
     _test()

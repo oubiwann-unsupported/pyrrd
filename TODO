@@ -1,7 +1,31 @@
-* Add an RPN class.
-* Add a DS collection class that has a get() method for getting a
-  particular DS by name.
-* Finish support for fetch().
+Near Term
+=========
+
 * Add support for rrdtool info
+
 * Write up a good README, taking examples from the wiki/docstrings so that it
   will look good (and be informative) on PyPI, and then upload to PyPI
+
+* Add a wrapper for the Python RRDTool bindings
+  - since the doctests are mostly to show API functionality, we'll need to add
+    unit tests for both backends (cli wrapper and bindings wrapper)
+  - the python bindings should be fairly straight-forward to support, since we
+    should just be able to split on the parameters that are currently
+    calculated
+
+* Allow for users to supply their own fd to pyrrd.graph
+
+* Allow for users to decide which backend will be used on an
+  instance-by-instance basis
+
+
+Future
+======
+
+* Add an RPN class.
+
+* Add a DS collection class that has a get() method for getting a
+  particular DS by name.
+
+* Finish support for fetch().
+

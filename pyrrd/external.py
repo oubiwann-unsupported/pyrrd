@@ -236,7 +236,11 @@ def prepareObject(function, obj):
 
     if function == 'fetch':
         # XXX add support
-        pass
+        raise NotImplementedError
+
+    if function == 'info':
+        # XXX add support
+        raise NotImplementedError
 
     if function == 'graph':
         validParams = ['start', 'end', 'step', 'title',

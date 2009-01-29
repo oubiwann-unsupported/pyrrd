@@ -7,7 +7,7 @@ rrdtool bindings, we'll need to provide pairs of strings for some
 of the parameters.
 '''
 
-def preparObject(obj):
+def prepareObject(obj):
     '''
     This is a funtion that serves to make interacting with the
     backend as transparent as possible. It's sole purpose it to
