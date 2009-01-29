@@ -260,7 +260,7 @@ class CalculationDefinition(VariableDefinition):
     >>> cdef1
     CDEF:mydatabits=mydata,8,*
     '''
-    def __init__(self, vname, rpn):
+    def __init__(self, vname=None, rpn=None):
         super(CalculationDefinition, self).__init__(vname, rpn)
         self.abbr = 'CDEF'
 

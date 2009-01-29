@@ -14,6 +14,7 @@
 * Added a NotImplementedError for the fetch method.
 * Updated TODO.
 * Added missing named parameters in VariableDefinition class.
+* Added missing named parameters in CalculationDefinition class.
 
 2008.04.11
 
