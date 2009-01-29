@@ -4,6 +4,7 @@
 * Added more scripts, including definitions for pushing back up to Google Code
 (Subversion).
 * Added a fix for Windows users. Fixes: http://code.google.com/p/pyrrd/issues/detail?id=1
+* Cleaned up the backend module a tiny bit.
 
 2008.04.11
 
