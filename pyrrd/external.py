@@ -210,7 +210,7 @@ def prepareObject(function, obj):
 
     This function will get called by methods in the pyrrd wrapper
     objects. For instance, most of the methods of pyrrd.rrd.RRD
-    will call this function. In graph, Pretty much only the method 
+    will call this function. In graph, Pretty much only the method
     pyrrd.graph.Graph.write() will call this function.
     '''
     if function == 'create':
@@ -223,12 +223,12 @@ def prepareObject(function, obj):
     if function == 'update':
         validParams = ['template']
         params = buildParameters(obj, validParams)
-       
+
         FIRST_VALUE = 0
         DATA = 1
-        TIME_OR_DATA = 0 
+        TIME_OR_DATA = 0
         if obj.values[FIRST_VALUE][DATA]:
-            data = ' '.join([ '%s:%s' % (time, values) 
+            data = ' '.join([ '%s:%s' % (time, values)
                 for time, values in obj.values ])
         else:
             data = ' '.join([ data for data, nil in obj.values ])

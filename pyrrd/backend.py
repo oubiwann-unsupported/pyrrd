@@ -13,7 +13,7 @@ try:
     # XXX we're not going to let this pass for now, since we don't
     # support the python bindings yet
     raise NotImplementedError
-    #import rrdtool 
+    #import rrdtool
     #import bindings as rrdbackend
 except:
     import external as rrdbackend

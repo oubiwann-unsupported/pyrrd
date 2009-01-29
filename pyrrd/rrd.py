@@ -116,7 +116,7 @@ class RRD(object):
         the order in which they will be applied to the DSs (i.e.,
         respectively... i.e., in the order that the DSs were added
         to the RRD).
-        
+
         >>> my_rrd = RRD('somefile')
         >>> my_rrd.bufferValue('sometime', 'value')
         >>> my_rrd.update(debug=True, dry_run=True)
@@ -197,7 +197,7 @@ class DataSource(object):
     >>> ds
     DS:speed:COUNTER:600:U:U
     '''
-    def __init__(self, dsName, dsType, heartbeat=None, minval='U', 
+    def __init__(self, dsName, dsType, heartbeat=None, minval='U',
         maxval='U', rpn=None):
         self.name = dsName
         self.type = dsType
@@ -252,7 +252,7 @@ class RRA(object):
 
     rows defines how many generations of data values are kept in
     an RRA.
-    
+
     >>> rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24)
     >>> rra1
     RRA:AVERAGE:0.5:1:24
@@ -261,7 +261,7 @@ class RRA(object):
     RRA:AVERAGE:0.5:6:10
     '''
     def __init__(self, cf, xff=None, steps=None, rows=None, alpha=None,
-        beta=None, seasonal_period=None, rra_num=None, gamma=None, 
+        beta=None, seasonal_period=None, rra_num=None, gamma=None,
         threshold=None, window_length=None):
         self.cf = cf
         self.xff = xff

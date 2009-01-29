@@ -20,6 +20,6 @@ def preparObject(obj):
 
     This function will get called by methods in the pyrrd wrapper
     objects. For instance, most of the methods of pyrrd.rrd.RRD
-    will call this function. In graph, Pretty much only the method 
+    will call this function. In graph, Pretty much only the method
     pyrrd.graph.Graph.write() will call this function.
     '''
