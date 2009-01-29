@@ -4,6 +4,8 @@
 * Started stubbing out the code that will support loading data from files (and
 thus an info method).
 * Added a reference directory with the dump dtd in it.
+* Added acknowledgements to README.
+* Removed the testing sandbox in trunk.
 
 2009.01.28
 
