@@ -3,6 +3,7 @@
 * Updated the old admin scripts to use bazaar.
 * Added more scripts, including definitions for pushing back up to Google Code
 (Subversion).
+* Added a fix for Windows users. Fixes: http://code.google.com/p/pyrrd/issues/detail?id=1
 
 2008.04.11
 

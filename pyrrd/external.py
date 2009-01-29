@@ -5,8 +5,11 @@ from subprocess import call, Popen, PIPE
 
 def _cmd(command, args):
     args = 'rrdtool %s %s' % (command, args)
-
-    p = Popen([args], shell=True, stdin=PIPE, stdout=PIPE, close_fds=True)
+    if sys.platform == 'win32':
+        close_fds = False
+    else:
+        close_fds = True
+    p = Popen([args], shell=True, stdin=PIPE, stdout=PIPE, close_fds=close_fds)
     stdout, stderr = (p.stdout, p.stderr)
     err = output = None
     try:
