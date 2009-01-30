@@ -8,6 +8,7 @@
 * Added printInfo method to the base mapper class.
 * Updated the RRD.info method to use the printInfo mapper method.
 * Added support for printing info of loaded RRD files.
+* Updated TODO.
 
 2009.01.29
 
