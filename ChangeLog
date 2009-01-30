@@ -4,6 +4,7 @@
 * Added last update tracking.
 * Updated RRD.load to use the mapper map method.
 * Cleaned up some variable names and comments.
+* Added missing mapper module.
 
 2009.01.29
 
