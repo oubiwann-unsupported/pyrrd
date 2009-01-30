@@ -8,6 +8,8 @@ thus an info method).
 * Removed the testing sandbox in trunk.
 * Renamed "read" to "load".
 * Added dump function with doctests.
+* Added working code and doctests for loading an RRD XML dump file as an
+ElementTree instance.
 
 2009.01.28
 

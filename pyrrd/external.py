@@ -185,7 +185,19 @@ def dump(filename, outfile=None, parameters=""):
 def load(filename):
     """
     Load RRD data via the RRDtool XML dump into an ElementTree.
+
+    >>> filename = '/tmp/test.rrd'
+    >>> parameters = ' --start 920804400'
+    >>> parameters += ' DS:speed:COUNTER:600:U:U'
+    >>> parameters += ' RRA:AVERAGE:0.5:1:24'
+    >>> parameters += ' RRA:AVERAGE:0.5:6:10'
+    >>> create(filename, parameters)
+    >>> tree = load(filename)
+    >>> [x.tag for x in tree]
+    ['version', 'step', 'lastupdate', 'ds', 'rra', 'rra']
     """
+    xml = dump(filename)
+    return ElementTree.fromstring(xml)
 
 def graph(filename, parameters):
     """
