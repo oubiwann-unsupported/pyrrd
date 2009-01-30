@@ -10,6 +10,7 @@ thus an info method).
 * Added dump function with doctests.
 * Added working code and doctests for loading an RRD XML dump file as an
 ElementTree instance.
+* Added an XML module for extracting data from RRD dumps.
 
 2009.01.28
 

@@ -1,8 +1,10 @@
 import re
 from datetime import datetime
 
-from utils import epoch
-from backend import rrdbackend
+from pyrrd.utils import epoch
+from pyrrd.backend import rrdbackend
+from pyrrd.external import load
+
 
 
 def validateDSName(name):
@@ -232,12 +234,42 @@ class RRD(object):
 
     def load(filename=None, include_data=False):
         """
+        # create an empty file
+        >>> dss = []
+        >>> rras = []
+        >>> filename = '/tmp/test.rrd'
+        >>> dss.append(DataSource(dsName='speed', dsType='COUNTER',
+        ...   heartbeat=600))
+        >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
+        >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
+        >>> rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
+        >>> rrd.create()
+
+        # add some values
+        >>> rrd.bufferValue('920805600', '12363')
+        >>> rrd.bufferValue('920805900', '12363')
+        >>> rrd.bufferValue('920806200', '12373')
+        >>> rrd.bufferValue('920806500', '12383')
+        >>> rrd.update()
+
+        # now load the data from a file
+        >>> rrd2 = RRD(filename)
+        >>> rrd2.filename
+        >>> len(rrd2.ds)
+        >>> len(rrd2.rra)
         """
-        if filename:
-            self.filename = filename
+        # XXX this should only be enabled once we have the data from the loaded
+        # RRD file updating the RRD object
+        #if filename:
+        #    self.filename = filename
+
         # regardless of backend, will need to use the _cmd call in order to get
         # the dump, since the python bindings don't support it
-
+        tree = load(self.filename)
+        # get the data sources
+        dss = tree.findall("ds")
+        # get the RRAs
+        rras = tree.findall("rra")
         # call the "load" function from the "external" module (needs to be
         # written; it will use ElementTree)
 

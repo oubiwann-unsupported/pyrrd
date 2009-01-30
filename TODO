@@ -61,6 +61,8 @@ Near Term
     should just be able to split on the parameters that are currently
     calculated
 
+* Add docstrings for the classes in the new xml module.
+
 * Allow for users to supply their own fd to pyrrd.graph
 
 * Allow for users to decide which backend will be used on an

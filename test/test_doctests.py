@@ -9,6 +9,7 @@ modules = [
     "pyrrd.graph",
     "pyrrd.rrd",
     "pyrrd.utils",
+    "pyrrd.xml",
 ]
 
 suites = [DocFileSuite("../README")]
