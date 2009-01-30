@@ -63,6 +63,7 @@ class RRDXMLNode(XMLNode):
             ("step", int, 300),
             ("lastupdate", int, 0),
             ]
+        super(RRDXMLNode, self).__init__(tree, attributes)
         dsAttributes = [
             ("name", str, ""),
             ("type", str, "GAUGE"),
@@ -77,7 +78,6 @@ class RRDXMLNode(XMLNode):
             ("cf", str, "AVERAGE"),
             ("pdp_per_row", int, 0),
             ]
-        super(RRDXMLNode, self).__init__(tree, attributes)
         self.ds = []
         self.rra = []
         for ds in self.getDataSources():

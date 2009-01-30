@@ -1,10 +1,9 @@
 import re
 from datetime import datetime
 
-from pyrrd.utils import epoch
+from pyrrd import mapper
+from pyrrd import utils
 from pyrrd.backend import rrdbackend
-from pyrrd.external import load
-
 
 
 def validateDSName(name):
@@ -25,7 +24,7 @@ def validateDSName(name):
         raise ValueError, "Names must be shorter than 19 characters"
 
 
-def validateDSType(dstype):
+def validateDSType(dsType):
     """
     >>> validateDSType('counter')
     'COUNTER'
@@ -33,17 +32,17 @@ def validateDSType(dstype):
     Traceback (most recent call last):
     ValueError: A data source type must be one of the following: GAUGE COUNTER DERIVE ABSOLUTE COMPUTE
     """
-    dstype = dstype.upper()
+    dsType = dsType.upper()
     valid = ['GAUGE', 'COUNTER', 'DERIVE', 'ABSOLUTE', 'COMPUTE']
-    if dstype in valid:
-        return dstype
+    if dsType in valid:
+        return dsType
     else:
         valid = ' '.join(valid)
         raise ValueError, 'A data source type must be one of the ' + \
             'following: %s' % valid
 
 
-def validateRRACF(consolidation_function):
+def validateRRACF(consolidationFunction):
     """
     >>> validateRRACF('Max')
     'MAX'
@@ -54,7 +53,7 @@ def validateRRACF(consolidation_function):
     Traceback (most recent call last):
     ValueError: An RRA's consolidation function must be one of the following: AVERAGE MIN MAX LAST HWPREDICT SEASONAL DEVSEASONAL DEVPREDICT FAILURES
     """
-    cf = consolidation_function.upper()
+    cf = consolidationFunction.upper()
     valid = ['AVERAGE', 'MIN', 'MAX', 'LAST', 'HWPREDICT', 'SEASONAL',
         'DEVSEASONAL', 'DEVPREDICT', 'FAILURES']
     if cf in valid:
@@ -65,7 +64,7 @@ def validateRRACF(consolidation_function):
             "one of the following: %s" % valid
 
 
-class RRD(object):
+class RRD(mapper.RRDMapper):
     """
     >>> dss = []
     >>> rras = []
@@ -103,20 +102,33 @@ class RRD(object):
             raise ValueError, "You must provide a filename."
         self.filename = filename
         if not start or isinstance(start, datetime):
-            self.start = epoch(start)
+            self.start = utils.epoch(start)
         else:
             self.start = start
         self.ds = ds
         self.rra = rra
         self.values = []
         self.step = step
+        self.lastupdate = None
 
     def create(self, debug=False):
         data = rrdbackend.prepareObject('create', self)
         if debug: print data
         rrdbackend.create(*data)
 
-    def bufferValue(self, time_or_data, *values):
+    # XXX this can be uncommented when we're doing full database imports with
+    # the loads method and storing those values in the python objects
+    #def write(self, filename, debug=False):
+    #    self.filename = filename
+    #    if not os.path.exists(filename):
+    #        self.create(debug)
+    #    for rra in self.rra:
+    #        for row in rra.database.rows:
+    #            time, data = 
+    #            self.bufferValue(time, data)
+    #        self.update()
+
+    def bufferValue(self, timeOrData, *values):
         """
         The parameter 'values' can either be a an n-tuple, but it
         is assumed that the order in which the values are sent is
@@ -125,38 +137,39 @@ class RRD(object):
         to the RRD).
 
         >>> my_rrd = RRD('somefile')
-        >>> my_rrd.bufferValue('sometime', 'value')
+        >>> my_rrd.bufferValue('1000000', 'value')
         >>> my_rrd.update(debug=True, dry_run=True)
-        ('somefile', ' sometime:value')
+        ('somefile', ' 1000000:value')
         >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
-        ('somefile', '--template ds0 sometime:value')
+        ('somefile', '--template ds0 1000000:value')
         >>> my_rrd.values = []
 
-        >>> my_rrd.bufferValue('sometime:value')
+        >>> my_rrd.bufferValue('1000000:value')
         >>> my_rrd.update(debug=True, dry_run=True)
-        ('somefile', ' sometime:value')
+        ('somefile', ' 1000000:value')
         >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
-        ('somefile', '--template ds0 sometime:value')
+        ('somefile', '--template ds0 1000000:value')
         >>> my_rrd.values = []
 
-        >>> my_rrd.bufferValue('sometime', 'value1', 'value2')
-        >>> my_rrd.bufferValue('anothertime', 'value3', 'value4')
+        >>> my_rrd.bufferValue('1000000', 'value1', 'value2')
+        >>> my_rrd.bufferValue('1000001', 'value3', 'value4')
         >>> my_rrd.update(debug=True, dry_run=True)
-        ('somefile', ' sometime:value1:value2 anothertime:value3:value4')
+        ('somefile', ' 1000000:value1:value2 1000001:value3:value4')
         >>> my_rrd.update(template='ds1:ds0', debug=True, dry_run=True)
-        ('somefile', '--template ds1:ds0 sometime:value1:value2 anothertime:value3:value4')
+        ('somefile', '--template ds1:ds0 1000000:value1:value2 1000001:value3:value4')
         >>> my_rrd.values = []
 
-        >>> my_rrd.bufferValue('sometime:value')
-        >>> my_rrd.bufferValue('anothertime:anothervalue')
+        >>> my_rrd.bufferValue('1000000:value')
+        >>> my_rrd.bufferValue('1000001:anothervalue')
         >>> my_rrd.update(debug=True, dry_run=True)
-        ('somefile', ' sometime:value anothertime:anothervalue')
+        ('somefile', ' 1000000:value 1000001:anothervalue')
         >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
-        ('somefile', '--template ds0 sometime:value anothertime:anothervalue')
+        ('somefile', '--template ds0 1000000:value 1000001:anothervalue')
         >>> my_rrd.values = []
         """
         values = ':'.join([ str(x) for x in values ])
-        self.values.append((time_or_data, values))
+        self.values.append((timeOrData, values))
+        self.lastupdate = int(timeOrData.split(":")[0])
 
     # for backwards compatibility
     bufferValues = bufferValue
@@ -232,7 +245,7 @@ class RRD(object):
         # bindings' info output
         raise NotImplementedError
 
-    def load(filename=None, include_data=False):
+    def load(self, filename=None, include_data=False):
         """
         # create an empty file
         >>> dss = []
@@ -252,32 +265,47 @@ class RRD(object):
         >>> rrd.bufferValue('920806500', '12383')
         >>> rrd.update()
 
-        # now load the data from a file
+        # let's create another one, using the source file we just created
         >>> rrd2 = RRD(filename)
-        >>> rrd2.filename
+        >>> rrd2.ds
+        []
+        >>> rrd2.rra
+        []
+
+        # now let's load the data from self.filename
+        >>> rrd2.load()
+        >>> top_level_attrs = rrd2.items()
+        >>> top_level_attrs["lastupdate"]
+        920806500
+        >>> top_level_attrs["filename"]
+        '/tmp/test.rrd'
+        >>> top_level_attrs["step"]
+        300
         >>> len(rrd2.ds)
+        1
         >>> len(rrd2.rra)
+        2
+        >>> rrd2.ds[0].items().keys()
+        ['name', 'min', 'max', 'unknown_sec', 'minimal_heartbeat', 'value', 'rpn', 'type', 'last_ds']
+        >>> rrd2.rra[1].items().keys()
+        ['rows', 'database', 'cf', 'cdp_prep', 'beta', 'seasonal_period', 'steps', 'window_length', 'threshold', 'alpha', 'pdp_per_row', 'xff', 'gamma', 'rra_num']
+
+        # finally, a comparison
+        >>> rrd.lastupdate == rrd2.lastupdate
+        True
+        >>> rrd.filename == rrd2.filename
+        True
+        >>> rrd.step == rrd2.step
+        True
         """
         # XXX this should only be enabled once we have the data from the loaded
         # RRD file updating the RRD object
         #if filename:
         #    self.filename = filename
 
-        # regardless of backend, will need to use the _cmd call in order to get
-        # the dump, since the python bindings don't support it
-        tree = load(self.filename)
-        # get the data sources
-        dss = tree.findall("ds")
-        # get the RRAs
-        rras = tree.findall("rra")
-        # call the "load" function from the "external" module (needs to be
-        # written; it will use ElementTree)
-
-        # will reset all attributes of this object (self) based on what is
-        # ready in from the dump
-
-        # will create data source objects, RRA objects, and all sub-objects of
-        # those objects
+        # this re-maps all attributes of this object (self) based on what is
+        # read in from self.filename
+        self.map()
 
         # XXX add support for loading data from the database XML tag; when this
         # is implemented, we will also need to come up with the best way to
@@ -287,7 +315,7 @@ class RRD(object):
             pass
 
 
-class DataSource(object):
+class DataSource(mapper.DSMapper):
     """
     A single RRD can accept input from several data sources (DS),
     for example incoming and outgoing traffic on a specific
@@ -322,7 +350,7 @@ class DataSource(object):
             raise ValueError, "You must provide a type for the data source."
         self.name = dsName
         self.type = dsType
-        self.heartbeat = int(heartbeat)
+        self.minimal_heartbeat = heartbeat
         self.min = minval
         self.max = maxval
         self.rpn = rpn
@@ -335,53 +363,20 @@ class DataSource(object):
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
         """
-        main = 'DS:%(name)s:%(type)s' % self.__dict__
+        main = 'DS:%s:%s' % (self.name, self.type)
         tail = ''
         if self.type == 'COMPUTE':
             tail += ':%s' % self.rpn
         else:
-            tail += ':%(heartbeat)s:%(min)s:%(max)s' % self.__dict__
-        return main+tail
+            tail += ':%s:%s:%s' % (
+                self.minimal_heartbeat, self.min, self.max)
+        return main + tail
 
 
 DS = DataSource
 
 
-# XXX the following may want to go in a "mapper" module
-class RowValue(object):
-    """
-    """
-
-class Row(object):
-    """
-    """
-    v = None
-
-
-class Database(object):
-    """
-    """
-    rows = []
-
-
-# XXX maybe make this a dict with slots defined
-class CDPrepDS(object):
-    """
-    """
-    primary_value = None
-    secondary_value = None
-    value = None
-    unknown_datapoints = None
-
-
-# XXX maybe just make this a list subclass
-class CDPPrep(object):
-    """
-    """
-    ds = []
-
-
-class RRA(object):
+class RRA(mapper.RRAMapper):
     """
     The purpose of an RRD is to store data in the round robin
     archives (RRA). An archive consists of a number of data values
@@ -422,6 +417,7 @@ class RRA(object):
         beta=None, seasonal_period=None, rra_num=None, gamma=None,
         threshold=None, window_length=None, cdpPrepObject=None,
         databaseObject=None):
+        super(RRA, self).__init__()
         if cf == None:
             msg = "You must provide a value for the consolidation function."
             raise ValueError, msg
@@ -448,24 +444,24 @@ class RRA(object):
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
         """
-        main = 'RRA:%(cf)s' % self.__dict__
+        main = 'RRA:%s' % self.cf
         tail = ''
         if self.cf in ['AVERAGE', 'MIN', 'MAX', 'LAST']:
-            tail += ':%(xff)s:%(steps)s:%(rows)s' % self.__dict__
+            tail += ':%s:%s:%s' % (self.xff, self.steps, self.rows)
         elif self.cf == 'HWPREDICT':
-            tail += ':%(rows)s:%(alpha)s:%(beta)s' % self.__dict__
-            tail += ':%(seasonal_period)s:%(rra_num)s' % self.__dict__
+            tail += ':%s:%s:%s' % (self.rows, self.alpha, self.beta)
+            tail += ':%s:%s' % (self.seasonal_period, self.rra_num)
         elif self.cf == 'SEASONAL':
-            tail += ':%(seasonal_period)s:%(gamma)s:%(rra_num)s' % (
-                self.__dict__)
+            tail += ':%s:%s:%s' % (
+                self.seasonal_period, self.gamma, self.rra_num)
         elif self.cf == 'DEVSEASONAL':
-            tail += ':%(seasonal_period)s:%(gamma)s:%(rra_num)s' % (
-                self.__dict__)
+            tail += ':%s:%s:%s' % (
+                self.seasonal_period, self.gamma, self.rra_num)
         elif self.cf == 'DEVPREDICT':
-            tail += ':%(rows)s:%(rra_num)s' % self.__dict__
+            tail += ':%s:%s' % (self.rows, self.rra_num)
         elif self.cf == 'FAILURES':
-            tail += ':%(rows)s:%(threshold)s' % self.__dict__
-            tail += ':%(window_length)s:%(rra_num)s' % self.__dict__
+            tail += ':%s:%s' % (self.rows, self.threshold)
+            tail += ':%s:%s' % (self.window_length, self.rra_num)
         return main+tail
 
 

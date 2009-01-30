@@ -1,3 +1,10 @@
+2009.01.30
+
+* Changed the rrd.* classes to inherit from the mapper.* classes.
+* Added last update tracking.
+* Updated RRD.load to use the mapper map method.
+* Cleaned up some variable names and comments.
+
 2009.01.29
 
 * Updated the TODO with thoughts/plans for implementing an info method.
@@ -11,6 +18,10 @@ thus an info method).
 * Added working code and doctests for loading an RRD XML dump file as an
 ElementTree instance.
 * Added an XML module for extracting data from RRD dumps.
+* Removed stubbed mapper objects from rrd module.
+* Added mapper module for mapping ElementTree XML nodes to Python objects with
+attributes.
+* With the use of slots, removed __dict__ references.
 
 2009.01.28
 
