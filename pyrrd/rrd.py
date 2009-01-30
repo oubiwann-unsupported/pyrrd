@@ -230,8 +230,7 @@ class RRD(object):
         # bindings' info output
         raise NotImplementedError
 
-    # XXX maybe this should be "load"?
-    def read(filename=None):
+    def load(filename=None, include_data=False):
         """
         """
         if filename:
@@ -247,6 +246,13 @@ class RRD(object):
 
         # will create data source objects, RRA objects, and all sub-objects of
         # those objects
+
+        # XXX add support for loading data from the database XML tag; when this
+        # is implemented, we will also need to come up with the best way to
+        # write this data back to disk (write the individual rows of data that
+        # get read in, that is)
+        if include_data:
+            pass
 
 
 class DataSource(object):

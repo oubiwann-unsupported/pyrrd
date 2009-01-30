@@ -2,6 +2,10 @@ import re
 import os
 import sys
 from subprocess import call, Popen, PIPE
+try:
+    from xml.etree import ElementTree
+except ImportError:
+    from elementtree import ElementTree
 
 def _cmd(command, args):
     args = 'rrdtool %s %s' % (command, args)
@@ -67,7 +71,7 @@ def buildParameters(obj, validList):
     return params.strip()
 
 def create(filename, parameters):
-    '''
+    """
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
@@ -80,12 +84,12 @@ def create(filename, parameters):
     >>> os.unlink(filename)
     >>> os.path.exists(filename)
     False
-    '''
+    """
     parameters = '%s %s' % (filename, parameters)
     output = _cmd('create', parameters)
 
 def update(filename, data, debug=False):
-    '''
+    """
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
@@ -104,7 +108,7 @@ def update(filename, data, debug=False):
     >>> os.unlink(filename)
     >>> os.path.exists(filename)
     False
-    '''
+    """
     parameters = '%s %s' % (filename, data)
     if debug:
         _cmd('updatev', parameters)
@@ -116,7 +120,7 @@ def fetchRaw(filename, query):
     return _cmd('fetch', parameters).strip()
 
 def fetch(filename, query, iterResults=True):
-    '''
+    """
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
@@ -145,7 +149,7 @@ def fetch(filename, query, iterResults=True):
     >>> os.unlink(filename)
     >>> os.path.exists(filename)
     False
-    '''
+    """
     output = fetchRaw(filename, query)
     lines = output.split('\n')
     dsName = lines[0]
@@ -156,8 +160,35 @@ def fetch(filename, query, iterResults=True):
     else:
         return (dsName, list(results))
 
+def dump(filename, outfile=None, parameters=""):
+    """
+    >>> filename = '/tmp/test.rrd'
+    >>> parameters = ' --start 920804400'
+    >>> parameters += ' DS:speed:COUNTER:600:U:U'
+    >>> parameters += ' RRA:AVERAGE:0.5:1:24'
+    >>> parameters += ' RRA:AVERAGE:0.5:6:10'
+    >>> create(filename, parameters)
+    >>> xml = dump(filename)
+    >>> len(xml)
+    3724
+    >>> xml[0:30]
+    '<!-- Round Robin Database Dump'
+    """
+    parameters = '%s %s' % (filename, parameters)
+    output = _cmd('dump', parameters).strip()
+    if not outfile:
+        return output
+    fh = open(outfile, "w+")
+    fh.write(output)
+    fh.close()
+
+def load(filename):
+    """
+    Load RRD data via the RRDtool XML dump into an ElementTree.
+    """
+
 def graph(filename, parameters):
-    '''
+    """
     >>> filename = '/tmp/speed.png'
     >>> rrdfile = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
@@ -194,12 +225,12 @@ def graph(filename, parameters):
     >>> os.unlink(rrdfile)
     >>> os.path.exists(rrdfile)
     False
-    '''
+    """
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)
 
 def prepareObject(function, obj):
-    '''
+    """
     This is a funtion that serves to make interacting with the
     backend as transparent as possible. It's sole purpose it to
     prepare the attributes and data of the various pyrrd objects
@@ -212,7 +243,7 @@ def prepareObject(function, obj):
     objects. For instance, most of the methods of pyrrd.rrd.RRD
     will call this function. In graph, Pretty much only the method
     pyrrd.graph.Graph.write() will call this function.
-    '''
+    """
     if function == 'create':
         validParams = ['start', 'step']
         params = buildParameters(obj, validParams)
