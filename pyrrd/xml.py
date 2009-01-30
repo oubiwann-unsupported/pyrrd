@@ -68,7 +68,7 @@ class RRDXMLNode(XMLNode):
             ("name", str, ""),
             ("type", str, "GAUGE"),
             ("minimal_heartbeat", int, 300),
-            ("min", int, "Nan"),
+            ("min", int, "NaN"),
             ("max", int, "NaN"),
             ("last_ds", int, 0),
             ("value", float, 0.0),

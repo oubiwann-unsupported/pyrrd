@@ -5,6 +5,9 @@
 * Updated RRD.load to use the mapper map method.
 * Cleaned up some variable names and comments.
 * Added missing mapper module.
+* Added printInfo method to the base mapper class.
+* Updated the RRD.info method to use the printInfo mapper method.
+* Added support for printing info of loaded RRD files.
 
 2009.01.29
 

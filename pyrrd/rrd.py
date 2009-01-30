@@ -240,10 +240,11 @@ class RRD(mapper.RRDMapper):
          'rrd_version': '0003',
          'step': 300}
         """
-        # XXX obviously, we need to imnplement this
-        # XXX this needs to present the same output format as the python
-        # bindings' info output
-        raise NotImplementedError
+        self.printInfo()
+        for ds in self.ds:
+            ds.printInfo()
+        for index, rra in enumerate(self.rra):
+            rra.printInfo(index)
 
     def load(self, filename=None, include_data=False):
         """
@@ -274,7 +275,7 @@ class RRD(mapper.RRDMapper):
 
         # now let's load the data from self.filename
         >>> rrd2.load()
-        >>> top_level_attrs = rrd2.items()
+        >>> top_level_attrs = rrd2.getData()
         >>> top_level_attrs["lastupdate"]
         920806500
         >>> top_level_attrs["filename"]
@@ -285,9 +286,9 @@ class RRD(mapper.RRDMapper):
         1
         >>> len(rrd2.rra)
         2
-        >>> rrd2.ds[0].items().keys()
+        >>> rrd2.ds[0].getData().keys()
         ['name', 'min', 'max', 'unknown_sec', 'minimal_heartbeat', 'value', 'rpn', 'type', 'last_ds']
-        >>> rrd2.rra[1].items().keys()
+        >>> rrd2.rra[1].getData().keys()
         ['rows', 'database', 'cf', 'cdp_prep', 'beta', 'seasonal_period', 'steps', 'window_length', 'threshold', 'alpha', 'pdp_per_row', 'xff', 'gamma', 'rra_num']
 
         # finally, a comparison

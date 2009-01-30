@@ -12,7 +12,7 @@ class Mapper(object):
         for name, value in attributes.items():
             setattr(self, name, value)
 
-    def items(self):
+    def getData(self):
         items = {}
         for name in self.__slots__:
             if name not in self.__skip_repr__:
@@ -23,6 +23,10 @@ class Mapper(object):
         """
         """
         self.setAttributes(node.attributes)
+
+    def printInfo(self):
+        for name, value in self.getData().items():
+            print "%s = %s" % (name, str(value))
 
 
 class RowMapper(Mapper):
@@ -48,6 +52,10 @@ class CDPrepDSMapper(Mapper):
         "value",
         "unknown_datapoints",
         ]
+
+    def printInfo(self, prefix, index):
+        for name, value in self.getData().items():
+            print "%s.cdp_prep[%s].%s = %s" % (prefix, index, name, str(value))
 
 
 class CDPPrepMapper(Mapper):
@@ -81,6 +89,20 @@ class RRAMapper(Mapper):
     __skip_repr__ = ["ds"]
     ds = []
 
+    def map(self, node):
+        super(RRAMapper, self).map(node)
+        for subNode in node.cdp_prep.ds:
+            ds = CDPrepDSMapper()
+            ds.map(subNode)
+            self.ds.append(ds)
+
+    def printInfo(self, index):
+        prefix = "rra[%s]" % index
+        for name, value in self.getData().items():
+            print "%s.%s = %s" % (prefix, name, str(value))
+        for index, ds in enumerate(self.ds):
+            ds.printInfo(prefix, index)
+
 
 class DSMapper(Mapper):
     """
@@ -96,6 +118,11 @@ class DSMapper(Mapper):
         "unknown_sec",
         "rpn",
         ]
+
+    def printInfo(self):
+        for name, value in self.getData().items():
+            if name != self.name:
+                print "ds[%s].%s = %s" % (self.name, name, str(value))
 
 
 class RRDMapper(Mapper):
