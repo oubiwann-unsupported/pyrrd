@@ -47,6 +47,8 @@ Near Term
 
 * Update all examples for recent dates like example4 has been updated
 
+* Stop using actual file writes for doctests and use StringIO instead
+
 Future
 ======
 
@@ -55,11 +57,12 @@ Future
 * Add a DS collection class that has a get() method for getting a
   particular DS by name.
 
-* Finish support for fetch().
+* - DONE - Finish support for fetch().
   - DONE - check fetch data from rrdtool.fetch (python bindings)
     . ugh - checked and not a fan
     . no driving need to maintain compatibility with it (yet)
-  - put fetch results into a mapper class
+  - put fetch results into a mapper class (this will have to wait until the
+    mapper classes are supporting XML dump database reads)
   - allow printing of results (add info method to other rrd.* classes)
   - DONE - put sub-node data into getData method(s)
 

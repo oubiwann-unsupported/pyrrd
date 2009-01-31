@@ -3,6 +3,7 @@
 * Removed ez_setup dependence.
 * Fixed old parameter name in example.
 * Added shell script for testing example code.
+* Updated TODO.
 
 2009.01.30
 
