@@ -96,6 +96,11 @@ class RRAMapper(Mapper):
             ds.map(subNode)
             self.ds.append(ds)
 
+    def getData(self):
+        data = super(RRAMapper, self).getData()
+        data["ds"] = [ds.getData() for ds in self.ds]
+        return data
+
     def printInfo(self, index):
         prefix = "rra[%s]" % index
         for name, value in self.getData().items():
@@ -141,6 +146,16 @@ class RRDMapper(Mapper):
     __skip_repr__ = ["ds", "rra"]
     ds = []
     rra = []
+
+    def getData(self):
+        """
+        """
+        #if not (self.ds or self.rra):
+        #    self.map()
+        data = super(RRDMapper, self).getData()
+        data["ds"] = [ds.getData() for ds in self.ds]
+        data["rra"] = [rra.getData() for rra in self.rra]
+        return data
 
     def map(self):
         """

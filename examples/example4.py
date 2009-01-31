@@ -1,3 +1,4 @@
+import time
 from math import sin, pi
 from random import random
 
@@ -18,8 +19,9 @@ quarter = month * 3
 half = 365 * day / 2
 year = 365 * day
 
-startTime = 1122876000
-endTime = 1136012400
+endTime = int(round(time.time()))
+delta = 13136400
+startTime = endTime - delta
 step = 300
 maxSteps = int((endTime-startTime)/step)
 

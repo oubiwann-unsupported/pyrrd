@@ -124,7 +124,7 @@ class RRD(mapper.RRDMapper):
     #        self.create(debug)
     #    for rra in self.rra:
     #        for row in rra.database.rows:
-    #            time, data = 
+    #            time, data =
     #            self.bufferValue(time, data)
     #        self.update()
 
@@ -169,7 +169,7 @@ class RRD(mapper.RRDMapper):
         """
         values = ':'.join([ str(x) for x in values ])
         self.values.append((timeOrData, values))
-        self.lastupdate = int(timeOrData.split(":")[0])
+        self.lastupdate = int(str(timeOrData).split(":")[0])
 
     # for backwards compatibility
     bufferValues = bufferValue
@@ -195,50 +195,6 @@ class RRD(mapper.RRDMapper):
 
     def info(self):
         """
-        {'ds': {'dementia': {'ds_name': 'dementia',
-                             'last_ds': '-348',
-                             'max': None,
-                             'min': None,
-                             'minimal_heartbeat': 900,
-                             'type': 'GAUGE',
-                             'unknown_sec': 0,
-                             'value': -0.0},
-                'insanity': {'ds_name': 'insanity',
-                             'last_ds': '-373',
-                             'max': None,
-                             'min': None,
-                             'minimal_heartbeat': 900,
-                             'type': 'GAUGE',
-                             'unknown_sec': 0,
-                             'value': -0.0},
-                'silliness': {'ds_name': 'silliness',
-                              'last_ds': '-120',
-                              'max': None,
-                              'min': None,
-                              'minimal_heartbeat': 900,
-                              'type': 'GAUGE',
-                              'unknown_sec': 0,
-                              'value': -0.0},
-                'speed': {'ds_name': 'speed',
-                          'last_ds': '-997',
-                          'max': None,
-                          'min': None,
-                          'minimal_heartbeat': 900,
-                          'type': 'GAUGE',
-                          'unknown_sec': 0,
-                          'value': -0.0}},
-         'filename': 'example4.rrd',
-         'last_update': 1136012400,
-         'rra': [{'cdp_prep': [{'unknown_datapoints': 0, 'value': 378.0},
-                               {'unknown_datapoints': 0, 'value': -2.0},
-                               {'unknown_datapoints': 0, 'value': 594.0},
-                               {'unknown_datapoints': 0, 'value': -448.0}],
-                  'cf': 'AVERAGE',
-                  'pdp_per_row': 24,
-                  'rows': 1460,
-                  'xff': 0.5}],
-         'rrd_version': '0003',
-         'step': 300}
         """
         self.printInfo()
         for ds in self.ds:
@@ -286,10 +242,10 @@ class RRD(mapper.RRDMapper):
         1
         >>> len(rrd2.rra)
         2
-        >>> rrd2.ds[0].getData().keys()
-        ['name', 'min', 'max', 'unknown_sec', 'minimal_heartbeat', 'value', 'rpn', 'type', 'last_ds']
-        >>> rrd2.rra[1].getData().keys()
-        ['rows', 'database', 'cf', 'cdp_prep', 'beta', 'seasonal_period', 'steps', 'window_length', 'threshold', 'alpha', 'pdp_per_row', 'xff', 'gamma', 'rra_num']
+        >>> sorted(rrd2.ds[0].getData().keys())
+        ['last_ds', 'max', 'min', 'minimal_heartbeat', 'name', 'rpn', 'type', 'unknown_sec', 'value']
+        >>> sorted(rrd2.rra[1].getData().keys())
+        ['alpha', 'beta', 'cdp_prep', 'cf', 'database', 'ds', 'gamma', 'pdp_per_row', 'rows', 'rra_num', 'seasonal_period', 'steps', 'threshold', 'window_length', 'xff']
 
         # finally, a comparison
         >>> rrd.lastupdate == rrd2.lastupdate

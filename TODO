@@ -54,5 +54,11 @@ Future
   particular DS by name.
 
 * Finish support for fetch().
+  - check fetch data from rrdtool.fetch (python bindings)
+    . ugh - checked and not a fan
+    . no driving need to maintain compatibility with it (yet)
+  - put fetch results into a mapper class
+  - allow printing of results (add info method to other rrd.* classes)
+  - DONE - put sub-node data into getData method(s)
 
 * Add support for atomic operations.

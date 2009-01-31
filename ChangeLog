@@ -9,6 +9,11 @@
 * Updated the RRD.info method to use the printInfo mapper method.
 * Added support for printing info of loaded RRD files.
 * Updated TODO.
+* Updated example4 to use current times instead of the times for when the
+examples were originally written (2005).
+* Added a string coercion before doing a split on dateOrData.
+* Removed old docstrings.
+* Improved getData mapper methods to descend into sub-objects.
 
 2009.01.29
 
