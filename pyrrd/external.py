@@ -7,6 +7,7 @@ try:
 except ImportError:
     from elementtree import ElementTree
 
+
 def _cmd(command, args):
     args = 'rrdtool %s %s' % (command, args)
     if sys.platform == 'win32':
@@ -25,6 +26,30 @@ def _cmd(command, args):
     else:
         return output
 
+
+def coerce(value):
+    """
+    >>> coerce("NaN")
+    nan
+    >>> coerce("nan")
+    nan
+    >>> coerce("Unkn")
+    >>> coerce("u")
+    >>> coerce("1")
+    1.0
+    >>> 0.039 < coerce("4.0000000000e-02") < 0.041
+    True
+    >>> 0.039 < coerce(4.0000000000e-02) < 0.041
+    True
+    """
+    try:
+        return float(value)
+    except ValueError:
+        if value.lower() in ['unkn', 'u']:
+            return None
+    raise ValueError, "Unexpected type for data (%s)" % value
+
+ 
 def iterParse(lines):
     """
     >>> lines = [' 920804700: nan',
@@ -45,7 +70,7 @@ def iterParse(lines):
     ...  ' 920809200: nan']
     >>> g = iterParse(lines)
     >>> g.next()
-    (920804700, None)
+    (920804700, nan)
     >>> g.next()
     (920805000, 0.040000000000000001)
     >>> len(list(g)) == len(lines) - 2
@@ -54,11 +79,8 @@ def iterParse(lines):
     for line in lines:
         line = line.strip()
         time, value = [x.strip() for x in re.split(':\s+', line)]
-        if value.lower() in ['nan', 'unkn', 'u']:
-            value = None
-        else:
-            value = float(value)
-        yield (int(time), value)
+        yield (int(time), coerce(value))
+
 
 def buildParameters(obj, validList):
     paramTemplate = ' --%s %s'
@@ -69,6 +91,7 @@ def buildParameters(obj, validList):
             param = param.replace('_', '-')
             params += paramTemplate % (param, attr)
     return params.strip()
+
 
 def create(filename, parameters):
     """
@@ -87,6 +110,7 @@ def create(filename, parameters):
     """
     parameters = '%s %s' % (filename, parameters)
     output = _cmd('create', parameters)
+
 
 def update(filename, data, debug=False):
     """
@@ -115,9 +139,11 @@ def update(filename, data, debug=False):
     else:
          _cmd('update', parameters)
 
+
 def fetchRaw(filename, query):
     parameters = '%s %s' % (filename, query)
     return _cmd('fetch', parameters).strip()
+
 
 def fetch(filename, query, iterResults=True):
     """
@@ -136,29 +162,48 @@ def fetch(filename, query, iterResults=True):
     >>> update('/tmp/test.rrd', '920807400:12405 920807700:12411 920808000:12415')
     >>> update('/tmp/test.rrd', '920808300:12420 920808600:12422 920808900:12423')
 
-    >>> dsName, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200')
-    >>> dsName
-    'speed'
-    >>> results.next()
-    (920804700, None)
-    >>> dsName, results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200',
-    ...   iterResults=False)
-    >>> len(results)
-    17
+    >>> results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200')
+
+    # Results are provided in two ways, one of which is by the data source
+    # name:
+    >>> sorted(results["ds"].keys())
+    ['speed']
+
+    # accessing a DS entry like this gives of a (time, data) tuple:
+    >>> results["ds"]["speed"][0]
+    (920805000, 0.040000000000000001)
+
+    # The other way of accessing the results data is by data source time
+    # entries:
+    >>> keys = sorted(results["time"].keys())
+    >>> len(keys)
+    16
+    >>> keys[0:6]
+    [920805000, 920805300, 920805600, 920805900, 920806200, 920806500]
+    >>> results["time"][920805000]
+    {'speed': 0.040000000000000001}
+
+    The benefits of using an approach like this become obvious when the RRD
+    file has multiple DSs and RRAs.
 
     >>> os.unlink(filename)
-    >>> os.path.exists(filename)
-    False
     """
     output = fetchRaw(filename, query)
-    lines = output.split('\n')
-    dsName = lines[0]
-    # lines[1] is blank
-    results = iterParse(lines[2:])
-    if iterResults:
-        return (dsName, results)
-    else:
-        return (dsName, list(results))
+    lines = [line for line in output.split('\n') if line]
+    dsNames = lines[0].split()
+    results = {
+        "ds": {},
+        "time": {},
+        }
+    for line in lines[2:]:
+        time, data = line.split(":")
+        data = [coerce(datum) for datum in data.split()]
+        results["time"][int(time)] = dict(zip(dsNames, data))
+        for dsName, datum in zip(dsNames, data):
+            results["ds"].setdefault(dsName, [])
+            results["ds"][dsName].append((int(time), coerce(datum)))
+    return results
+
 
 def dump(filename, outfile=None, parameters=""):
     """
@@ -182,6 +227,7 @@ def dump(filename, outfile=None, parameters=""):
     fh.write(output)
     fh.close()
 
+
 def load(filename):
     """
     Load RRD data via the RRDtool XML dump into an ElementTree.
@@ -198,6 +244,7 @@ def load(filename):
     """
     xml = dump(filename)
     return ElementTree.fromstring(xml)
+
 
 def graph(filename, parameters):
     """
@@ -240,6 +287,7 @@ def graph(filename, parameters):
     """
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)
+
 
 def prepareObject(function, obj):
     """
@@ -297,9 +345,11 @@ def prepareObject(function, obj):
         data = ' '.join([ str(x) for x in obj.data ])
         return (obj.filename, "%s %s" % (params, data))
 
+
 def _test():
     from doctest import testmod
     return testmod()
+
 
 if __name__ == '__main__':
     _test()

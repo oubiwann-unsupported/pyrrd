@@ -38,12 +38,14 @@ Near Term
     calculated
 
 * Add docstrings for the classes in the new xml module.
+  - add *all* missing docstrings
 
 * Allow for users to supply their own fd to pyrrd.graph
 
 * Allow for users to decide which backend will be used on an
   instance-by-instance basis
 
+* Update all examples for recent dates like example4 has been updated
 
 Future
 ======
@@ -54,7 +56,7 @@ Future
   particular DS by name.
 
 * Finish support for fetch().
-  - check fetch data from rrdtool.fetch (python bindings)
+  - DONE - check fetch data from rrdtool.fetch (python bindings)
     . ugh - checked and not a fan
     . no driving need to maintain compatibility with it (yet)
   - put fetch results into a mapper class
