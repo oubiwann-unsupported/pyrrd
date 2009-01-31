@@ -138,32 +138,32 @@ class RRD(mapper.RRDMapper):
 
         >>> my_rrd = RRD('somefile')
         >>> my_rrd.bufferValue('1000000', 'value')
-        >>> my_rrd.update(debug=True, dry_run=True)
+        >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ' 1000000:value')
-        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
         ('somefile', '--template ds0 1000000:value')
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
-        >>> my_rrd.update(debug=True, dry_run=True)
+        >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ' 1000000:value')
-        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
         ('somefile', '--template ds0 1000000:value')
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000', 'value1', 'value2')
         >>> my_rrd.bufferValue('1000001', 'value3', 'value4')
-        >>> my_rrd.update(debug=True, dry_run=True)
+        >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ' 1000000:value1:value2 1000001:value3:value4')
-        >>> my_rrd.update(template='ds1:ds0', debug=True, dry_run=True)
+        >>> my_rrd.update(template='ds1:ds0', debug=True, dryRun=True)
         ('somefile', '--template ds1:ds0 1000000:value1:value2 1000001:value3:value4')
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
         >>> my_rrd.bufferValue('1000001:anothervalue')
-        >>> my_rrd.update(debug=True, dry_run=True)
+        >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ' 1000000:value 1000001:anothervalue')
-        >>> my_rrd.update(template='ds0', debug=True, dry_run=True)
+        >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
         ('somefile', '--template ds0 1000000:value 1000001:anothervalue')
         >>> my_rrd.values = []
         """
@@ -174,7 +174,7 @@ class RRD(mapper.RRDMapper):
     # for backwards compatibility
     bufferValues = bufferValue
 
-    def update(self, debug=False, template=None, dry_run=False):
+    def update(self, debug=False, template=None, dryRun=False):
         """
         """
         # XXX this needs a lot more testing with different data
@@ -182,16 +182,33 @@ class RRD(mapper.RRDMapper):
         self.template = template
         if self.values:
             data = rrdbackend.prepareObject('update', self)
-            if debug: print data
-            if not dry_run:
+            if debug:
+                print data
+            if not dryRun:
                 rrdbackend.update(debug=debug, *data)
                 self.values = []
 
-    def fetch(self):
+    def fetch(self, cf="AVERAGE", resolution=None, start=None, end=None,
+              returnStyle="ds"):
         """
+        By default, fetch returns a dict of data source names whose associated
+        values are lists. The list for each DS contains (time, data) tuples.
+
+        Optionally, one may pass returnStyle="time" and one will instead get a
+        dict of times whose associated values are dicts. These associated dicts
+        have a key for every defined DS and a corresponding value that is the
+        data associated with that DS at the given time.
+
+        # XXX add a doctest that creates an RRD with multiple DSs and RRAs
         """
-        # XXX obviously, we need to imnplement this
-        raise NotImplementedError
+        attributes = utils.Attributes()
+        attributes.filename = self.filename
+        attributes.cf = cf
+        attributes.resolution = resolution
+        attributes.start = start
+        attributes.end = end
+        data = rrdbackend.prepareObject('fetch', attributes)
+        return rrdbackend.fetch(*data)[returnStyle]
 
     def info(self):
         """

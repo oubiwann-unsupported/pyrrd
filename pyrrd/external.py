@@ -145,7 +145,7 @@ def fetchRaw(filename, query):
     return _cmd('fetch', parameters).strip()
 
 
-def fetch(filename, query, iterResults=True):
+def fetch(filename, query):
     """
     >>> filename = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
@@ -327,11 +327,14 @@ def prepareObject(function, obj):
 
     if function == 'fetch':
         # XXX add support
-        raise NotImplementedError
+        validParams = ['resolution', 'start', 'end']
+        params = buildParameters(obj, validParams)
+        return (obj.filename, "%s %s" % (obj.cf, params))
 
     if function == 'info':
-        # XXX add support
-        raise NotImplementedError
+        # the command line tool is not used to get the info; parsed dump output
+        # is used instead
+        pass
 
     if function == 'graph':
         validParams = ['start', 'end', 'step', 'title',

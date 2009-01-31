@@ -13,3 +13,9 @@ def epoch(dt_obj=None):
     if not dt_obj:
         dt_obj = datetime.now()
     return int(mktime(dt_obj.timetuple()))
+
+
+class Attributes(object):
+    """
+    A simple object for storing attributes.
+    """
