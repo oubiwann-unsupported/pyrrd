@@ -1,6 +1,8 @@
 2009.01.31
 
 * Removed ez_setup dependence.
+* Fixed old parameter name in example.
+* Added shell script for testing example code.
 
 2009.01.30
 

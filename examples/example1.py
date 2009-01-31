@@ -10,7 +10,7 @@ graphfile = 'example%s.png' % exampleNum
 # Let's create and RRD file and dump some data in it
 dss = []
 rras = []
-ds1 = DS(dsName='speed', ds_type='COUNTER', heartbeat=600)
+ds1 = DS(dsName='speed', dsType='COUNTER', heartbeat=600)
 dss.append(ds1)
 rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24)
 rra2 = RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10)
