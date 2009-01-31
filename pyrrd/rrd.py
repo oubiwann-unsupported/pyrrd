@@ -72,32 +72,33 @@ class RRD(mapper.RRDMapper):
     >>> dss.append(DataSource(dsName='speed', dsType='COUNTER', heartbeat=600))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
-    >>> my_rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
-    >>> my_rrd.create()
+    >>> rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
+    >>> rrd.create()
     >>> import os
     >>> os.path.exists(filename)
     True
-    >>> my_rrd.bufferValue('920805600', '12363')
-    >>> my_rrd.bufferValue('920805900', '12363')
-    >>> my_rrd.bufferValue('920806200', '12373')
-    >>> my_rrd.bufferValue('920806500', '12383')
-    >>> my_rrd.update()
-    >>> my_rrd.bufferValue('920806800', '12393')
-    >>> my_rrd.bufferValue('920807100', '12399')
-    >>> my_rrd.bufferValue('920807400', '12405')
-    >>> my_rrd.bufferValue('920807700', '12411')
-    >>> my_rrd.bufferValue('920808000', '12415')
-    >>> my_rrd.bufferValue('920808300', '12420')
-    >>> my_rrd.bufferValue('920808600', '12422')
-    >>> my_rrd.bufferValue('920808900', '12423')
-    >>> my_rrd.update()
-    >>> len(my_rrd.values)
+    >>> rrd.bufferValue('920805600', '12363')
+    >>> rrd.bufferValue('920805900', '12363')
+    >>> rrd.bufferValue('920806200', '12373')
+    >>> rrd.bufferValue('920806500', '12383')
+    >>> rrd.update()
+    >>> rrd.bufferValue('920806800', '12393')
+    >>> rrd.bufferValue('920807100', '12399')
+    >>> rrd.bufferValue('920807400', '12405')
+    >>> rrd.bufferValue('920807700', '12411')
+    >>> rrd.bufferValue('920808000', '12415')
+    >>> rrd.bufferValue('920808300', '12420')
+    >>> rrd.bufferValue('920808600', '12422')
+    >>> rrd.bufferValue('920808900', '12423')
+    >>> rrd.update()
+    >>> len(rrd.values)
     0
     >>> os.unlink(filename)
     >>> os.path.exists(filename)
     False
     """
-    def __init__(self, filename=None, start=None, step=300, ds=[], rra=[]):
+    def __init__(self, filename=None, start=None, step=300, ds=[], rra=[],
+                 mode="w"):
         if filename == None:
             raise ValueError, "You must provide a filename."
         self.filename = filename
@@ -110,6 +111,8 @@ class RRD(mapper.RRDMapper):
         self.values = []
         self.step = step
         self.lastupdate = None
+        if mode == "r":
+            self.load()
 
     def create(self, debug=False):
         data = rrdbackend.prepareObject('create', self)
@@ -221,7 +224,7 @@ class RRD(mapper.RRDMapper):
 
     def load(self, filename=None, include_data=False):
         """
-        # create an empty file
+        # Create an empty file:
         >>> dss = []
         >>> rras = []
         >>> filename = '/tmp/test.rrd'
@@ -232,22 +235,20 @@ class RRD(mapper.RRDMapper):
         >>> rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
         >>> rrd.create()
 
-        # add some values
+        # Add some values:
         >>> rrd.bufferValue('920805600', '12363')
         >>> rrd.bufferValue('920805900', '12363')
         >>> rrd.bufferValue('920806200', '12373')
         >>> rrd.bufferValue('920806500', '12383')
         >>> rrd.update()
 
-        # let's create another one, using the source file we just created
-        >>> rrd2 = RRD(filename)
-        >>> rrd2.ds
-        []
-        >>> rrd2.rra
-        []
+        # Let's create another one, using the source file we just created. Note
+        # that by passing the "read" mode, were letting the RRD class know that
+        # it should call load() immediately, thus giving us read-access to the
+        # file's data.
+        >>> rrd2 = RRD(filename, mode="r")
 
-        # now let's load the data from self.filename
-        >>> rrd2.load()
+        # Now let's load the data from self.filename:
         >>> top_level_attrs = rrd2.getData()
         >>> top_level_attrs["lastupdate"]
         920806500
@@ -264,7 +265,7 @@ class RRD(mapper.RRDMapper):
         >>> sorted(rrd2.rra[1].getData().keys())
         ['alpha', 'beta', 'cdp_prep', 'cf', 'database', 'ds', 'gamma', 'pdp_per_row', 'rows', 'rra_num', 'seasonal_period', 'steps', 'threshold', 'window_length', 'xff']
 
-        # finally, a comparison
+        # Finally, a comparison:
         >>> rrd.lastupdate == rrd2.lastupdate
         True
         >>> rrd.filename == rrd2.filename
