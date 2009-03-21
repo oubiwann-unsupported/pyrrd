@@ -17,7 +17,12 @@ class XMLNode(object):
     def getAttribute(self, attrName):
         """
         """
-        return self.tree.find(attrName).text.strip()
+        ### BUGFIX - Handle failure to find the node. @ AW
+        node = self.tree.find(attrName)
+        if node!=None:
+          return node.text.strip()
+        raise ValueError()
+        ### END BUGFIX
 
 
 class DSXMLNode(XMLNode):
@@ -46,8 +51,14 @@ class RRAXMLNode(XMLNode):
     def __init__(self, tree, attributes, include_data=False):
         super(RRAXMLNode, self).__init__(tree, attributes)
         self.database = None
-        xff = float(self.tree.find("params").find("xff").text)
-        self.attributes["xff"] = xff
+        ### BUGFIX - There might not be an xff element for Holt-Winters
+        ### RRAs. @AW
+        xff = self.tree.find('params').find('xff')
+        if xff!=None:
+          xff = float(xff.text)
+          self.attributes["xff"] = xff
+        ### END BUGFIX
+
         self.cdp_prep = CDPPrepXMLNode(self.tree.find("cdp_prep"))
         if include_data:
             db = self.tree.get("database")

@@ -1,0 +1,6 @@
+Code pulled from trunk 19 March 09, http://pyrrd.googlecode.com/svn/trunk/
+
+Modifications:
+  * Moved pyrrd.xml to pyrrd.__xml to not conflict with stdlib xml namespace.
+  * Fixed loading of existing RRDs when expected attributes are not there,
+    specifically when RRAs are for Holt-Winters.
