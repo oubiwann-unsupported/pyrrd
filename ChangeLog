@@ -14,6 +14,7 @@
 * Updated the clean script.
 * Incremented microversion number to 0.0.5 (committed this change earlier).
 * Updated acknowledgements section in README.
+* Updated install instructions with a note about a conditional dependency.
 
 2009.01.31
 
