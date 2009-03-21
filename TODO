@@ -22,10 +22,10 @@ Near Term
       just like to smack shit around
     . if no exception is raised, move the tempfile over the original (there's
       still a race condition there)
-  - I haven't decided on how to handle the .load() in general... whether to do
-    it automatically or to leave it as an explicit step for the user. Hrm. I
-    could take a hint from Python's open() and pass "r" or "w" parameters, and
-    have the behaviour adjusted accordingly...
+  - DONE - I haven't decided on how to handle the .load() in general... whether
+    to do it automatically or to leave it as an explicit step for the user.
+    Hrm. I could take a hint from Python's open() and pass "r" or "w"
+    parameters, and have the behaviour adjusted accordingly...
 
 * Write up a good README, taking examples from the wiki/docstrings so that it
   will look good (and be informative) on PyPI, and then upload to PyPI
