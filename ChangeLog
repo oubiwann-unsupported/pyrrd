@@ -1,3 +1,14 @@
+2009.03.21
+
+* Received the following fixes from Aaron Westendorf of Agora Games:
+  - Moved pyrrd.xml to pyrrd.__xml to not conflict with stdlib xml namespace.
+  - Fixed loading of existing RRDs when expected attributes are not there,
+    specifically when RRAs are for Holt-Winters.
+* Renamed __xml to node.
+* Updated unit tests.
+* Added missing docstrings.
+* Formatted contributed code.
+
 2009.01.31
 
 * Removed ez_setup dependence.

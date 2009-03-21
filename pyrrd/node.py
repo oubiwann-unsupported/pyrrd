@@ -1,5 +1,11 @@
+"""
+This module's classes are used to represent RRD data in XML format. The mapper
+module uses this format to establish a relationship between RRD files (and
+their exports) and Python objects.
+"""
 class XMLNode(object):
     """
+    A base class. Not used directly.
     """
     def __init__(self, tree, attribute_names):
         self.tree = tree
@@ -17,16 +23,26 @@ class XMLNode(object):
     def getAttribute(self, attrName):
         """
         """
-        return self.tree.find(attrName).text.strip()
+        node = self.tree.find(attrName)
+        if node!=None:
+            return node.text.strip()
+        raise ValueError()
 
 
 class DSXMLNode(XMLNode):
     """
+    An object abstraction for the <ds> node in the XML RRD export. This is a
+    child of the <rrd> node, and thus this class is used in the RRDXMLNode
+    class.
+    
+    Currently provides no featres beyond those of the base XML node class.
     """
 
 
 class CDPPrepXMLNode(XMLNode):
     """
+    An object abstraction for the <cd_prep> node in the XML RRD export. The
+    <cd_prep> nodes are children node of an <rra> node.
     """
     def __init__(self, tree):
         self.ds = []
@@ -42,12 +58,17 @@ class CDPPrepXMLNode(XMLNode):
 
 class RRAXMLNode(XMLNode):
     """
+    An object abstraction for the <rra> node in the XML RRD export. The <rra>
+    nodes are children of the <rrd> node.
     """
     def __init__(self, tree, attributes, include_data=False):
         super(RRAXMLNode, self).__init__(tree, attributes)
         self.database = None
-        xff = float(self.tree.find("params").find("xff").text)
-        self.attributes["xff"] = xff
+        xff = self.tree.find('params').find('xff')
+        if xff!=None:
+            xff = float(xff.text)
+            self.attributes["xff"] = xff
+
         self.cdp_prep = CDPPrepXMLNode(self.tree.find("cdp_prep"))
         if include_data:
             db = self.tree.get("database")
@@ -56,6 +77,8 @@ class RRAXMLNode(XMLNode):
 
 class RRDXMLNode(XMLNode):
     """
+    An object abstraction for the <rrd> node in the XML RRD export. This is the
+    top-level node in the XML RRD export.
     """
     def __init__(self, tree, include_data=False):
         attributes = [

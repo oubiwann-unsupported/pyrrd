@@ -7,9 +7,9 @@ from utils import buildDoctestSuite
 modules = [
     "pyrrd.external",
     "pyrrd.graph",
+    "pyrrd.node",
     "pyrrd.rrd",
     "pyrrd.utils",
-    "pyrrd.xml",
 ]
 
 suites = [DocFileSuite("../README")]
