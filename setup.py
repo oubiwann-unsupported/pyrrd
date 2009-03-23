@@ -15,10 +15,6 @@ setup(name='PyRRD',
     packages=[
         'pyrrd',
     ],
-    include_package_data = False,
-    exclude_package_data = { 
-        '': ['*.sh', 'pyrrd/old/*'],
-    },
 )
 '''
     classifiers = [f.strip() for f in """

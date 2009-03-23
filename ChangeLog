@@ -1,3 +1,10 @@
+2009.03.23
+
+* Added a file manifest so that files don't get left out during build process.
+* Updated setup.py.
+* Updated TODO.
+* Incremented microversion to 0.0.6 since this is a bug fix (manifest file).
+
 2009.03.21
 
 * Received the following fixes from Aaron Westendorf of Agora Games:

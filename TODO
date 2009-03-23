@@ -1,6 +1,7 @@
 Near Term
 =========
 
+* Add wiki examples for using info and fetch
 * Add support for rrdtool info
   - DONE - this is going to be something like an object-RRD-mapper...
   - DONE - if we can get all the information about an RRD (including DSs and
