@@ -22,6 +22,55 @@ Near Term
     should just be able to split on the parameters that are currently
     calculated.
 
+    From issue #5:
+
+    On that last point, this is how PyRRD currently wraps the command line
+    interface:
+
+      * a private function concatenates a string of "rrdtool", the rrdtool
+        command to execute, and then the list of arguments that need to be
+        passed to the chosen rrdtool command
+
+      * this string is then used in a call to subprocess.Popen.
+
+    The list of arguments is built by functions whose primary job is to finagle
+    arguements such that they can be passed to the private (and generalized)
+    _cmd function. It is these functions that are used by the object oriented
+    code.  The module that contains these functions is pyrrd.external and the
+    work that is does needs to be adjusted for use by the bindings in
+    pyrrd.bindings.
+
+    In a twist of awkwardness (that needs to be refactored), these functions
+    are called by the object wrapper after calling another utility function,
+    prepareObject. preparObject does the final massaging of parameters suitable
+    for consumption by the command line tool. If this workflow is preserved,
+    then pyrrd.bindings will need a prepareObject function as well.
+
+    The python bindings essentially have the same usage as the command line
+    tool. As such, the rrdtool parameters that are currently prepared by PyRRD
+    look to be almost usable as-is with the python bindings.  Some adjustments
+    will have to be made, however. Currently, the parameters are assembled
+    strings passed to Popen with shell=True. There's a good change that we'd
+    get very close to perfect suitability with the bindings if PyRRD changed to
+    a list of parameters and called Popen with shell=False.
+
+    In addition to wrapping the bindings, the following adjustments will need
+    to be made to pyrrd.
+
+    So, in a nutshell, the plan is this:
+
+      * write some proof of concept code that demonstrates the use of PyRRD
+        with the python bindings for rrdtool
+
+      * compare this with the current implementation, and generalize
+        appropriately
+
+      * refactor the current awkward parameter processing to be as
+        straight-forward as possible
+
+      * adjust individual method implementations as necessary, based on
+        performance (bindings vs. external)
+
 * Allow for users to supply their own fd to pyrrd.graph.
 
 * Allow for users to decide which backend will be used on an
