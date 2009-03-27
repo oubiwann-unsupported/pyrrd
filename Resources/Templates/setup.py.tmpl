@@ -1,27 +1,17 @@
 from setuptools import setup
 
-from pyrrd import meta
-from pyrrd.util import dist
-
-
 setup(
-    name=meta.display_name,
-    version=meta.version,
-    description=meta.description,
-    author=meta.author,
-    author_email=meta.author_email,
-    url=meta.url,
-    license=meta.license,
-    packages=dist.findPackages(),
-    long_description=dist.catReST(
-        "docs/PRELUDE.txt",
-        "README",
-        "TODO",
-        "docs/HISTORY.txt",
-        "docs/ACKNOWLEDGEMENTS.txt",
-        "docs/FOOTNOTES.txt",
-        stop_on_errors=True,
-        out=True),
+    name="%(display_name)s",
+    version="%(version)s",
+    description="%(description)s",
+    author="%(author)s",
+    author_email="%(author_email)s",
+    url="%(url)s",
+    license="%(license)s",
+    packages=%(packages)s,
+    long_description="""
+        %(long_description)s
+        """,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",

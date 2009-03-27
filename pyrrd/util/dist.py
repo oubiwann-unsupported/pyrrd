@@ -1,6 +1,9 @@
 import os
 import re
 
+from pyrrd import meta
+
+
 legalReSTFiles = [
     'README',
     'TODO',
@@ -30,7 +33,7 @@ def findPackages():
     except ImportError:
         pass
     packages = []
-    for directory, subdirectories, files in os.walk("txlb"):
+    for directory, subdirectories, files in os.walk(meta.library_name):
         if '__init__.py' in files:
             packages.append(directory.replace(os.sep, '.'))
     return packages

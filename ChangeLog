@@ -10,6 +10,10 @@
 * Added file cleanups in doctests.
 * Updated MANIFEST to include new docs and removed references to files that no
 longer exist.
+* Tweaked setup.py and dist module.
+* Cleaned up parts of README that were causing problems in ReST rendering on
+PyPI.
+* Created an uploader for PyPI dists.
 
 2009.03.23
 

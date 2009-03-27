@@ -1,3 +1,24 @@
+from setuptools import setup
+
+setup(
+    name="PyRRD",
+    version="0.0.7",
+    description="An Object-Oriented Python Interface for RRD",
+    author="Duncan McGreggor",
+    author_email="duncan@canonical.com",
+    url="http://code.google.com/p/pyrrd/",
+    license="BSD",
+    packages=['test', 'pyrrd', 'pyrrd.util'],
+    long_description="""
+        
+~~~~~
+PyRRD
+~~~~~
+
+.. contents::
+   :depth: 1
+
+
 ========
 Features
 ========
@@ -167,4 +188,173 @@ Let's clean up the files we've put in the temp directory::
 
     >>> os.unlink(filename)
     >>> os.unlink(graphfile)
+
+
+
+==========
+Known Bugs
+==========
+
+* No known bugs.
+
+====
+TODO
+====
+
+Near Term
+---------
+
+* Add wiki examples for using info and fetch
+
+* Add a wrapper for the Python RRDTool bindings
+
+  - Since the doctests are mostly to show API functionality, we'll need to add
+    unit tests for both backends (cli wrapper and bindings wrapper).
+
+  - The python bindings should be fairly straight-forward to support, since we
+    should just be able to split on the parameters that are currently
+    calculated.
+
+* Allow for users to supply their own fd to pyrrd.graph.
+
+* Allow for users to decide which backend will be used on an
+  instance-by-instance basis.
+
+* Update all examples for recent dates like example4 has been updated.
+
+* Stop using actual file writes and doctests for file tests; use unit tests
+  (and StringIO) instead.
+
+Future
+------
+
+* Add an RPN class.
+
+* Add a DS collection class that has a get() method for getting a
+  particular DS by name.
+
+* Add support for atomic operations.
+
+
+=======
+Changes
+=======
+
+From 0.0.6 to 0.0.7
+-------------------
+
+* Packaging improvements and loads of documentation.
+
+
+From 0.0.5 to 0.0.6
+-------------------
+
+* Bug fix release (missing files in source package).
+
+
+From 0.0.4 to 0.0.5
+-------------------
+
+* Added support for retrieving and displaying RRD from RRD files.
+
+* Added an object mapper for RRD data (via XML files).
+
+* Added community-contributed improvements.
+
+
+From 0.0.3 to 0.0.4
+-------------------
+
+* Updated all the examples to work with the latest code.
+
+* Added community-contributed bug fix for Windows users.
+
+
+From 0.0.2 to 0.0.3
+-------------------
+
+* Minor code reorg.
+
+* Fixed doctests.
+
+* Various bug fixes.
+
+* Examples updates.
+
+
+From 0.0.1 to 0.0.2
+-------------------
+
+* Added license.
+
+* Added unit tests.
+
+* Added more examples.
+
+
+From 0 to 0.0.1
+---------------
+
+* Reorganized RRD code as donated from the CoyMon project.
+
+* Got basic rrdtool functionality represented as Python classes.
+
+* Code cleanup.
+
+
+================
+Acknowledgements
+================
+
+The following members of the community have provided valuable contributions to
+this project:
+
+* Ravi Bhalotia
+
+* Allen Lerner
+
+* Mike Carrick and the U.S. Department of Veterans Affairs
+
+* AdytumSolutions, Inc.
+
+* nasvos
+
+* Leem Smit
+
+* Aaron Westendorf and Agora Games
+
+Thanks!
+
+
+==========
+References
+==========
+
+.. [#] http://code.google.com/p/pyrrd/wiki/FrontPage?tm=6
+
+.. [#] http://code.google.com/p/pyrrd/wiki/FullWorkingExamples
+
+.. [#] http://oss.oetiker.ch/rrdtool/
+
+.. [#] http://effbot.org/zone/element-index.htm
+
+
+
+        """,
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Intended Audience :: by End-User Class :: Advanced End Users",
+        "Intended Audience :: by End-User Class :: System Administrators",
+        "Intended Audience :: by Industry or Sector :: Information Technology",
+        "Programming Language :: Python",
+        "Topic :: Database",
+        "Topic :: Formats and Protocols :: Data Formats",
+        "Topic :: Multimedia :: Graphics :: Presentation",
+        "Topic :: Software Development :: Object Oriented",
+        "Topic :: System :: Networking :: Monitoring",
+        "Topic :: System :: Systems Administration",
+        "License :: OSI Approved :: BSD License",
+       ],
+    )
 
