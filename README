@@ -1,23 +1,213 @@
-For installation instructions, see INSTALL.
+========
+Features
+========
 
 For docs, see the docstrings at the beginning of each class (and
 many of the functions). They not only contain many of the standard
 RRDTool docs, but they contain doctests which give you a hands-on,
 how-it-works understanding of actual usage.
 
-You can also view the wiki here:
-  http://code.google.com/p/pyrrd/wiki/FrontPage?tm=6
-
-And be sure not to miss the examples (images and source code!) here:
-  http://code.google.com/p/pyrrd/wiki/FullWorkingExamples
+A quick review of features is available at the project wiki [#]_ . Example
+code with graph image output is also available on the wiki [#]_ .
 
 
-Acknowledgements
-================
+============
+Introduction
+============
 
-The following members of the community have provided valuable contributions to
-this project:
+PyRRD is an object-oriented wrapper for the command line graphing and
+round-robin database utility, rrdtool [#]_ . PyRRD originally had two design
+goals:
 
- Ravi Bhalotia, nasvos, Leem Smit, Aaron Westendorf, Agora Games
+    1. provide an interface to rrdtool that Python programmers would love, and
 
-Thanks!
+    2. not depend upon the Python bindings for rrdtool.
+
+The reasons for the former are obvious. The motivation for the latter were the
+many people who had difficulty compiling the rrdtool bindings on their
+operating system of choice.
+
+The PyRRD project has plans of incorporating the Python bindings for those that
+have them on their system so that they may enjoy both the speed benefits from
+the bindings as well as the API usability from PyRRD.
+
+
+============
+Dependencies
+============
+
+Some parts of PyRRD make use of ElementTree for XML processing. If you have
+Python 2.5 or greater, PyRRD will use xml.etree. If your Python version is less
+than 2.5 and you want to use features that depend on XML processing (such as
+dump function and the fetch/info methods), you will need to install
+the ElementTree library [#]_ .
+
+
+
+============
+Installation
+============
+
+PyRRD is installed in the usual way::
+
+  python setup.py install
+
+You may also use PyRRD without installing it as long as you have ./ in your
+PYTHONPATH and you are in the top-level directory (which has the pyrrd child
+directory).
+
+
+=====
+Usage
+=====
+
+Create an RRD file programmatically::
+
+    >>> from pyrrd.rrd import DataSource, RRA, RRD
+    >>> filename = '/tmp/test.rrd'
+    >>> dataSources = []
+    >>> roundRobinArchives = []
+    >>> dataSource = DataSource(
+    ...     dsName='speed', dsType='COUNTER', heartbeat=600)
+    >>> dataSources.append(dataSource)
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
+    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
+    ...     start=920804400)
+    >>> myRRD.create()
+
+Let's check to see that the file exists::
+
+    >>> import os
+    >>> os.path.isfile(filename)
+    True
+
+In order to save writes to disk, PyRRD buffers values and then writes the
+values to the RRD file at one go::
+
+    >>> myRRD.bufferValue('920805600', '12363')
+    >>> myRRD.bufferValue('920805900', '12363')
+    >>> myRRD.bufferValue('920806200', '12373')
+    >>> myRRD.bufferValue('920806500', '12383')
+    >>> myRRD.update()
+
+Let's add some more data::
+
+    >>> myRRD.bufferValue('920806800', '12393')
+    >>> myRRD.bufferValue('920807100', '12399')
+    >>> myRRD.bufferValue('920807400', '12405')
+    >>> myRRD.bufferValue('920807700', '12411')
+    >>> myRRD.bufferValue('920808000', '12415')
+    >>> myRRD.bufferValue('920808300', '12420')
+    >>> myRRD.bufferValue('920808600', '12422')
+    >>> myRRD.bufferValue('920808900', '12423')
+    >>> myRRD.update()
+
+Just out of curiosity, let's take a look at our rrd file with the following::
+
+    >>> myRRD.info()
+    lastupdate = 920808900
+    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}]
+    filename = /tmp/test.rrd
+    start = 920804400
+    step = 300
+    version = None
+    values = []
+    ds = [{'name': 'speed', 'min': 'U', 'max': 'U', 'unknown_sec': None, 'minimal_heartbeat': 600, 'value': None, 'rpn': None, 'type': 'COUNTER', 'last_ds': None}]
+    ds[speed].name = speed
+    ds[speed].min = U
+    ds[speed].max = U
+    ds[speed].unknown_sec = None
+    ds[speed].minimal_heartbeat = 600
+    ds[speed].value = None
+    ds[speed].rpn = None
+    ds[speed].type = COUNTER
+    ds[speed].last_ds = None
+    rra[0].rows = 24
+    rra[0].database = None
+    rra[0].cf = AVERAGE
+    rra[0].cdp_prep = None
+    rra[0].beta = None
+    rra[0].seasonal_period = None
+    rra[0].steps = 1
+    rra[0].window_length = None
+    rra[0].threshold = None
+    rra[0].alpha = None
+    rra[0].pdp_per_row = None
+    rra[0].xff = 0.5
+    rra[0].ds = []
+    rra[0].gamma = None
+    rra[0].rra_num = None
+    rra[1].rows = 10
+    rra[1].database = None
+    rra[1].cf = AVERAGE
+    rra[1].cdp_prep = None
+    rra[1].beta = None
+    rra[1].seasonal_period = None
+    rra[1].steps = 6
+    rra[1].window_length = None
+    rra[1].threshold = None
+    rra[1].alpha = None
+    rra[1].pdp_per_row = None
+    rra[1].xff = 0.5
+    rra[1].ds = []
+    rra[1].gamma = None
+    rra[1].rra_num = None
+
+In order to create a graph, we'll need some data definitions. We'll also
+throw in some calculated definitions and variable definitions for good
+meansure::
+
+    >>> from pyrrd.graph import DEF, CDEF, VDEF, LINE, AREA, GPRINT
+    >>> def1 = DEF(rrdfile=myRRD.filename, vname='myspeed',
+    ...     dsName=dataSource.name)
+    >>> cdef1 = CDEF(vname='kmh', rpn='%s,3600,*' % def1.vname)
+    >>> cdef2 = CDEF(vname='fast', rpn='kmh,100,GT,kmh,0,IF')
+    >>> cdef3 = CDEF(vname='good', rpn='kmh,100,GT,0,kmh,IF')
+    >>> vdef1 = VDEF(vname='mymax', rpn='%s,MAXIMUM' % def1.vname)
+    >>> vdef2 = VDEF(vname='myavg', rpn='%s,AVERAGE' % def1.vname)
+
+    >>> line1 = LINE(value=100, color='#990000', legend='Maximum Allowed')
+    >>> area1 = AREA(defObj=cdef3, color='#006600', legend='Good Speed')
+    >>> area2 = AREA(defObj=cdef2, color='#CC6633', legend='Too Fast')
+    >>> line2 = LINE(defObj=vdef2, color='#000099', legend='My Average', 
+    ...     stack=True)
+    >>> gprint1 = GPRINT(vdef2, '%6.2lf kph')
+
+Color is the spice of life. Let's spice it up a little::
+
+    >>> from pyrrd.graph import ColorAttributes
+    >>> ca = ColorAttributes()
+    >>> ca.back = '#333333'
+    >>> ca.canvas = '#333333'
+    >>> ca.shadea = '#000000'
+    >>> ca.shadeb = '#111111'
+    >>> ca.mgrid = '#CCCCCC'
+    >>> ca.axis = '#FFFFFF'
+    >>> ca.frame = '#AAAAAA'
+    >>> ca.font = '#FFFFFF'
+    >>> ca.arrow = '#FFFFFF'
+
+Now we can create a graph for the data in our RRD file::
+
+    >>> from pyrrd.graph import Graph
+    >>> graphfile = "/tmp/rrdgraph.png"
+    >>> g = Graph(graphfile, start=920805000, end=920810000,
+    ...     vertical_label='km/h', color=ca)
+    >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1,
+    ...     area2, line2, gprint1])
+    >>> g.write()
+
+Let's make sure it's there::
+
+    >>> os.path.isfile(graphfile)
+    True
+
+Open that up in your favorite image browser and confirm that the appropriate
+RRD graph is generated.
+
+Let's clean up the files we've put in the temp directory::
+
+    >>> os.unlink(filename)
+    >>> os.unlink(graphfile)
+

@@ -9,7 +9,8 @@ modules = [
     "pyrrd.graph",
     "pyrrd.node",
     "pyrrd.rrd",
-    "pyrrd.utils",
+    "pyrrd.util",
+    "pyrrd.util.dist",
 ]
 
 suites = [DocFileSuite("../README")]

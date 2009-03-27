@@ -1,10 +1,8 @@
-recursive-include pyrrd
+recursive-include pyrrd *.py
 recursive-include examples *.py *.png
+recursive-include docs *.txt
 include ChangeLog
 include README
-include INSTALL
-include VERSION
 include LICENSE
 include TODO
-include ez_setup.py
 

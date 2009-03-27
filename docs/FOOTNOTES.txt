@@ -1,0 +1,11 @@
+==========
+References
+==========
+
+.. [#] http://code.google.com/p/pyrrd/wiki/FrontPage?tm=6
+
+.. [#] http://code.google.com/p/pyrrd/wiki/FullWorkingExamples
+
+.. [#] http://oss.oetiker.ch/rrdtool/
+
+.. [#] http://effbot.org/zone/element-index.htm

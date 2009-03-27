@@ -282,8 +282,7 @@ def graph(filename, parameters):
     True
 
     >>> os.unlink(rrdfile)
-    >>> os.path.exists(rrdfile)
-    False
+    >>> os.unlink(filename)
     """
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)

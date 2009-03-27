@@ -1,3 +1,16 @@
+2009.03.26
+
+* Moved meta data out of setup.py and into pyrrd.meta.
+* Added docs directory and split docs out of README and added more info.
+* Moved pyrrd/utils.py to pyrrd/util/__init__.py.
+* Added pyrrd.util.dist.
+* Updated setup.py to use meta as well as the new dist utility.
+* Moved INSTALL content into README.
+* Moved acknowledgements out of README and into their own file.
+* Added file cleanups in doctests.
+* Updated MANIFEST to include new docs and removed references to files that no
+longer exist.
+
 2009.03.23
 
 * Added a file manifest so that files don't get left out during build process.

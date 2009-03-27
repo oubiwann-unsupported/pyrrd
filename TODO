@@ -1,70 +1,43 @@
+==========
+Known Bugs
+==========
+
+* No known bugs.
+
+====
+TODO
+====
+
 Near Term
-=========
+---------
 
 * Add wiki examples for using info and fetch
-* Add support for rrdtool info
-  - DONE - this is going to be something like an object-RRD-mapper...
-  - DONE - if we can get all the information about an RRD (including DSs and
-    RRAs) we would be able to rebuild full objects representing actual RRD
-    files (we'd nee to add a "read" method to the RRD class)
-  - DONE - in order to pull in as much details as possible, it might be more useful to
-    use "rrdtool dump" and parse the XML
-  - DONE - with that in place, calling info() would essentially just be a method that
-    displays data stored in the RRD object itself
-  - even if we don't support something that pretends to be an atomic operation,
-    we should still check state before an overwrite... maybe something like
-    this:
-    . create tempfile and update to it
-    . save it
-    . get its checksum
-    . get the checksum of the original
-    . if they are different, raise an inconsistent state exception
-    . also provide a means of forcing an overwrite... 'cause sometimes people
-      just like to smack shit around
-    . if no exception is raised, move the tempfile over the original (there's
-      still a race condition there)
-  - DONE - I haven't decided on how to handle the .load() in general... whether
-    to do it automatically or to leave it as an explicit step for the user.
-    Hrm. I could take a hint from Python's open() and pass "r" or "w"
-    parameters, and have the behaviour adjusted accordingly...
-
-* Write up a good README, taking examples from the wiki/docstrings so that it
-  will look good (and be informative) on PyPI, and then upload to PyPI
 
 * Add a wrapper for the Python RRDTool bindings
-  - since the doctests are mostly to show API functionality, we'll need to add
-    unit tests for both backends (cli wrapper and bindings wrapper)
-  - the python bindings should be fairly straight-forward to support, since we
+
+  - Since the doctests are mostly to show API functionality, we'll need to add
+    unit tests for both backends (cli wrapper and bindings wrapper).
+
+  - The python bindings should be fairly straight-forward to support, since we
     should just be able to split on the parameters that are currently
-    calculated
+    calculated.
 
-* Add docstrings for the classes in the new xml module.
-  - add *all* missing docstrings
-
-* Allow for users to supply their own fd to pyrrd.graph
+* Allow for users to supply their own fd to pyrrd.graph.
 
 * Allow for users to decide which backend will be used on an
-  instance-by-instance basis
+  instance-by-instance basis.
 
-* Update all examples for recent dates like example4 has been updated
+* Update all examples for recent dates like example4 has been updated.
 
-* Stop using actual file writes for doctests and use StringIO instead
+* Stop using actual file writes and doctests for file tests; use unit tests
+  (and StringIO) instead.
 
 Future
-======
+------
 
 * Add an RPN class.
 
 * Add a DS collection class that has a get() method for getting a
   particular DS by name.
-
-* - DONE - Finish support for fetch().
-  - DONE - check fetch data from rrdtool.fetch (python bindings)
-    . ugh - checked and not a fan
-    . no driving need to maintain compatibility with it (yet)
-  - put fetch results into a mapper class (this will have to wait until the
-    mapper classes are supporting XML dump database reads)
-  - allow printing of results (add info method to other rrd.* classes)
-  - DONE - put sub-node data into getData method(s)
 
 * Add support for atomic operations.

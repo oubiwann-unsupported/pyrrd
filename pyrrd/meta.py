@@ -1,0 +1,6 @@
+version = "0.0.7"
+author = "Duncan McGreggor"
+author_email = "duncan@canonical.com"
+license = "BSD"
+url = "http://code.google.com/p/pyrrd/"
+description = "An Object-Oriented Python Interface for RRD"

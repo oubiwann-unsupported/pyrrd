@@ -738,6 +738,8 @@ class Graph(object):
     >>> g.write()
     >>> os.path.exists(graphfile)
     True
+    >>> os.unlink(filename)
+    >>> os.unlink(graphfile)
     '''
     # Note that we don't use the Twisted camel case convention for the
     # parameters in the following method signature due to the fact that these

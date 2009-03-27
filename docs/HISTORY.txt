@@ -1,0 +1,64 @@
+=======
+Changes
+=======
+
+From 0.0.6 to 0.0.7
+-------------------
+
+* Packaging improvements and loads of documentation.
+
+
+From 0.0.5 to 0.0.6
+-------------------
+
+* Bug fix release (missing files in source package).
+
+
+From 0.0.4 to 0.0.5
+-------------------
+
+* Added support for retrieving and displaying RRD from RRD files.
+
+* Added an object mapper for RRD data (via XML files).
+
+* Added community-contributed improvements.
+
+
+From 0.0.3 to 0.0.4
+-------------------
+
+* Updated all the examples to work with the latest code.
+
+* Added community-contributed bug fix for Windows users.
+
+
+From 0.0.2 to 0.0.3
+-------------------
+
+* Minor code reorg.
+
+* Fixed doctests.
+
+* Various bug fixes.
+
+* Examples updates.
+
+
+From 0.0.1 to 0.0.2
+-------------------
+
+* Added license.
+
+* Added unit tests.
+
+* Added more examples.
+
+
+From 0 to 0.0.1
+---------------
+
+* Reorganized RRD code as donated from the CoyMon project.
+
+* Got basic rrdtool functionality represented as Python classes.
+
+* Code cleanup.

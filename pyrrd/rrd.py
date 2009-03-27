@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 from pyrrd import mapper
-from pyrrd import utils
+from pyrrd import util
 from pyrrd.backend import rrdbackend
 
 
@@ -103,7 +103,7 @@ class RRD(mapper.RRDMapper):
             raise ValueError, "You must provide a filename."
         self.filename = filename
         if not start or isinstance(start, datetime):
-            self.start = utils.epoch(start)
+            self.start = util.epoch(start)
         else:
             self.start = start
         self.ds = ds
@@ -204,7 +204,7 @@ class RRD(mapper.RRDMapper):
 
         # XXX add a doctest that creates an RRD with multiple DSs and RRAs
         """
-        attributes = utils.Attributes()
+        attributes = util.Attributes()
         attributes.filename = self.filename
         attributes.cf = cf
         attributes.resolution = resolution
@@ -272,6 +272,10 @@ class RRD(mapper.RRDMapper):
         True
         >>> rrd.step == rrd2.step
         True
+
+        # Cleanup:
+        >>> import os
+        >>> os.unlink(filename)
         """
         # XXX this should only be enabled once we have the data from the loaded
         # RRD file updating the RRD object

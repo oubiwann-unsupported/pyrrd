@@ -1,6 +1,0 @@
-Install with the following:
-
-  python setup.py install
-
-If your Python version is less than 2.5, you will also need to install
-ElementTree for some of the functionality offered by PyRRD.
