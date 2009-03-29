@@ -1,3 +1,8 @@
+2009.03.29
+
+* Created a branch for doing the python RRDtool bindings integration.
+* Added admin scripts for convenient branch management.
+
 2009.03.26
 
 * Moved meta data out of setup.py and into pyrrd.meta.
