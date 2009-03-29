@@ -83,6 +83,16 @@ def iterParse(lines):
 
 
 def buildParameters(obj, validList):
+    """
+    >>> class TestClass(object):
+    ...   pass
+    >>> testClass = TestClass()
+    >>> testClass.a = 1
+    >>> testClass.b = 2
+    >>> testClass.c = 3
+    >>> buildParameters(testClass, ["a", "b"])
+    '--a 1 --b 2'
+    """
     paramTemplate = ' --%s %s'
     params = ''
     for param in validList:
@@ -137,7 +147,7 @@ def update(filename, data, debug=False):
     if debug:
         _cmd('updatev', parameters)
     else:
-         _cmd('update', parameters)
+        _cmd('update', parameters)
 
 
 def fetchRaw(filename, query):

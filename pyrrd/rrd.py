@@ -3,7 +3,8 @@ from datetime import datetime
 
 from pyrrd import mapper
 from pyrrd import util
-from pyrrd.backend import rrdbackend
+from pyrrd import external
+from pyrrd import bindings
 
 
 def validateDSName(name):
@@ -98,7 +99,7 @@ class RRD(mapper.RRDMapper):
     False
     """
     def __init__(self, filename=None, start=None, step=300, ds=[], rra=[],
-                 mode="w"):
+                 mode="w", backend=external):
         if filename == None:
             raise ValueError, "You must provide a filename."
         self.filename = filename
@@ -113,11 +114,12 @@ class RRD(mapper.RRDMapper):
         self.lastupdate = None
         if mode == "r":
             self.load()
+        self.backend = backend
 
     def create(self, debug=False):
-        data = rrdbackend.prepareObject('create', self)
+        data = self.backend.prepareObject('create', self)
         if debug: print data
-        rrdbackend.create(*data)
+        self.backend.create(*data)
 
     # XXX this can be uncommented when we're doing full database imports with
     # the loads method and storing those values in the python objects
@@ -184,11 +186,11 @@ class RRD(mapper.RRDMapper):
         # sources and values
         self.template = template
         if self.values:
-            data = rrdbackend.prepareObject('update', self)
+            data = self.backend.prepareObject('update', self)
             if debug:
                 print data
             if not dryRun:
-                rrdbackend.update(debug=debug, *data)
+                self.backend.update(debug=debug, *data)
                 self.values = []
 
     def fetch(self, cf="AVERAGE", resolution=None, start=None, end=None,
@@ -210,8 +212,8 @@ class RRD(mapper.RRDMapper):
         attributes.resolution = resolution
         attributes.start = start
         attributes.end = end
-        data = rrdbackend.prepareObject('fetch', attributes)
-        return rrdbackend.fetch(*data)[returnStyle]
+        data = self.backend.prepareObject('fetch', attributes)
+        return self.backend.fetch(*data)[returnStyle]
 
     def info(self):
         """

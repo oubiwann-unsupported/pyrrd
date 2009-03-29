@@ -3,6 +3,10 @@
 * Created a branch for doing the python RRDtool bindings integration.
 * Added admin scripts for convenient branch management.
 * Updated TODO.
+* Added doctest for buildParameters.
+* Updated the RRD class to take a backend parameter in the constructor and
+modified the class to reference this assigned attribute in the rest of its
+methods.
 
 2009.03.26
 

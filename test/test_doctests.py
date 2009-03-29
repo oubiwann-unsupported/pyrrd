@@ -5,6 +5,7 @@ from utils import buildDoctestSuite
 
 # to add a new module to the test runner, simply include is in the list below:
 modules = [
+    "pyrrd.bindings",
     "pyrrd.external",
     "pyrrd.graph",
     "pyrrd.node",
