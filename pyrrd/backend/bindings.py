@@ -8,6 +8,8 @@ of the parameters.
 """
 import rrdtool
 
+from pyrrd.backend.common import buildParameters
+
 
 def _cmd(command, args):
     function = getattr(rrdtool, command)
@@ -37,28 +39,6 @@ def create(filename, parameters):
     """
     parameters.insert(0, filename)
     output = _cmd('create', parameters)
-
-
-# XXX remove redundancy between this and pyrrd.external.buildParameters and
-# maybe put the result in pyrrd.util
-def buildParameters(obj, validList):
-    """
-    >>> class TestClass(object):
-    ...   pass
-    >>> testClass = TestClass()
-    >>> testClass.a = 1
-    >>> testClass.b = 2
-    >>> testClass.c = 3
-    >>> buildParameters(testClass, ["a", "b"])
-    ['--a', '1', '--b', '2']
-    """
-    params = []
-    for param in validList:
-        attr = str(getattr(obj, param))
-        if attr:
-            param = param.replace("_", "-")
-            params.extend(["--%s" % param, attr])
-    return params
 
 
 def prepareObject(function, obj):

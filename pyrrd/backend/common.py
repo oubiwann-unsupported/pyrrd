@@ -54,3 +54,32 @@ def iterParse(lines):
         line = line.strip()
         time, value = [x.strip() for x in re.split(':\s+', line)]
         yield (int(time), coerce(value))
+
+
+def buildParameters(obj, validList):
+    """
+    >>> class TestClass(object):
+    ...   pass
+    >>> testClass = TestClass()
+    >>> testClass.a = 1
+    >>> testClass.b = 2
+    >>> testClass.c = 3
+    >>> buildParameters(testClass, ["a", "b"])
+    ['--a', '1', '--b', '2']
+
+    >>> testClass.b = None
+    >>> buildParameters(testClass, ["a", "b"])
+    ['--a', '1']
+    """
+    params = []
+    for param in validList:
+        attr = getattr(obj, param)
+        if attr:
+            param = param.replace("_", "-")
+            params.extend(["--%s" % param, str(attr)])
+    return params
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

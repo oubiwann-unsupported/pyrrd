@@ -5,8 +5,7 @@ try:
 except ImportError:
     from elementtree import ElementTree
 
-
-from pyrrd.backend.common import coerce
+from pyrrd.backend import common
 
 
 def _cmd(command, args):
@@ -138,11 +137,11 @@ def fetch(filename, query):
         }
     for line in lines[2:]:
         time, data = line.split(":")
-        data = [coerce(datum) for datum in data.split()]
+        data = [common.coerce(datum) for datum in data.split()]
         results["time"][int(time)] = dict(zip(dsNames, data))
         for dsName, datum in zip(dsNames, data):
             results["ds"].setdefault(dsName, [])
-            results["ds"][dsName].append((int(time), coerce(datum)))
+            results["ds"][dsName].append((int(time), common.coerce(datum)))
     return results
 
 
@@ -242,14 +241,7 @@ def buildParameters(obj, validList):
     >>> buildParameters(testClass, ["a", "b"])
     '--a 1 --b 2'
     """
-    paramTemplate = ' --%s %s'
-    params = ''
-    for param in validList:
-        attr = getattr(obj, param)
-        if attr:
-            param = param.replace('_', '-')
-            params += paramTemplate % (param, attr)
-    return params.strip()
+    return " ".join(common.buildParameters(obj, validList))
 
 
 def prepareObject(function, obj):
@@ -311,11 +303,7 @@ def prepareObject(function, obj):
         return (obj.filename, "%s %s" % (params, data))
 
 
-def _test():
-    from doctest import testmod
-    return testmod()
-
-
-if __name__ == '__main__':
-    _test()
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()
 

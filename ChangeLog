@@ -17,6 +17,8 @@ backend.
 common to both types.
 * Moved coerce and iterparse into common.
 * Cleaned up imports.
+* Fixed bindings.buildParameters and moved it into common.
+* Updated external.buildParameters to use the one from common.
 
 2009.03.26
 
