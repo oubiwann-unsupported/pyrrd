@@ -13,6 +13,9 @@ the two backends.
 * Updated the README with a note about using the Graph class with the Python
 bindings.
 * Cleaned up an outdated docstring.
+Updated the "Features" and "Introduction" sections of the README.
+* Fixed typo in kwds dict (Mladen Milankovic).
+* Updated acknowledgements.
 
 2009.03.29
 

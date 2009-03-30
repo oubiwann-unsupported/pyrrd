@@ -2,10 +2,9 @@
 Features
 ========
 
-For docs, see the docstrings at the beginning of each class (and
-many of the functions). They not only contain many of the standard
-RRDTool docs, but they contain doctests which give you a hands-on,
-how-it-works understanding of actual usage.
+PyRRD lets you use RRDTool from Python code that takes advantage of standard
+object-oriented patterns. The makes the programmatic usage of RRDTool much
+easier and reusable. 
 
 A quick review of features is available at the project wiki [#]_ . Example
 code with graph image output is also available on the wiki [#]_ .
@@ -32,6 +31,32 @@ project now offers support for those with the bindings installed. As such,
 users may enjoy both the speed benefits from the bindings as well as the API
 usability from PyRRD.
 
+For docs, see the docstrings at the beginning of each class (and many of the
+functions). They not only contain many of the standard RRDTool docs, but they
+contain doctests which give you a hands-on, how-it-works understanding of
+actual usage.
+
+For those curious about the motivation for creating PyRRD, perhaps some
+background would be in order. Originally, there were only two ways to use
+RRDTool from Python:
+
+1. using the Python bindings which were difficult to compile and use, or
+
+2. making system calls to the "rrdtool" executable from Python, passing
+it all the parameters it needed.
+
+Option #1 was often difficult or impossible for many folks to get running on
+their preferred operating system. But even if one was able to compile it and
+run it, usage was very cumbersome and designed to work like the command line
+tool and the C interface, not like most people typically use Python.
+
+Now, with PyRRD, there are two additional ways to use RRDTool from Python:
+
+3. an object-oriented interface that wraps system calls (Popen) to the
+rrdtool binary, and
+
+4. the same object-oriented interface that wraps the cumbersome rrdtool
+Python bindings.
 
 ============
 Dependencies

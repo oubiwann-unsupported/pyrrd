@@ -5,18 +5,14 @@ Acknowledgements
 The following members of the community have provided valuable contributions to
 this project:
 
-* Ravi Bhalotia
-
-* Allen Lerner
+* Ravi Bhalotia, Allen Lerner
 
 * Mike Carrick and the U.S. Department of Veterans Affairs
 
-* AdytumSolutions, Inc.
+* AdytumSolutions, Inc., E-Secure Systems
 
-* nasvos
+* nasvos, Leem Smit, Aaron Westendorf and Agora Games
 
-* Leem Smit
-
-* Aaron Westendorf and Agora Games
+* Mladen Milankovic
 
 Thanks!

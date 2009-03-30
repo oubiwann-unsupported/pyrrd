@@ -216,7 +216,7 @@ class RRD(mapper.RRDMapper):
         attributes.end = end
         data = self.backend.prepareObject('fetch', attributes)
         if useBindings:
-            kwds = {"useBindings": useBindimgs}
+            kwds = {"useBindings": useBindings}
             return self.backend.fetch(*data, **kwds)
         return self.backend.fetch(*data)[returnStyle]
 
