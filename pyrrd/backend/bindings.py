@@ -14,7 +14,7 @@ from pyrrd.backend.common import buildParameters
 
 def _cmd(command, args):
     function = getattr(rrdtool, command)
-    function(*args)
+    return function(*args)
 
 
 def create(filename, parameters):
@@ -79,8 +79,69 @@ def update(filename, parameters, debug=False):
         _cmd('update', parameters)
 
 
-def fetch(filename, query):
-    pass
+def fetch(filename, parameters, useBindings=False):
+    """
+    By default, this function does not use the bindings for fetch. The reason
+    for this is we want default compatibility with the data output/results from
+    the fetch method for both the external and bindings modules.
+
+    If a developer really wants to use the native bindings to get the fetch
+    data, they may do so by explicitly setting the useBindings parameter. This
+    will return data in the Python Python bindings format, though.
+
+    Do be aware, though, that the PyRRD format is much easier to get data out
+    of in a sensible manner (unless you really like the RRDTool approach).
+
+    >>> rrdfile = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(rrdfile, parameters)
+
+    >>> import os
+    >>> os.path.exists(rrdfile)
+    True
+
+    >>> parameters = ['920804700:12345', '920805000:12357', '920805300:12363']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920805600:12363', '920805900:12363','920806200:12373']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920806500:12383', '920806800:12393','920807100:12399']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920807400:12405', '920807700:12411', '920808000:12415']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920808300:12420', '920808600:12422','920808900:12423']
+    >>> update(rrdfile, parameters)
+
+    >>> parameters = ['AVERAGE', '--start', '920804400', '--end', '920809200']
+    >>> results = fetch(rrdfile, parameters, useBindings=True)
+
+    >>> results[0]
+    (920804400, 920809500, 300)
+    >>> results[1]
+    ('speed',)
+    >>> len(results[2])
+    18
+
+    # For more info on the PyRRD data format, see the docstring for
+    # pyrrd.external.fetch.
+    >>> parameters = ['AVERAGE', '--start', '920804400', '--end', '920809200']
+    >>> results = fetch(rrdfile, parameters, useBindings=False)
+    >>> sorted(results["ds"].keys())
+    ['speed']
+    
+    >>> os.unlink(rrdfile)
+    >>> os.path.exists(rrdfile)
+    False
+    """
+    if useBindings:
+        parameters.insert(0, filename)
+        return _cmd('fetch', parameters)
+    else:
+        return external.fetch(filename, " ".join(parameters))
 
 
 def dump(filename, outfile="", parameters=[]):
@@ -138,6 +199,25 @@ def load(filename):
     ['version', 'step', 'lastupdate', 'ds', 'rra', 'rra']
     """
     return external.load(filename)
+
+
+def info(filename, obj=None, useBindings=False):
+    """
+    Similarly to the fetch function, the info function uses
+    pyrrd.backend.external by default. This is due to the fact that 1) the
+    output of the RRD info module is much more easily legible, and 2) it is
+    very similar in form to the output produced by the "rrdtool info" command.
+    The output produced by the rrdtool Python bindings is a data structure and
+    more difficult to view.
+
+    However, if that output is what you desire, then simply set the useBindings
+    parameter to True.
+    """
+    if useBindings:
+        from pprint import pprint
+        pprint(_cmd('info', [filename]))
+    else:
+        external.info(filename, obj)
 
 
 def graph(filename, parameters):
@@ -218,6 +298,17 @@ def prepareObject(function, obj):
         params += [str(x) for x in obj.rra]
         return (obj.filename, params)
     # XXX add the rest of them!!
+    if function == 'update':
+        pass
+
+    if function == 'fetch':
+        pass
+
+    if function == 'info':
+        return (obj.filename, obj)
+
+    if function == 'graph':
+        pass
 
 
 if __name__ == "__main__":

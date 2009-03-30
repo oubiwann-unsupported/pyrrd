@@ -196,7 +196,7 @@ class RRD(mapper.RRDMapper):
                 self.values = []
 
     def fetch(self, cf="AVERAGE", resolution=None, start=None, end=None,
-              returnStyle="ds"):
+              returnStyle="ds", useBindings=False):
         """
         By default, fetch returns a dict of data source names whose associated
         values are lists. The list for each DS contains (time, data) tuples.
@@ -215,16 +215,18 @@ class RRD(mapper.RRDMapper):
         attributes.start = start
         attributes.end = end
         data = self.backend.prepareObject('fetch', attributes)
+        if useBindings:
+            kwds = {"useBindings": useBindimgs}
+            return self.backend.fetch(*data, **kwds)
         return self.backend.fetch(*data)[returnStyle]
 
-    def info(self):
+    def info(self, useBindings=False):
         """
+        For this method, the info is rendered to stdout.
         """
-        self.printInfo()
-        for ds in self.ds:
-            ds.printInfo()
-        for index, rra in enumerate(self.rra):
-            rra.printInfo(index)
+        data = self.backend.prepareObject('info', self)
+        kwds = {"useBindings": useBindings}
+        self.backend.info(*data, **kwds)
 
     def load(self, filename=None, include_data=False):
         """

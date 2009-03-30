@@ -199,6 +199,15 @@ def load(filename):
     return ElementTree.fromstring(xml)
 
 
+def info(filename, obj):
+    """
+    """
+    obj.printInfo()
+    for ds in obj.ds:
+        ds.printInfo()
+    for index, rra in enumerate(obj.rra):
+        rra.printInfo(index)
+
 def graph(filename, parameters):
     """
     >>> filename = '/tmp/speed.png'
@@ -282,7 +291,6 @@ def prepareObject(function, obj):
     if function == 'update':
         validParams = ['template']
         params = buildParameters(obj, validParams)
-
         FIRST_VALUE = 0
         DATA = 1
         TIME_OR_DATA = 0
@@ -299,9 +307,7 @@ def prepareObject(function, obj):
         return (obj.filename, "%s %s" % (obj.cf, params))
 
     if function == 'info':
-        # the command line tool is not used to get the info; parsed dump output
-        # is used instead
-        pass
+        return (obj.filename, obj)
 
     if function == 'graph':
         validParams = ['start', 'end', 'step', 'title',

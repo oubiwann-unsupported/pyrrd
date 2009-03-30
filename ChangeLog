@@ -4,6 +4,10 @@
 * Stubbed out fetch, dump, and load functions.
 * Added a graph function to the bindings wrapper.
 * Added dump and load functions to the bindings wrapper.
+* Added fetch wrapper for bindings.
+* Completely rearranged the info method/function/dispatch for symmetry between
+the two backends.
+* Added an info wrapper for bindings.
 
 2009.03.29
 
