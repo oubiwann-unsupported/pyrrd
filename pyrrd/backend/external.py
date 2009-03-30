@@ -150,27 +150,35 @@ def fetch(filename, query):
     return results
 
 
-def dump(filename, outfile=None, parameters=""):
+def dump(filename, outfile="", parameters=""):
     """
-    >>> filename = '/tmp/test.rrd'
+    >>> rrdfile = '/tmp/test.rrd'
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(filename, parameters)
-    >>> xml = dump(filename)
+    >>> create(rrdfile, parameters)
+
+    >>> xml = dump(rrdfile)
     >>> len(xml)
     3724
     >>> xml[0:30]
     '<!-- Round Robin Database Dump'
+
+    >>> xmlfile = '/tmp/test.xml'
+    >>> dump(rrdfile, xmlfile)
+
+    >>> import os
+    >>> os.path.exists(xmlfile)
+    True
+
+    >>> os.unlink(rrdfile)
+    >>> os.unlink(xmlfile)
     """
-    parameters = '%s %s' % (filename, parameters)
-    output = _cmd('dump', parameters).strip()
+    parameters = '%s %s %s' % (filename, outfile, parameters)
+    output = _cmd('dump', parameters)
     if not outfile:
-        return output
-    fh = open(outfile, "w+")
-    fh.write(output)
-    fh.close()
+        return output.strip()
 
 
 def load(filename):

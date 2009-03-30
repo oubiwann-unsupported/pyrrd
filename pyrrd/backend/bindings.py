@@ -8,6 +8,7 @@ of the parameters.
 """
 import rrdtool
 
+from pyrrd.backend import external
 from pyrrd.backend.common import buildParameters
 
 
@@ -82,12 +83,61 @@ def fetch(filename, query):
     pass
 
 
-def dump(filename, outfile=None, parameters=""):
-    pass
+def dump(filename, outfile="", parameters=[]):
+    """
+    The rrdtool Python bindings don't have support for dump, so we need to use
+    the external dump function.
+
+    >>> rrdfile = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(rrdfile, parameters)
+
+    >>> xml = dump(rrdfile)
+    >>> len(xml)
+    3724
+    >>> xml[0:30]
+    '<!-- Round Robin Database Dump'
+
+    >>> xmlfile = '/tmp/test.xml'
+    >>> dump(rrdfile, xmlfile)
+
+    >>> import os
+    >>> os.path.exists(xmlfile)
+    True
+
+    >>> os.unlink(rrdfile)
+    >>> os.unlink(xmlfile)
+    """
+    parameters = " ".join(parameters)
+    output = external.dump(filename, outfile, parameters)
+    if output:
+        return output.strip()
 
 
 def load(filename):
-    pass
+    """
+    The rrdtool Python bindings don't have support for load, so we need to use
+    the external load function.
+
+    >>> rrdfile = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(rrdfile, parameters)
+
+    >>> tree = load(rrdfile)
+    >>> [x.tag for x in tree]
+    ['version', 'step', 'lastupdate', 'ds', 'rra', 'rra']
+    """
+    return external.load(filename)
 
 
 def graph(filename, parameters):
@@ -167,6 +217,7 @@ def prepareObject(function, obj):
         params += [str(x) for x in obj.ds]
         params += [str(x) for x in obj.rra]
         return (obj.filename, params)
+    # XXX add the rest of them!!
 
 
 if __name__ == "__main__":

@@ -3,6 +3,7 @@
 * Added update function to bindings wrapper.
 * Stubbed out fetch, dump, and load functions.
 * Added a graph function to the bindings wrapper.
+* Added dump and load functions to the bindings wrapper.
 
 2009.03.29
 
