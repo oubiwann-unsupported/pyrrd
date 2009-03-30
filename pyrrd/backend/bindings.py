@@ -18,27 +18,131 @@ def _cmd(command, args):
 
 def create(filename, parameters):
     """
-    >>> filename = '/tmp/test.rrd'
+    >>> rrdfile = '/tmp/test.rrd'
     >>> parameters = [
     ...   '--start',
     ...   '920804400',
     ...   'DS:speed:COUNTER:600:U:U',
     ...   'RRA:AVERAGE:0.5:1:24',
     ...   'RRA:AVERAGE:0.5:6:10']
-    >>> create(filename, parameters)
+    >>> create(rrdfile, parameters)
 
     # Check that the file's there:
     >>> import os
-    >>> os.path.exists(filename)
+    >>> os.path.exists(rrdfile)
     True
 
     # Cleanup:
-    >>> os.unlink(filename)
-    >>> os.path.exists(filename)
+    >>> os.unlink(rrdfile)
+    >>> os.path.exists(rrdfile)
     False
     """
     parameters.insert(0, filename)
     output = _cmd('create', parameters)
+
+
+def update(filename, parameters, debug=False):
+    """
+    >>> rrdfile = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(rrdfile, parameters)
+
+    >>> import os
+    >>> os.path.exists(rrdfile)
+    True
+
+    >>> parameters = ['920804700:12345', '920805000:12357', '920805300:12363']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920805600:12363', '920805900:12363','920806200:12373']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920806500:12383', '920806800:12393','920807100:12399']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920807400:12405', '920807700:12411', '920808000:12415']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920808300:12420', '920808600:12422','920808900:12423']
+    >>> update(rrdfile, parameters)
+
+    >>> os.unlink(rrdfile)
+    >>> os.path.exists(rrdfile)
+    False
+    """
+    parameters.insert(0, filename)
+    if debug:
+        _cmd('updatev', parameters)
+    else:
+        _cmd('update', parameters)
+
+
+def fetch(filename, query):
+    pass
+
+
+def dump(filename, outfile=None, parameters=""):
+    pass
+
+
+def load(filename):
+    pass
+
+
+def graph(filename, parameters):
+    """
+    >>> rrdfile = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(rrdfile, parameters)
+
+    >>> import os
+    >>> os.path.exists(rrdfile)
+    True
+
+    >>> parameters = ['920804700:12345', '920805000:12357', '920805300:12363']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920805600:12363', '920805900:12363','920806200:12373']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920806500:12383', '920806800:12393','920807100:12399']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920807400:12405', '920807700:12411', '920808000:12415']
+    >>> update(rrdfile, parameters)
+    >>> parameters = ['920808300:12420', '920808600:12422','920808900:12423']
+    >>> update(rrdfile, parameters)
+
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400', 
+    ...   '--end', 
+    ...   '920808000',
+    ...   '--vertical-label',
+    ...   'km/h',
+    ...   'DEF:myspeed=%s:speed:AVERAGE' % rrdfile,
+    ...   'CDEF:realspeed=myspeed,1000,*',
+    ...   'CDEF:kmh=myspeed,3600,*',
+    ...   'CDEF:fast=kmh,100,GT,kmh,0,IF',
+    ...   'CDEF:good=kmh,100,GT,0,kmh,IF',
+    ...   'HRULE:100#0000FF:"Maximum allowed"',
+    ...   'AREA:good#00FF00:"Good speed"',
+    ...   'AREA:fast#00FFFF:"Too fast"',
+    ...   'LINE2:realspeed#FF0000:Unadjusted']
+    >>> graphfile = '/tmp/speed.png'
+    >>> graph(graphfile, parameters)
+
+    >>> os.path.exists(graphfile)
+    True
+
+    >>> os.unlink(rrdfile)
+    >>> os.unlink(graphfile)
+    """
+    parameters.insert(0, filename)
+    output = _cmd('graph', parameters)
 
 
 def prepareObject(function, obj):

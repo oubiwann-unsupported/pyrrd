@@ -117,24 +117,6 @@ class RRD(mapper.RRDMapper):
         if mode == "r":
             self.load()
 
-    def create(self, debug=False):
-        data = self.backend.prepareObject('create', self)
-        if debug:
-            print data
-        self.backend.create(*data)
-
-    # XXX this can be uncommented when we're doing full database imports with
-    # the loads method and storing those values in the python objects
-    #def write(self, filename, debug=False):
-    #    self.filename = filename
-    #    if not os.path.exists(filename):
-    #        self.create(debug)
-    #    for rra in self.rra:
-    #        for row in rra.database.rows:
-    #            time, data =
-    #            self.bufferValue(time, data)
-    #        self.update()
-
     def bufferValue(self, timeOrData, *values):
         """
         The parameter 'values' can either be a an n-tuple, but it
@@ -180,6 +162,24 @@ class RRD(mapper.RRDMapper):
 
     # for backwards compatibility
     bufferValues = bufferValue
+
+    def create(self, debug=False):
+        data = self.backend.prepareObject('create', self)
+        if debug:
+            print data
+        self.backend.create(*data)
+
+    # XXX this can be uncommented when we're doing full database imports with
+    # the loads method and storing those values in the python objects
+    #def write(self, filename, debug=False):
+    #    self.filename = filename
+    #    if not os.path.exists(filename):
+    #        self.create(debug)
+    #    for rra in self.rra:
+    #        for row in rra.database.rows:
+    #            time, data =
+    #            self.bufferValue(time, data)
+    #        self.update()
 
     def update(self, debug=False, template=None, dryRun=False):
         """

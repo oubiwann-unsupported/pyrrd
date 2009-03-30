@@ -1,3 +1,9 @@
+2009.03.30
+
+* Added update function to bindings wrapper.
+* Stubbed out fetch, dump, and load functions.
+* Added a graph function to the bindings wrapper.
+
 2009.03.29
 
 * Created a branch for doing the python RRDtool bindings integration.
