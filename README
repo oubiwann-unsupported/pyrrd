@@ -83,6 +83,11 @@ Let's check to see that the file exists::
     >>> os.path.isfile(filename)
     True
 
+Let's see how big it is::
+
+    >>> len(open(filename).read())
+    1008
+
 In order to save writes to disk, PyRRD buffers values and then writes the
 values to the RRD file at one go::
 
@@ -161,6 +166,11 @@ Let's make sure it's there::
     >>> os.path.isfile(graphfile)
     True
 
+Let's see how big it is::
+
+    >>> len(open(graphfile).read())
+    10270
+
 Open that up in your favorite image browser and confirm that the appropriate
 RRD graph is generated.
 
@@ -194,6 +204,18 @@ construction::
     >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
     ...     backend=bindings)
     >>> myRRD.create()
+
+Note that since the Graph module is its own beast, you will need to indicate
+whether you want to use the bindings or the external backend when you graph as
+well::
+
+    >>> from pyrrd.graph import Graph
+    >>> graphfile = "/tmp/rrdgraph.png"
+    >>> g = Graph(graphfile, start=920805000, end=920810000,
+    ...     vertical_label='km/h', color=ca, backend=bindings)
+    >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1,
+    ...     area2, line2, gprint1])
+    >>> g.write()
 
 Everything else is the same. Let's check to see that the file exists, and then
 we'll cleanup::

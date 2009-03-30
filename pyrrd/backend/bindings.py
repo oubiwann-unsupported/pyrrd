@@ -5,6 +5,196 @@ use to prepare input for the rrdtool calls.
 To use the pyrrd.external, we just send it strings. To use the
 rrdtool bindings, we"ll need to provide pairs of strings for some
 of the parameters.
+
+The following exercises the RRD class with this backend:
+
+Create an RRD file programmatically::
+
+    >>> from pyrrd.rrd import DataSource, RRA, RRD
+    >>> from pyrrd.backend import bindings
+
+    >>> filename = '/tmp/test.rrd'
+    >>> dataSources = []
+    >>> roundRobinArchives = []
+    >>> dataSource = DataSource(
+    ...     dsName='speed', dsType='COUNTER', heartbeat=600)
+    >>> dataSources.append(dataSource)
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
+
+    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
+    ...     start=920804400, backend=bindings)
+    >>> myRRD.create()
+
+Let's check to see that the file exists::
+
+    >>> import os
+    >>> os.path.isfile(filename)
+    True
+
+Let's see how big it is::
+
+    >>> len(open(filename).read())
+    1008
+
+In order to save writes to disk, PyRRD buffers values and then writes the
+values to the RRD file at one go::
+
+    >>> myRRD.bufferValue('920805600', '12363')
+    >>> myRRD.bufferValue('920805900', '12363')
+    >>> myRRD.bufferValue('920806200', '12373')
+    >>> myRRD.bufferValue('920806500', '12383')
+    >>> myRRD.update()
+
+Let's add some more data::
+
+    >>> myRRD.bufferValue('920806800', '12393')
+    >>> myRRD.bufferValue('920807100', '12399')
+    >>> myRRD.bufferValue('920807400', '12405')
+    >>> myRRD.bufferValue('920807700', '12411')
+    >>> myRRD.bufferValue('920808000', '12415')
+    >>> myRRD.bufferValue('920808300', '12420')
+    >>> myRRD.bufferValue('920808600', '12422')
+    >>> myRRD.bufferValue('920808900', '12423')
+    >>> myRRD.update()
+
+Info checks::
+
+    >>> myRRD.info()
+    lastupdate = 920808900
+    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}]
+    filename = /tmp/test.rrd
+    start = 920804400
+    step = 300
+    version = None
+    values = []
+    ds = [{'name': 'speed', 'min': 'U', 'max': 'U', 'unknown_sec': None, 'minimal_heartbeat': 600, 'value': None, 'rpn': None, 'type': 'COUNTER', 'last_ds': None}]
+    ds[speed].name = speed
+    ds[speed].min = U
+    ds[speed].max = U
+    ds[speed].unknown_sec = None
+    ds[speed].minimal_heartbeat = 600
+    ds[speed].value = None
+    ds[speed].rpn = None
+    ds[speed].type = COUNTER
+    ds[speed].last_ds = None
+    rra[0].rows = 24
+    rra[0].database = None
+    rra[0].cf = AVERAGE
+    rra[0].cdp_prep = None
+    rra[0].beta = None
+    rra[0].seasonal_period = None
+    rra[0].steps = 1
+    rra[0].window_length = None
+    rra[0].threshold = None
+    rra[0].alpha = None
+    rra[0].pdp_per_row = None
+    rra[0].xff = 0.5
+    rra[0].ds = []
+    rra[0].gamma = None
+    rra[0].rra_num = None
+    rra[1].rows = 10
+    rra[1].database = None
+    rra[1].cf = AVERAGE
+    rra[1].cdp_prep = None
+    rra[1].beta = None
+    rra[1].seasonal_period = None
+    rra[1].steps = 6
+    rra[1].window_length = None
+    rra[1].threshold = None
+    rra[1].alpha = None
+    rra[1].pdp_per_row = None
+    rra[1].xff = 0.5
+    rra[1].ds = []
+    rra[1].gamma = None
+    rra[1].rra_num = None
+
+    >>> myRRD.info(useBindings=True)
+    {'ds': {'speed': {'ds_name': 'speed',
+                      'last_ds': '12423',
+                      'max': None,
+                      'min': None,
+                      'minimal_heartbeat': 600,
+                      'type': 'COUNTER',
+                      'unknown_sec': 0,
+                      'value': 0.0}},
+     'filename': '/tmp/test.rrd',
+     'last_update': 920808900,
+     'rra': [{'cdp_prep': [{'unknown_datapoints': 0, 'value': None}],
+              'cf': 'AVERAGE',
+              'pdp_per_row': 1,
+              'rows': 24,
+              'xff': 0.5},
+             {'cdp_prep': [{'unknown_datapoints': 0,
+                            'value': 0.026666666666666668}],
+              'cf': 'AVERAGE',
+              'pdp_per_row': 6,
+              'rows': 10,
+              'xff': 0.5}],
+     'rrd_version': '0003',
+     'step': 300}
+
+In order to create a graph, we'll need some data definitions. We'll also
+throw in some calculated definitions and variable definitions for good
+meansure::
+
+    >>> from pyrrd.graph import DEF, CDEF, VDEF, LINE, AREA, GPRINT
+    >>> def1 = DEF(rrdfile=myRRD.filename, vname='myspeed',
+    ...     dsName=dataSource.name)
+    >>> cdef1 = CDEF(vname='kmh', rpn='%s,3600,*' % def1.vname)
+    >>> cdef2 = CDEF(vname='fast', rpn='kmh,100,GT,kmh,0,IF')
+    >>> cdef3 = CDEF(vname='good', rpn='kmh,100,GT,0,kmh,IF')
+    >>> vdef1 = VDEF(vname='mymax', rpn='%s,MAXIMUM' % def1.vname)
+    >>> vdef2 = VDEF(vname='myavg', rpn='%s,AVERAGE' % def1.vname)
+
+    >>> line1 = LINE(value=100, color='#990000', legend='Maximum Allowed')
+    >>> area1 = AREA(defObj=cdef3, color='#006600', legend='Good Speed')
+    >>> area2 = AREA(defObj=cdef2, color='#CC6633', legend='Too Fast')
+    >>> line2 = LINE(defObj=vdef2, color='#000099', legend='My Average', 
+    ...     stack=True)
+    >>> gprint1 = GPRINT(vdef2, '%6.2lf kph')
+
+Color is the spice of life. Let's spice it up a little::
+
+    >>> from pyrrd.graph import ColorAttributes
+    >>> ca = ColorAttributes()
+    >>> ca.back = '#333333'
+    >>> ca.canvas = '#333333'
+    >>> ca.shadea = '#000000'
+    >>> ca.shadeb = '#111111'
+    >>> ca.mgrid = '#CCCCCC'
+    >>> ca.axis = '#FFFFFF'
+    >>> ca.frame = '#AAAAAA'
+    >>> ca.font = '#FFFFFF'
+    >>> ca.arrow = '#FFFFFF'
+
+Now we can create a graph for the data in our RRD file::
+
+    >>> from pyrrd.graph import Graph
+    >>> graphfile = "/tmp/rrdgraph.png"
+    >>> g = Graph(graphfile, start=920805000, end=920810000,
+    ...     vertical_label='km/h', color=ca, backend=bindings)
+    >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1,
+    ...     area2, line2, gprint1])
+    >>> g.write()
+
+Let's make sure it's there::
+
+    >>> os.path.isfile(graphfile)
+    True
+
+Let's see how big it is::
+
+    >>> len(open(graphfile).read())
+    10617
+
+Open that up in your favorite image browser and confirm that the appropriate
+RRD graph is generated.
+
+Let's clean up the files we've put in the temp directory::
+
+    >>> os.unlink(filename)
+    >>> os.unlink(graphfile)
 """
 import rrdtool
 
@@ -297,18 +487,38 @@ def prepareObject(function, obj):
         params += [str(x) for x in obj.ds]
         params += [str(x) for x in obj.rra]
         return (obj.filename, params)
-    # XXX add the rest of them!!
+
     if function == 'update':
-        pass
+        validParams = ['template']
+        params = buildParameters(obj, validParams)
+        FIRST_VALUE = 0
+        DATA = 1
+        TIME_OR_DATA = 0
+        if obj.values[FIRST_VALUE][DATA]:
+            params += ['%s:%s' % (time, values) for time, values in obj.values]
+        else:
+            params += [data for data, nil in obj.values]
+        return (obj.filename, params)
 
     if function == 'fetch':
-        pass
+        validParams = ['resolution', 'start', 'end']
+        params = buildParameters(obj, validParams)
+        return (obj.filename, [obj.cf] + params)
 
     if function == 'info':
         return (obj.filename, obj)
 
     if function == 'graph':
-        pass
+        validParams = ['start', 'end', 'step', 'title',
+            'vertical_label', 'width', 'height', 'only_graph',
+            'upper_limit', 'lower_limit', 'rigid', 'alt_autoscale',
+            'alt_autoscale_max', 'no_gridfit', 'x_grid', 'y_grid',
+            'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
+            'font', 'font_render_mode', 'interlaced', 'no_legend',
+            'force_rules_legend', 'tabwidth', 'base', 'color']
+        params = buildParameters(obj, validParams)
+        params += [str(x) for x in obj.data]
+        return (obj.filename, params)
 
 
 if __name__ == "__main__":

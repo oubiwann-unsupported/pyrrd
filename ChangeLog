@@ -8,6 +8,10 @@
 * Completely rearranged the info method/function/dispatch for symmetry between
 the two backends.
 * Added an info wrapper for bindings.
+* Finished touching up the bindings dispatcher.
+* Added doctests for bindings-enabled RRD to the bindings module.
+* Updated the README with a note about using the Graph class with the Python
+bindings.
 
 2009.03.29
 
