@@ -12,6 +12,7 @@ the two backends.
 * Added doctests for bindings-enabled RRD to the bindings module.
 * Updated the README with a note about using the Graph class with the Python
 bindings.
+* Cleaned up an outdated docstring.
 
 2009.03.29
 

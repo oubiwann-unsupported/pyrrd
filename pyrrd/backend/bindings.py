@@ -1,11 +1,4 @@
 """
-Once we support the rrdtool bindings, this will be the wrapper we
-use to prepare input for the rrdtool calls.
-
-To use the pyrrd.external, we just send it strings. To use the
-rrdtool bindings, we"ll need to provide pairs of strings for some
-of the parameters.
-
 The following exercises the RRD class with this backend:
 
 Create an RRD file programmatically::
