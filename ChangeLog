@@ -8,6 +8,8 @@
 modified the class to reference this assigned attribute in the rest of its
 methods.
 * Started putting together the bindings module.
+* Cleaned up the part of the README that has the new bindings instructions in
+it.
 
 2009.03.26
 

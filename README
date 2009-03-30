@@ -174,11 +174,9 @@ Python Bindings
 ===============
 
 In addition to the command line tool, PyRRD also supports using the Python
-bindings, if you have them installed. Usage is identical to the standard PyRRD
-usage, with the exception of object construction:
+bindings, if you have them installed. Let's set some stuff up like we did in
+the previous example::
 
-    >>> from pyrrd import bindings
-    >>> from pyrrd.rrd import DataSource, RRA, RRD
     >>> filename = '/tmp/test.rrd'
     >>> dataSources = []
     >>> roundRobinArchives = []
@@ -188,12 +186,18 @@ usage, with the exception of object construction:
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
 
+Usage is identical to the standard PyRRD usage, with the exception of object
+construction::
+
+    >>> from pyrrd import bindings
     >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
     ...     backend=bindings)
     >>> myRRD.create()
 
-Let's check to see that the file exists::
+Everything else is the same. Let's check to see that the file exists, and then
+we'll cleanup::
 
     >>> import os
     >>> os.path.isfile(filename)
     True
+    >>> os.unlink(filename)
