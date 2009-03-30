@@ -6,8 +6,6 @@ To use the pyrrd.external, we just send it strings. To use the
 rrdtool bindings, we"ll need to provide pairs of strings for some
 of the parameters.
 """
-import os
-
 import rrdtool
 
 
@@ -28,6 +26,7 @@ def create(filename, parameters):
     >>> create(filename, parameters)
 
     # Check that the file's there:
+    >>> import os
     >>> os.path.exists(filename)
     True
 
@@ -53,7 +52,6 @@ def buildParameters(obj, validList):
     >>> buildParameters(testClass, ["a", "b"])
     ['--a', '1', '--b', '2']
     """
-    paramTemplate = " --%s %s"
     params = []
     for param in validList:
         attr = str(getattr(obj, param))

@@ -3,8 +3,7 @@ from datetime import datetime
 
 from pyrrd import mapper
 from pyrrd import util
-from pyrrd import external
-from pyrrd import bindings
+from pyrrd.backend import external
 
 
 def validateDSName(name):
@@ -112,9 +111,11 @@ class RRD(mapper.RRDMapper):
         self.values = []
         self.step = step
         self.lastupdate = None
+        # the backend attribute needs to be defined before the load call, since
+        # the load method (super class) expects the backend attribute
+        self.backend = backend
         if mode == "r":
             self.load()
-        self.backend = backend
 
     def create(self, debug=False):
         data = self.backend.prepareObject('create', self)

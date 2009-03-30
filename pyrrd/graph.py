@@ -1,7 +1,7 @@
 import os
 import re
 
-from backend import rrdbackend
+from pyrrd.backend import external
 
 def validateVName(name):
     '''
@@ -754,7 +754,7 @@ class Graph(object):
         zoom=None, font=None, font_render_mode=None,
         font_smoothing_threshold=None, slope_mode=None,
         imgformat='', interlaced=False, no_legend=False,
-        force_rules_legend=False, tabwidth=None, base=None):
+        force_rules_legend=False, tabwidth=None, base=None, backend=external):
 
         self.filename = filename
         if not imgformat:
@@ -790,6 +790,7 @@ class Graph(object):
         self.force_rules_legend = force_rules_legend
         self.tabwidth = tabwidth
         self.base = base
+        self.backend = backend
 
         if filename.strip() == '-':
             # send to stdout
@@ -799,14 +800,11 @@ class Graph(object):
     def write(self, debug=False):
         '''
         '''
-        data = rrdbackend.prepareObject('graph', self)
+        data = self.backend.prepareObject('graph', self)
         if debug: print data
-        rrdbackend.graph(*data)
+        self.backend.graph(*data)
 
-def _test():
-    from doctest import testmod
-    return testmod()
 
 if __name__ == '__main__':
-    _test()
-
+    import doctest
+    doctest.testmod()

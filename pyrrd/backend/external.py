@@ -1,11 +1,12 @@
-import re
-import os
 import sys
-from subprocess import call, Popen, PIPE
+from subprocess import Popen, PIPE
 try:
     from xml.etree import ElementTree
 except ImportError:
     from elementtree import ElementTree
+
+
+from pyrrd.backend.common import coerce
 
 
 def _cmd(command, args):
@@ -26,83 +27,7 @@ def _cmd(command, args):
     else:
         return output
 
-
-def coerce(value):
-    """
-    >>> coerce("NaN")
-    nan
-    >>> coerce("nan")
-    nan
-    >>> coerce("Unkn")
-    >>> coerce("u")
-    >>> coerce("1")
-    1.0
-    >>> 0.039 < coerce("4.0000000000e-02") < 0.041
-    True
-    >>> 0.039 < coerce(4.0000000000e-02) < 0.041
-    True
-    """
-    try:
-        return float(value)
-    except ValueError:
-        if value.lower() in ['unkn', 'u']:
-            return None
-    raise ValueError, "Unexpected type for data (%s)" % value
-
  
-def iterParse(lines):
-    """
-    >>> lines = [' 920804700: nan',
-    ...  ' 920805000: 4.0000000000e-02',
-    ...  ' 920805300: 2.0000000000e-02',
-    ...  ' 920805600: 0.0000000000e+00',
-    ...  ' 920805900: 0.0000000000e+00',
-    ...  ' 920806200: 3.3333333333e-02',
-    ...  ' 920806500: 3.3333333333e-02',
-    ...  ' 920806800: 3.3333333333e-02',
-    ...  ' 920807100: 2.0000000000e-02',
-    ...  ' 920807400: 2.0000000000e-02',
-    ...  ' 920807700: 2.0000000000e-02',
-    ...  ' 920808000: 1.3333333333e-02',
-    ...  ' 920808300: 1.6666666667e-02',
-    ...  ' 920808600: 6.6666666667e-03',
-    ...  ' 920808900: 3.3333333333e-03',
-    ...  ' 920809200: nan']
-    >>> g = iterParse(lines)
-    >>> g.next()
-    (920804700, nan)
-    >>> g.next()
-    (920805000, 0.040000000000000001)
-    >>> len(list(g)) == len(lines) - 2
-    True
-    """
-    for line in lines:
-        line = line.strip()
-        time, value = [x.strip() for x in re.split(':\s+', line)]
-        yield (int(time), coerce(value))
-
-
-def buildParameters(obj, validList):
-    """
-    >>> class TestClass(object):
-    ...   pass
-    >>> testClass = TestClass()
-    >>> testClass.a = 1
-    >>> testClass.b = 2
-    >>> testClass.c = 3
-    >>> buildParameters(testClass, ["a", "b"])
-    '--a 1 --b 2'
-    """
-    paramTemplate = ' --%s %s'
-    params = ''
-    for param in validList:
-        attr = getattr(obj, param)
-        if attr:
-            param = param.replace('_', '-')
-            params += paramTemplate % (param, attr)
-    return params.strip()
-
-
 def create(filename, parameters):
     """
     >>> filename = '/tmp/test.rrd'
@@ -111,6 +36,8 @@ def create(filename, parameters):
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
     >>> create(filename, parameters)
+
+    >>> import os
     >>> os.path.exists(filename)
     True
 
@@ -130,6 +57,8 @@ def update(filename, data, debug=False):
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
     >>> create(filename, parameters)
+
+    >>> import os
     >>> os.path.exists(filename)
     True
 
@@ -163,6 +92,8 @@ def fetch(filename, query):
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
     >>> create(filename, parameters)
+
+    >>> import os
     >>> os.path.exists(filename)
     True
 
@@ -265,6 +196,8 @@ def graph(filename, parameters):
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
     >>> create(rrdfile, parameters)
+
+    >>> import os
     >>> os.path.exists(rrdfile)
     True
 
@@ -296,6 +229,27 @@ def graph(filename, parameters):
     """
     parameters = '%s %s' % (filename, parameters)
     _cmd('graph', parameters)
+
+
+def buildParameters(obj, validList):
+    """
+    >>> class TestClass(object):
+    ...   pass
+    >>> testClass = TestClass()
+    >>> testClass.a = 1
+    >>> testClass.b = 2
+    >>> testClass.c = 3
+    >>> buildParameters(testClass, ["a", "b"])
+    '--a 1 --b 2'
+    """
+    paramTemplate = ' --%s %s'
+    params = ''
+    for param in validList:
+        attr = getattr(obj, param)
+        if attr:
+            param = param.replace('_', '-')
+            params += paramTemplate % (param, attr)
+    return params.strip()
 
 
 def prepareObject(function, obj):
@@ -335,7 +289,6 @@ def prepareObject(function, obj):
         return (obj.filename, "%s %s" % (params, data))
 
     if function == 'fetch':
-        # XXX add support
         validParams = ['resolution', 'start', 'end']
         params = buildParameters(obj, validParams)
         return (obj.filename, "%s %s" % (obj.cf, params))

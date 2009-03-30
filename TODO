@@ -59,7 +59,7 @@ Near Term
 
     So, in a nutshell, the plan is this:
 
-      * write some proof of concept code that demonstrates the use of PyRRD
+      * DONE - write some proof of concept code that demonstrates the use of PyRRD
         with the python bindings for rrdtool
 
       * compare this with the current implementation, and generalize

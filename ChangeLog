@@ -10,6 +10,13 @@ methods.
 * Started putting together the bindings module.
 * Cleaned up the part of the README that has the new bindings instructions in
 it.
+* Updated the Graph class to take a backend parameter in its constructor.
+* Updated the README to include how to use graph.Graph with the python bindings
+backend.
+* Renamed backend.py to common.py for a container of backend functions that are
+common to both types.
+* Moved coerce and iterparse into common.
+* Cleaned up imports.
 
 2009.03.26
 

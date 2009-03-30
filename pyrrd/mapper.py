@@ -1,5 +1,4 @@
 from pyrrd.node import RRDXMLNode
-from pyrrd.external import load
 
 
 class Mapper(object):
@@ -160,7 +159,8 @@ class RRDMapper(Mapper):
     def map(self):
         """
         """
-        tree = load(self.filename)
+        # the backend is defined by the subclass of this class
+        tree = self.backend.load(self.filename)
         node = RRDXMLNode(tree)
         super(RRDMapper, self).map(node)
         for subNode in node.ds:

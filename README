@@ -27,9 +27,10 @@ The reasons for the former are obvious. The motivation for the latter were the
 many people who had difficulty compiling the rrdtool bindings on their
 operating system of choice.
 
-The PyRRD project has plans of incorporating the Python bindings for those that
-have them on their system so that they may enjoy both the speed benefits from
-the bindings as well as the API usability from PyRRD.
+Even though PyRRD's original purpose was to help those without the bingins, the
+project now offers support for those with the bindings installed. As such,
+users may enjoy both the speed benefits from the bindings as well as the API
+usability from PyRRD.
 
 
 ============
@@ -189,7 +190,7 @@ the previous example::
 Usage is identical to the standard PyRRD usage, with the exception of object
 construction::
 
-    >>> from pyrrd import bindings
+    >>> from pyrrd.backend import bindings
     >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
     ...     backend=bindings)
     >>> myRRD.create()
