@@ -6,6 +6,38 @@ To use the pyrrd.external, we just send it strings. To use the
 rrdtool bindings, we"ll need to provide pairs of strings for some
 of the parameters.
 """
+import os
+
+import rrdtool
+
+
+def _cmd(command, args):
+    function = getattr(rrdtool, command)
+    function(*args)
+
+
+def create(filename, parameters):
+    """
+    >>> filename = '/tmp/test.rrd'
+    >>> parameters = [
+    ...   '--start',
+    ...   '920804400',
+    ...   'DS:speed:COUNTER:600:U:U',
+    ...   'RRA:AVERAGE:0.5:1:24',
+    ...   'RRA:AVERAGE:0.5:6:10']
+    >>> create(filename, parameters)
+
+    # Check that the file's there:
+    >>> os.path.exists(filename)
+    True
+
+    # Cleanup:
+    >>> os.unlink(filename)
+    >>> os.path.exists(filename)
+    False
+    """
+    parameters.insert(0, filename)
+    output = _cmd('create', parameters)
 
 
 # XXX remove redundancy between this and pyrrd.external.buildParameters and
@@ -31,7 +63,7 @@ def buildParameters(obj, validList):
     return params
 
 
-def prepareObject(obj):
+def prepareObject(function, obj):
     """
     This is a funtion that serves to make interacting with the
     backend as transparent as possible. It"s sole purpose it to
@@ -50,6 +82,11 @@ def prepareObject(obj):
     if function == 'create':
         validParams = ['start', 'step']
         params = buildParameters(obj, validParams)
-        data = ' '.join([ str(x) for x in obj.ds ])
-        data += ' ' + ' '.join([ str(x) for x in obj.rra ])
-        return (obj.filename, params + data)
+        params += [str(x) for x in obj.ds]
+        params += [str(x) for x in obj.rra]
+        return (obj.filename, params)
+
+
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

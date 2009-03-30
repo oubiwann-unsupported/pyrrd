@@ -118,7 +118,8 @@ class RRD(mapper.RRDMapper):
 
     def create(self, debug=False):
         data = self.backend.prepareObject('create', self)
-        if debug: print data
+        if debug:
+            print data
         self.backend.create(*data)
 
     # XXX this can be uncommented when we're doing full database imports with

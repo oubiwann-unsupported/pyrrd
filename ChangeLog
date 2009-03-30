@@ -7,6 +7,7 @@
 * Updated the RRD class to take a backend parameter in the constructor and
 modified the class to reference this assigned attribute in the rest of its
 methods.
+* Started putting together the bindings module.
 
 2009.03.26
 

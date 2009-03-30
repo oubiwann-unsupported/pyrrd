@@ -168,3 +168,32 @@ Let's clean up the files we've put in the temp directory::
     >>> os.unlink(filename)
     >>> os.unlink(graphfile)
 
+
+===============
+Python Bindings
+===============
+
+In addition to the command line tool, PyRRD also supports using the Python
+bindings, if you have them installed. Usage is identical to the standard PyRRD
+usage, with the exception of object construction:
+
+    >>> from pyrrd import bindings
+    >>> from pyrrd.rrd import DataSource, RRA, RRD
+    >>> filename = '/tmp/test.rrd'
+    >>> dataSources = []
+    >>> roundRobinArchives = []
+    >>> dataSource = DataSource(
+    ...     dsName='speed', dsType='COUNTER', heartbeat=600)
+    >>> dataSources.append(dataSource)
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
+    >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
+
+    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
+    ...     backend=bindings)
+    >>> myRRD.create()
+
+Let's check to see that the file exists::
+
+    >>> import os
+    >>> os.path.isfile(filename)
+    True
