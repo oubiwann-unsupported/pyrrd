@@ -1,6 +1,9 @@
 2009.07.01
 
 * Updated TODO.
+* Updated the admin defs to use the right google username.
+* Applied a fix for graphs on Windows machines (colons in filenames causing
+problems); patch supplied by Dennis Fortin.
 
 2009.03.30
 

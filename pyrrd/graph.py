@@ -143,7 +143,7 @@ class DataDefinition(object):
     def __init__(self, vname='', rrdfile='', dsName='', cdef='AVERAGE',
         step=None, start=None, end=None, reduce=None):
         self.vname = validateVName(vname)
-        self.rrdfile = rrdfile
+        self.rrdfile = escapeColons(rrdfile)
         self.dsName = dsName
         self.cdef = cdef
         self.step = step
