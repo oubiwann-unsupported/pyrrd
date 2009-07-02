@@ -62,20 +62,30 @@ def buildParameters(obj, validList):
     ...   pass
     >>> testClass = TestClass()
     >>> testClass.a = 1
-    >>> testClass.b = 2
+    >>> testClass.b = "2"
     >>> testClass.c = 3
+    >>> testClass.d = True
     >>> buildParameters(testClass, ["a", "b"])
     ['--a', '1', '--b', '2']
 
     >>> testClass.b = None
     >>> buildParameters(testClass, ["a", "b"])
     ['--a', '1']
+
+    The following shows support for boolean flags that don't have a value
+    associated with them:
+
+    >>> buildParameters(testClass, ["a", "d"])
+    ['--a', '1', '--c']
+     
     """
     params = []
     for param in validList:
         attr = getattr(obj, param)
         if attr:
             param = param.replace("_", "-")
+            if isinstance(attr, bool):
+                attr = ""
             params.extend(["--%s" % param, str(attr)])
     return params
 

@@ -6,6 +6,8 @@
 problems); patch supplied by Dennis Fortin.
 * Applied a patch from Dennis Fortin for letting Popen handle spaces in
 paramaters.
+* Applied a fix for an issue that Dennis Fortin opened a ticket for regarding
+boolean flags not being handled properly.
 
 2009.03.30
 
