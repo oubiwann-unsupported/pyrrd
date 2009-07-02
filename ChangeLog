@@ -3,11 +3,12 @@
 * Updated TODO.
 * Updated the admin defs to use the right google username.
 * Applied a fix for graphs on Windows machines (colons in filenames causing
-problems); patch supplied by Dennis Fortin.
-* Applied a patch from Dennis Fortin for letting Popen handle spaces in
+problems); patch supplied by Denis Fortin.
+* Applied a patch from Denis Fortin for letting Popen handle spaces in
 paramaters.
-* Applied a fix for an issue that Dennis Fortin opened a ticket for regarding
+* Applied a fix for an issue that Denis Fortin opened a ticket for regarding
 boolean flags not being handled properly.
+* Fixed the spelling on Denis' name!
 
 2009.03.30
 
