@@ -9,12 +9,11 @@ from pyrrd.backend import common
 
 
 def _cmd(command, args):
-    args = 'rrdtool %s %s' % (command, args)
     if sys.platform == 'win32':
         close_fds = False
     else:
         close_fds = True
-    p = Popen([args], shell=True, stdin=PIPE, stdout=PIPE, close_fds=close_fds)
+    p = Popen(["rrdtool",command] + args, shell=True, stdin=PIPE, stdout=PIPE, close_fds=close_fds)
     stdout, stderr = (p.stdout, p.stderr)
     err = output = None
     try:
@@ -44,7 +43,7 @@ def create(filename, parameters):
     >>> os.path.exists(filename)
     False
     """
-    parameters = '%s %s' % (filename, parameters)
+    parameters = [filename] + parameters
     output = _cmd('create', parameters)
 
 
@@ -76,7 +75,7 @@ def update(filename, data, debug=False):
     >>> os.path.exists(filename)
     False
     """
-    parameters = '%s %s' % (filename, data)
+    parameters = [filename] + data
     if debug:
         _cmd('updatev', parameters)
     else:
@@ -84,7 +83,7 @@ def update(filename, data, debug=False):
 
 
 def fetchRaw(filename, query):
-    parameters = '%s %s' % (filename, query)
+    parameters = [filename] +query
     return _cmd('fetch', parameters).strip()
 
 
@@ -175,7 +174,7 @@ def dump(filename, outfile="", parameters=""):
     >>> os.unlink(rrdfile)
     >>> os.unlink(xmlfile)
     """
-    parameters = '%s %s %s' % (filename, outfile, parameters)
+    parameters = [filename, outfile] +  parameters
     output = _cmd('dump', parameters)
     if not outfile:
         return output.strip()
@@ -248,7 +247,7 @@ def graph(filename, parameters):
     >>> os.unlink(rrdfile)
     >>> os.unlink(filename)
     """
-    parameters = '%s %s' % (filename, parameters)
+    parameters = [filename] + parameters
     _cmd('graph', parameters)
 
 
@@ -263,7 +262,7 @@ def buildParameters(obj, validList):
     >>> buildParameters(testClass, ["a", "b"])
     '--a 1 --b 2'
     """
-    return " ".join(common.buildParameters(obj, validList))
+    return common.buildParameters(obj, validList)
 
 
 def prepareObject(function, obj):
@@ -284,9 +283,9 @@ def prepareObject(function, obj):
     if function == 'create':
         validParams = ['start', 'step']
         params = buildParameters(obj, validParams)
-        data = ' '.join([ str(x) for x in obj.ds ])
-        data += ' ' + ' '.join([ str(x) for x in obj.rra ])
-        return (obj.filename, "%s %s" % (params, data))
+        data = [ str(x) for x in obj.ds ]
+        data += [ str(x) for x in obj.rra ]
+        return (obj.filename, params + data)
 
     if function == 'update':
         validParams = ['template']
@@ -295,11 +294,11 @@ def prepareObject(function, obj):
         DATA = 1
         TIME_OR_DATA = 0
         if obj.values[FIRST_VALUE][DATA]:
-            data = ' '.join([ '%s:%s' % (time, values)
-                for time, values in obj.values ])
+            data = [ '%s:%s' % (time, values)
+                     for time, values in obj.values ]
         else:
-            data = ' '.join([ data for data, nil in obj.values ])
-        return (obj.filename, "%s %s" % (params, data))
+            data = [ data for data, nil in obj.values ]
+        return (obj.filename, params + data)
 
     if function == 'fetch':
         validParams = ['resolution', 'start', 'end']
@@ -318,8 +317,8 @@ def prepareObject(function, obj):
             'font', 'font_render_mode', 'interlaced', 'no_legend',
             'force_rules_legend', 'tabwidth', 'base', 'color']
         params = buildParameters(obj, validParams)
-        data = ' '.join([ str(x) for x in obj.data ])
-        return (obj.filename, "%s %s" % (params, data))
+        data = [ str(x) for x in obj.data ]
+        return (obj.filename, params + data)
 
 
 if __name__ == "__main__":

@@ -4,6 +4,8 @@
 * Updated the admin defs to use the right google username.
 * Applied a fix for graphs on Windows machines (colons in filenames causing
 problems); patch supplied by Dennis Fortin.
+* Applied a patch from Dennis Fortin for letting Popen handle spaces in
+paramaters.
 
 2009.03.30
 
