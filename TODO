@@ -18,8 +18,8 @@ Near Term
   - Since the doctests are mostly to show API functionality, we'll need to add
     unit tests for both backends (cli wrapper and bindings wrapper).
 
-  - The python bindings should be fairly straight-forward to support, since we
-    should just be able to split on the parameters that are currently
+  - DONE - The python bindings should be fairly straight-forward to support,
+    since we should just be able to split on the parameters that are currently
     calculated.
 
     From issue #5:
@@ -73,7 +73,7 @@ Near Term
 
 * Allow for users to supply their own fd to pyrrd.graph.
 
-* Allow for users to decide which backend will be used on an
+* DONE - Allow for users to decide which backend will be used on an
   instance-by-instance basis.
 
 * Update all examples for recent dates like example4 has been updated.
