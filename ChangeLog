@@ -9,6 +9,7 @@
 * Fixed failing test in bindings backend.
 * Fixed graph formatting.
 * More external backend fixes.
+* Fixed unit tests in rrd module.
 
 2009.07.02
 

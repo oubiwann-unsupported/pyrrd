@@ -128,32 +128,32 @@ class RRD(mapper.RRDMapper):
         >>> my_rrd = RRD('somefile')
         >>> my_rrd.bufferValue('1000000', 'value')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ' 1000000:value')
+        ('somefile', ['1000000:value'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', '--template ds0 1000000:value')
+        ('somefile', ['--template', 'ds0', '1000000:value'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ' 1000000:value')
+        ('somefile', ['1000000:value'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', '--template ds0 1000000:value')
+        ('somefile', ['--template', 'ds0', '1000000:value'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000', 'value1', 'value2')
         >>> my_rrd.bufferValue('1000001', 'value3', 'value4')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ' 1000000:value1:value2 1000001:value3:value4')
+        ('somefile', ['1000000:value1:value2', '1000001:value3:value4'])
         >>> my_rrd.update(template='ds1:ds0', debug=True, dryRun=True)
-        ('somefile', '--template ds1:ds0 1000000:value1:value2 1000001:value3:value4')
+        ('somefile', ['--template', 'ds1:ds0', '1000000:value1:value2', '1000001:value3:value4'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
         >>> my_rrd.bufferValue('1000001:anothervalue')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ' 1000000:value 1000001:anothervalue')
+        ('somefile', ['1000000:value', '1000001:anothervalue'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', '--template ds0 1000000:value 1000001:anothervalue')
+        ('somefile', ['--template', 'ds0', '1000000:value', '1000001:anothervalue'])
         >>> my_rrd.values = []
         """
         values = ':'.join([ str(x) for x in values ])
