@@ -11,6 +11,9 @@
 * More external backend fixes.
 * Fixed unit tests in rrd module.
 * More unit test cleanups.
+* Added testing utilities.
+* Added new test runner that using the new testing module.
+* Removed old test runners.
 
 2009.07.02
 

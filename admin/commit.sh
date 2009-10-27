@@ -9,7 +9,7 @@ if [[ "$1" == "$FLAG" ]];then
 else
     # send the output (stdout and stderr) to both a file for checking and
     # stdout for immediate viewing/feedback purposes
-    python test/test_all.py 2>&1|tee test.out
+    python testRunner.py 2>&1|tee test.out
     ./admin/checkBuild.sh || error
 fi
 STATUS=`tail -1 test.out|awk '{print $1}'`

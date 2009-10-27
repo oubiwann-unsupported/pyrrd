@@ -55,7 +55,7 @@ Info checks::
 
     >>> myRRD.info()
     lastupdate = 920808900
-    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}]
+    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}], 'gamma': None, 'rra_num': None}]
     filename = /tmp/test.rrd
     start = 920804400
     step = 300
@@ -83,9 +83,17 @@ Info checks::
     rra[0].alpha = None
     rra[0].pdp_per_row = None
     rra[0].xff = 0.5
-    rra[0].ds = []
+    rra[0].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}]
     rra[0].gamma = None
     rra[0].rra_num = None
+    rra[0].cdp_prep[0].unknown_datapoints = 0
+    rra[0].cdp_prep[0].secondary_value = nan
+    rra[0].cdp_prep[0].primary_value = 0.033333333333
+    rra[0].cdp_prep[0].value = nan
+    rra[0].cdp_prep[1].unknown_datapoints = 0
+    rra[0].cdp_prep[1].secondary_value = 0.033333333333
+    rra[0].cdp_prep[1].primary_value = nan
+    rra[0].cdp_prep[1].value = 0.033333333333
     rra[1].rows = 10
     rra[1].database = None
     rra[1].cf = AVERAGE
@@ -98,9 +106,17 @@ Info checks::
     rra[1].alpha = None
     rra[1].pdp_per_row = None
     rra[1].xff = 0.5
-    rra[1].ds = []
+    rra[1].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}]
     rra[1].gamma = None
     rra[1].rra_num = None
+    rra[1].cdp_prep[0].unknown_datapoints = 0
+    rra[1].cdp_prep[0].secondary_value = nan
+    rra[1].cdp_prep[0].primary_value = 0.033333333333
+    rra[1].cdp_prep[0].value = nan
+    rra[1].cdp_prep[1].unknown_datapoints = 0
+    rra[1].cdp_prep[1].secondary_value = 0.033333333333
+    rra[1].cdp_prep[1].primary_value = nan
+    rra[1].cdp_prep[1].value = 0.033333333333
 
     >>> myRRD.info(useBindings=True)
     {'ds': {'speed': {'ds_name': 'speed',
