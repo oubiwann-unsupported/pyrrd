@@ -178,8 +178,9 @@ Let's make sure it's there::
 
 Let's see how big it is::
 
-    >>> len(open(graphfile).read())
-    10427
+    >>> bytes = len(open(graphfile).read())
+    >>> 10300 < bytes < 10700
+    True
 
 Open that up in your favorite image browser and confirm that the appropriate
 RRD graph is generated.

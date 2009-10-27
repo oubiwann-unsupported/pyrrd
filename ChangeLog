@@ -10,6 +10,7 @@
 * Fixed graph formatting.
 * More external backend fixes.
 * Fixed unit tests in rrd module.
+* More unit test cleanups.
 
 2009.07.02
 

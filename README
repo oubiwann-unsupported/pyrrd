@@ -191,10 +191,11 @@ Let's make sure it's there::
     >>> os.path.isfile(graphfile)
     True
 
-Let's see how big it is::
+Let's get a sense of the byte size::
 
-    >>> len(open(graphfile).read())
-    10270
+    >>> bytes = len(open(graphfile).read())
+    >>> 10000 < bytes < 10400
+    True
 
 Open that up in your favorite image browser and confirm that the appropriate
 RRD graph is generated.
