@@ -454,11 +454,6 @@ class Query(object):
     pass
 
 
-def _test():
+if __name__ == '__main__':
     from doctest import testmod
     testmod()
-
-
-if __name__ == '__main__':
-    _test()
-

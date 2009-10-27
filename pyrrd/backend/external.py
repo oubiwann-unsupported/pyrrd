@@ -13,8 +13,10 @@ def _cmd(command, args):
         close_fds = False
     else:
         close_fds = True
-    p = Popen(["rrdtool",command] + args, shell=True, stdin=PIPE, stdout=PIPE, close_fds=close_fds)
-    stdout, stderr = (p.stdout, p.stderr)
+    command = "rrdtool %s %s" % (command, args)
+    process = Popen(command, shell=True, stdin=PIPE, stdout=PIPE,
+                    close_fds=close_fds)
+    stdout, stderr = (process.stdout, process.stderr)
     err = output = None
     try:
         err = stderr.read()
@@ -43,7 +45,7 @@ def create(filename, parameters):
     >>> os.path.exists(filename)
     False
     """
-    parameters = [filename] + parameters
+    parameters = "%s %s" % (filename, parameters)
     output = _cmd('create', parameters)
 
 
@@ -75,7 +77,7 @@ def update(filename, data, debug=False):
     >>> os.path.exists(filename)
     False
     """
-    parameters = [filename] + data
+    parameters = "%s %s" % (filename, data)
     if debug:
         _cmd('updatev', parameters)
     else:
@@ -83,7 +85,7 @@ def update(filename, data, debug=False):
 
 
 def fetchRaw(filename, query):
-    parameters = [filename] +query
+    parameters = "%s %s" % (filename, query)
     return _cmd('fetch', parameters).strip()
 
 
@@ -174,7 +176,7 @@ def dump(filename, outfile="", parameters=""):
     >>> os.unlink(rrdfile)
     >>> os.unlink(xmlfile)
     """
-    parameters = [filename, outfile] +  parameters
+    parameters = "%s %s %s" % (filename, outfile, parameters)
     output = _cmd('dump', parameters)
     if not outfile:
         return output.strip()
@@ -247,22 +249,8 @@ def graph(filename, parameters):
     >>> os.unlink(rrdfile)
     >>> os.unlink(filename)
     """
-    parameters = [filename] + parameters
+    parameters = "%s %s" % (filename, parameters)
     _cmd('graph', parameters)
-
-
-def buildParameters(obj, validList):
-    """
-    >>> class TestClass(object):
-    ...   pass
-    >>> testClass = TestClass()
-    >>> testClass.a = 1
-    >>> testClass.b = 2
-    >>> testClass.c = 3
-    >>> buildParameters(testClass, ["a", "b"])
-    '--a 1 --b 2'
-    """
-    return common.buildParameters(obj, validList)
 
 
 def prepareObject(function, obj):
@@ -282,28 +270,28 @@ def prepareObject(function, obj):
     """
     if function == 'create':
         validParams = ['start', 'step']
-        params = buildParameters(obj, validParams)
+        params = common.buildParameters(obj, validParams)
         data = [ str(x) for x in obj.ds ]
         data += [ str(x) for x in obj.rra ]
         return (obj.filename, params + data)
 
     if function == 'update':
         validParams = ['template']
-        params = buildParameters(obj, validParams)
+        params = common.buildParameters(obj, validParams)
         FIRST_VALUE = 0
         DATA = 1
         TIME_OR_DATA = 0
         if obj.values[FIRST_VALUE][DATA]:
-            data = [ '%s:%s' % (time, values)
-                     for time, values in obj.values ]
+            data = ['%s:%s' % (time, values)
+                    for time, values in obj.values]
         else:
-            data = [ data for data, nil in obj.values ]
+            data = [data for data, nil in obj.values]
         return (obj.filename, params + data)
 
     if function == 'fetch':
         validParams = ['resolution', 'start', 'end']
-        params = buildParameters(obj, validParams)
-        return (obj.filename, "%s %s" % (obj.cf, params))
+        params = common.buildParameters(obj, validParams)
+        return (obj.filename, obj.cf, params)
 
     if function == 'info':
         return (obj.filename, obj)
@@ -316,7 +304,7 @@ def prepareObject(function, obj):
             'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
             'font', 'font_render_mode', 'interlaced', 'no_legend',
             'force_rules_legend', 'tabwidth', 'base', 'color']
-        params = buildParameters(obj, validParams)
+        params = common.buildParameters(obj, validParams)
         data = [ str(x) for x in obj.data ]
         return (obj.filename, params + data)
 
@@ -324,4 +312,3 @@ def prepareObject(function, obj):
 if __name__ == "__main__":
     import doctest
     doctest.testmod()
-

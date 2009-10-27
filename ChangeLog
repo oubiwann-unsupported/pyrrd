@@ -4,6 +4,8 @@
 * Sync'ed Launchpad and Google repos.
 * Updated TODO.
 * Fixed buildParameters in backend.common.
+* Removed unused backend.external.buildParameters function.
+* Fixed parameters in external backend.
 
 2009.07.02
 

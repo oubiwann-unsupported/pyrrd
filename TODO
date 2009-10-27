@@ -54,17 +54,20 @@ Near Term
     tool. As such, the rrdtool parameters that are currently prepared by PyRRD
     look to be almost usable as-is with the python bindings.  Some adjustments
     will have to be made, however. Currently, the parameters are assembled
-    strings passed to Popen with shell=True. There's a good change that we'd
+    strings passed to Popen with shell=True. There's a good chance that we'd
     get very close to perfect suitability with the bindings if PyRRD changed to
     a list of parameters and called Popen with shell=False.
+
+    Yikes! This won't work: some parameters are quoted strings with spaces in
+    them, and that needs to be supported.
 
     In addition to wrapping the bindings, the following adjustments will need
     to be made to pyrrd.
 
     So, in a nutshell, the plan is this:
 
-      * DONE - write some proof of concept code that demonstrates the use of PyRRD
-        with the python bindings for rrdtool
+      * DONE - write some proof of concept code that demonstrates the use of
+        PyRRD with the python bindings for rrdtool
 
       * compare this with the current implementation, and generalize
         appropriately
