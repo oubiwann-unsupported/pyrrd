@@ -353,7 +353,7 @@ class Print(object):
         Time representations must have their ':'s escaped, since
         the colon is the RRDTool separator for parameters.
         '''
-        main = self.abbr+':%s:%s' % (self.vname, escapeColons(self.format))
+        main = self.abbr+':%s:"%s"' % (self.vname, escapeColons(self.format))
         return main
 
 PRINT = Print
@@ -408,7 +408,7 @@ class GraphComment(object):
         newLine = '\n'
         if not self.autoNewline:
             newLine = ''
-        main = 'COMMENT:%s%s' % ( self.comment, newLine)
+        main = 'COMMENT:"%s"%s' % ( self.comment, newLine)
         return main
 
 COMMENT = GraphComment
@@ -500,7 +500,7 @@ class Line(object):
         if self.color:
             main += self.color
         if self.legend:
-            main += ':%s' % self.legend
+            main += ':"%s"' % self.legend
         if self.stack:
             main += ':STACK'
         return main
@@ -800,7 +800,8 @@ class Graph(object):
         '''
         '''
         data = self.backend.prepareObject('graph', self)
-        if debug: print data
+        if debug:
+            print data
         self.backend.graph(*data)
 
 

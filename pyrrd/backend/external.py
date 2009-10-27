@@ -27,7 +27,13 @@ def _cmd(command, args):
     else:
         return output
 
- 
+
+def concat(args):
+    if isinstance(args, list):
+        args = " ".join(args)
+    return args
+
+
 def create(filename, parameters):
     """
     >>> filename = '/tmp/test.rrd'
@@ -45,7 +51,7 @@ def create(filename, parameters):
     >>> os.path.exists(filename)
     False
     """
-    parameters = "%s %s" % (filename, parameters)
+    parameters = "%s %s" % (filename, concat(parameters))
     output = _cmd('create', parameters)
 
 
@@ -77,7 +83,7 @@ def update(filename, data, debug=False):
     >>> os.path.exists(filename)
     False
     """
-    parameters = "%s %s" % (filename, data)
+    parameters = "%s %s" % (filename, concat(data))
     if debug:
         _cmd('updatev', parameters)
     else:
@@ -85,7 +91,7 @@ def update(filename, data, debug=False):
 
 
 def fetchRaw(filename, query):
-    parameters = "%s %s" % (filename, query)
+    parameters = "%s %s" % (filename, concat(query))
     return _cmd('fetch', parameters).strip()
 
 
@@ -134,7 +140,7 @@ def fetch(filename, query):
 
     >>> os.unlink(filename)
     """
-    output = fetchRaw(filename, query)
+    output = fetchRaw(filename, concat(query))
     lines = [line for line in output.split('\n') if line]
     dsNames = lines[0].split()
     results = {
@@ -176,7 +182,7 @@ def dump(filename, outfile="", parameters=""):
     >>> os.unlink(rrdfile)
     >>> os.unlink(xmlfile)
     """
-    parameters = "%s %s %s" % (filename, outfile, parameters)
+    parameters = "%s %s %s" % (filename, outfile, concat(parameters))
     output = _cmd('dump', parameters)
     if not outfile:
         return output.strip()
@@ -249,7 +255,7 @@ def graph(filename, parameters):
     >>> os.unlink(rrdfile)
     >>> os.unlink(filename)
     """
-    parameters = "%s %s" % (filename, parameters)
+    parameters = "%s %s" % (filename, concat(parameters))
     _cmd('graph', parameters)
 
 
