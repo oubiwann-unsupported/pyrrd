@@ -76,8 +76,7 @@ def buildParameters(obj, validList):
     associated with them:
 
     >>> buildParameters(testClass, ["a", "d"])
-    ['--a', '1', '--c']
-     
+    ['--a', '1', '--d']
     """
     params = []
     for param in validList:
@@ -87,7 +86,7 @@ def buildParameters(obj, validList):
             if isinstance(attr, bool):
                 attr = ""
             params.extend(["--%s" % param, str(attr)])
-    return params
+    return [x for x in params if x]
 
 
 if __name__ == "__main__":

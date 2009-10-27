@@ -3,6 +3,7 @@
 * Fixed failing epoch test.
 * Sync'ed Launchpad and Google repos.
 * Updated TODO.
+* Fixed buildParameters in backend.common.
 
 2009.07.02
 
