@@ -4,7 +4,7 @@ Features
 
 PyRRD lets you use RRDTool from Python code that takes advantage of standard
 object-oriented patterns. The makes the programmatic usage of RRDTool much
-easier and reusable. 
+easier and reusable.
 
 A quick review of features is available at the project wiki [#]_ . Example
 code with graph image output is also available on the wiki [#]_ .
@@ -98,8 +98,8 @@ Create an RRD file programmatically::
     >>> dataSources.append(dataSource)
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
-    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
-    ...     start=920804400)
+    >>> myRRD = RRD(
+    ...     filename, ds=dataSources, rra=roundRobinArchives, start=920804400)
     >>> myRRD.create()
 
 Let's check to see that the file exists::
@@ -158,7 +158,7 @@ meansure::
     >>> line1 = LINE(value=100, color='#990000', legend='Maximum Allowed')
     >>> area1 = AREA(defObj=cdef3, color='#006600', legend='Good Speed')
     >>> area2 = AREA(defObj=cdef2, color='#CC6633', legend='Too Fast')
-    >>> line2 = LINE(defObj=vdef2, color='#000099', legend='My Average', 
+    >>> line2 = LINE(defObj=vdef2, color='#000099', legend='My Average',
     ...     stack=True)
     >>> gprint1 = GPRINT(vdef2, '%6.2lf kph')
 
@@ -226,7 +226,7 @@ Usage is identical to the standard PyRRD usage, with the exception of object
 construction::
 
     >>> from pyrrd.backend import bindings
-    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
+    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives,
     ...     backend=bindings)
     >>> myRRD.create()
 
