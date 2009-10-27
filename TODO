@@ -2,7 +2,7 @@
 Known Bugs
 ==========
 
-* No known bugs.
+* http://code.google.com/p/pyrrd/issues/list
 
 ====
 TODO
@@ -10,6 +10,10 @@ TODO
 
 Near Term
 ---------
+
+* Move test code around (testing and admin/testRunner).
+
+* Fix breaking tests.
 
 * Add wiki examples for using info and fetch
 
