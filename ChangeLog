@@ -6,6 +6,7 @@
 * Fixed buildParameters in backend.common.
 * Removed unused backend.external.buildParameters function.
 * Fixed parameters in external backend.
+* Fixed failing test in bindings backend.
 
 2009.07.02
 

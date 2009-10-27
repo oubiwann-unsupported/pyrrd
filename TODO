@@ -58,8 +58,8 @@ Near Term
     get very close to perfect suitability with the bindings if PyRRD changed to
     a list of parameters and called Popen with shell=False.
 
-    Yikes! This won't work: some parameters are quoted strings with spaces in
-    them, and that needs to be supported.
+    Yikes! That last bit won't work: some parameters are quoted strings with
+    spaces in them, and that needs to be supported.
 
     In addition to wrapping the bindings, the following adjustments will need
     to be made to pyrrd.

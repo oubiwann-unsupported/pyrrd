@@ -101,7 +101,6 @@ Create an RRD file programmatically::
     >>> myRRD = RRD(
     ...     filename, ds=dataSources, rra=roundRobinArchives, start=920804400)
     >>> myRRD.create()
-    >>> import pdb;pdb.set_trace()
 
 Let's check to see that the file exists::
 
