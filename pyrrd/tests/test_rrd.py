@@ -5,7 +5,7 @@ from pyrrd.rrd import DataSource, RRA, RRD
 
 class RRDTestCase(TestCase):
 
-    def test_creation_defaults(self):
+    def test_creationDefaults(self):
         filename = '/tmp/test.rrd'
         rrd = RRD(filename, start=920804400)
         self.assertEquals(rrd.filename, filename)
@@ -32,7 +32,7 @@ class RRDTestCase(TestCase):
         self.assertEquals(rrd.step, 300)
         self.assertEquals(rrd.lastupdate, None)
 
-    def test_creation_dss_and_rras(self):
+    def test_creationDSsAndRRAs(self):
         dss1 = []
         rras1 = []
         filename = '/tmp/test1.rrd'
