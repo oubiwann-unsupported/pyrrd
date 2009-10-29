@@ -4,6 +4,7 @@
 * Applied partial patch from Denis Fortin (the part of the patch not included
 was a Linux-incompatible change for NaNs).
 * Changed a filename check in the doctest, due to the patch.
+* Fixed the doctests that were broken after the patch.
 
 2009.10.27
 

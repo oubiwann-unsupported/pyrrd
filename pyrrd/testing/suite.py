@@ -94,14 +94,14 @@ def _buildDoctestSuiteFromPaths(paths=[], skip=[]):
             suite.addTest(doctest.DocTestSuite(mod))
     return suite
 
-def buildDoctestSuites(modules=[], files=[], paths=[]):
+def buildDoctestSuites(modules=[], files=[], paths=[], skip=[]):
     suite = []
     if modules:
         suite.extend(_buildDoctestSuiteFromModules(modules))
     if files:
         suite.extend(_buildDoctestSuiteFromFiles(files))
     if paths:
-        suite.extend(_buildDoctestSuiteFromPaths(paths))
+        suite.extend(_buildDoctestSuiteFromPaths(paths, skip))
     return suite
 
 def buildUnittestSuites(paths=[], skip=[]):

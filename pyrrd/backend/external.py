@@ -46,7 +46,6 @@ def create(filename, parameters):
     >>> import os
     >>> os.path.exists(rrdfile.name)
     True
-
     """
     parameters = "%s %s" % (filename, concat(parameters))
     output = _cmd('create', parameters)
@@ -133,7 +132,6 @@ def fetch(filename, query):
 
     The benefits of using an approach like this become obvious when the RRD
     file has multiple DSs and RRAs.
-
     """
     output = fetchRaw(filename, concat(query))
     lines = [line for line in output.split('\n') if line]
@@ -169,12 +167,11 @@ def dump(filename, outfile="", parameters=""):
     '<!-- Round Robin Database Dump'
 
     >>> xmlfile = tempfile.NamedTemporaryFile()
-    >>> dump(rrdfile, xmlfile.name)
+    >>> dump(rrdfile.name, xmlfile.name)
 
     >>> import os
     >>> os.path.exists(xmlfile.name)
     True
-
     """
     parameters = "%s %s %s" % (filename, outfile, concat(parameters))
     output = _cmd('dump', parameters)
@@ -219,7 +216,7 @@ def graph(filename, parameters):
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(rrdfile, parameters)
+    >>> create(rrdfile.name, parameters)
 
     >>> import os
     >>> os.path.exists(rrdfile.name)
@@ -233,7 +230,7 @@ def graph(filename, parameters):
 
     >>> parameters = ' --start 920804400 --end 920808000'
     >>> parameters += ' --vertical-label km/h'
-    >>> parameters += ' DEF:myspeed=%s:speed:AVERAGE' % rrdfile
+    >>> parameters += ' DEF:myspeed=%s:speed:AVERAGE' % rrdfile.name
     >>> parameters += ' CDEF:realspeed=myspeed,1000,*'
     >>> parameters += ' CDEF:kmh=myspeed,3600,*'
     >>> parameters += ' CDEF:fast=kmh,100,GT,kmh,0,IF'
@@ -245,7 +242,6 @@ def graph(filename, parameters):
     >>> graph(graphfile.name, parameters)
     >>> os.path.exists(graphfile.name)
     True
-
     """
     parameters = "%s %s" % (filename, concat(parameters))
     _cmd('graph', parameters)

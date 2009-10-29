@@ -8,12 +8,13 @@ from pyrrd.testing.suite import (
 
 
 searchDirs = [meta.library_name]
-suites = buildUnittestSuites(paths=searchDirs)
+skips = []
+suites = buildUnittestSuites(paths=searchDirs, skip=skips)
 docFiles = [
     DocFileSuite("README"),
     ]
 suites.extend(docFiles)
-suites.extend(buildDoctestSuites(paths=searchDirs))
+suites.extend(buildDoctestSuites(paths=searchDirs, skip=skips))
 
 if __name__ == '__main__':
     runner = TextTestRunner(verbosity=2)
