@@ -20,6 +20,9 @@ def fileCheck(path, skipFiles=[]):
     filename = os.path.basename(path)
     if filename in skipFiles:
         return False
+    if path in skipFiles:
+        print "skip it!"
+        return False
     return True
 
 
@@ -35,8 +38,6 @@ def fileIsTest(path, skipFiles=[]):
 def fileHasDoctests(path, skipFiles=[]):
     result = fileCheck(path, skipFiles)
     if result and path.endswith('.py'):
-        if path.endswith('.pyc'):
-            import pdb;pdb.set_trace()
         fh = open(path)
         if '>>>' in fh.read():
             result = True
@@ -65,18 +66,20 @@ def findDoctests(startDir, skipFiles=[]):
     return find(startDir, fileHasDoctests, skipFiles)
 
 
-def _buildDoctestSuiteFromModules(modules):
+def _buildDoctestSuiteFromModules(modules, skip):
     suite = unittest.TestSuite()
     for modname in modules:
         mod = importModule(modname)
-        suite.addTest(doctest.DocTestSuite(mod))
+        if mod not in skip:
+            suite.addTest(doctest.DocTestSuite(mod))
     return suite
 
 
-def _buildDoctestSuiteFromFiles(files):
+def _buildDoctestSuiteFromFiles(files, skip):
     suite = []
     for file in files:
-        suite.append(DocFileSuite(file))
+        if file not in skip:
+            suite.append(DocFileSuite(file))
     return suite
 
 def _buildDoctestSuiteFromPaths(paths=[], skip=[]):
@@ -90,6 +93,8 @@ def _buildDoctestSuiteFromPaths(paths=[], skip=[]):
         for testFile in findDoctests(startDir, skip):
             modBase = os.path.splitext(testFile)[0]
             name = modBase.replace(os.path.sep, '.')
+            if name in skip:
+                continue
             mod = importModule(name)
             suite.addTest(doctest.DocTestSuite(mod))
     return suite
@@ -97,9 +102,9 @@ def _buildDoctestSuiteFromPaths(paths=[], skip=[]):
 def buildDoctestSuites(modules=[], files=[], paths=[], skip=[]):
     suite = []
     if modules:
-        suite.extend(_buildDoctestSuiteFromModules(modules))
+        suite.extend(_buildDoctestSuiteFromModules(modules, skip))
     if files:
-        suite.extend(_buildDoctestSuiteFromFiles(files))
+        suite.extend(_buildDoctestSuiteFromFiles(files, skip))
     if paths:
         suite.extend(_buildDoctestSuiteFromPaths(paths, skip))
     return suite

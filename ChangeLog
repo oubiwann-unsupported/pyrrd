@@ -5,6 +5,10 @@
 was a Linux-incompatible change for NaNs).
 * Changed a filename check in the doctest, due to the patch.
 * Fixed the doctests that were broken after the patch.
+* Updated pyrrd.testing.suite to do more widespread and intelligent optional
+test skipping.
+* Added an option parser to the test running so that users may not indicate
+verbosity level and skip files from the command line.
 
 2009.10.27
 
