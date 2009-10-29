@@ -1,5 +1,9 @@
 import re
 
+class NaN(float):
+
+    def __repr__(self):
+        return "nan"
 
 def coerce(value):
     """
@@ -19,8 +23,11 @@ def coerce(value):
     try:
         return float(value)
     except ValueError:
-        if value.lower() in ['unkn', 'u']:
+        value = str(value).lower()
+        if value in ["unkn", "u"]:
             return None
+        elif value == "nan":
+            return NaN()
     raise ValueError, "Unexpected type for data (%s)" % value
 
 

@@ -1,3 +1,7 @@
+2009.10.29
+
+* Added a first draft of a NaN fix for Windows users.
+
 2009.10.27
 
 * Fixed failing epoch test.
