@@ -36,20 +36,17 @@ def concat(args):
 
 def create(filename, parameters):
     """
-    >>> filename = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(filename, parameters)
-
+    >>> create(rrdfile.name, parameters)
     >>> import os
-    >>> os.path.exists(filename)
+    >>> os.path.exists(rrdfile.name)
     True
 
-    >>> os.unlink(filename)
-    >>> os.path.exists(filename)
-    False
     """
     parameters = "%s %s" % (filename, concat(parameters))
     output = _cmd('create', parameters)
@@ -57,31 +54,29 @@ def create(filename, parameters):
 
 def update(filename, data, debug=False):
     """
-    >>> filename = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(filename, parameters)
+    >>> create(rrdfile.name, parameters)
 
     >>> import os
-    >>> os.path.exists(filename)
+    >>> os.path.exists(rrdfile.name)
     True
 
-    >>> update('/tmp/test.rrd',
+    >>> update(rrdfile.name,
     ...   '920804700:12345 920805000:12357 920805300:12363')
-    >>> update('/tmp/test.rrd',
+    >>> update(rrdfile.name,
     ...   '920805600:12363 920805900:12363 920806200:12373')
-    >>> update('/tmp/test.rrd',
+    >>> update(rrdfile.name,
     ...   '920806500:12383 920806800:12393 920807100:12399')
-    >>> update('/tmp/test.rrd',
+    >>> update(rrdfile.name,
     ...   '920807400:12405 920807700:12411 920808000:12415')
-    >>> update('/tmp/test.rrd',
+    >>> update(rrdfile.name,
     ...   '920808300:12420 920808600:12422 920808900:12423')
 
-    >>> os.unlink(filename)
-    >>> os.path.exists(filename)
-    False
     """
     parameters = "%s %s" % (filename, concat(data))
     if debug:
@@ -97,24 +92,25 @@ def fetchRaw(filename, query):
 
 def fetch(filename, query):
     """
-    >>> filename = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(filename, parameters)
+    >>> create(rrdfile.name, parameters)
 
     >>> import os
-    >>> os.path.exists(filename)
+    >>> os.path.exists(rrdfile.name)
     True
 
-    >>> update('/tmp/test.rrd', '920804700:12345 920805000:12357 920805300:12363')
-    >>> update('/tmp/test.rrd', '920805600:12363 920805900:12363 920806200:12373')
-    >>> update('/tmp/test.rrd', '920806500:12383 920806800:12393 920807100:12399')
-    >>> update('/tmp/test.rrd', '920807400:12405 920807700:12411 920808000:12415')
-    >>> update('/tmp/test.rrd', '920808300:12420 920808600:12422 920808900:12423')
+    >>> update(rrdfile.name, '920804700:12345 920805000:12357 920805300:12363')
+    >>> update(rrdfile.name, '920805600:12363 920805900:12363 920806200:12373')
+    >>> update(rrdfile.name, '920806500:12383 920806800:12393 920807100:12399')
+    >>> update(rrdfile.name, '920807400:12405 920807700:12411 920808000:12415')
+    >>> update(rrdfile.name, '920808300:12420 920808600:12422 920808900:12423')
 
-    >>> results = fetch('/tmp/test.rrd', 'AVERAGE --start 920804400 --end 920809200')
+    >>> results = fetch(rrdfile.name, 'AVERAGE --start 920804400 --end 920809200')
 
     # Results are provided in two ways, one of which is by the data source
     # name:
@@ -138,7 +134,6 @@ def fetch(filename, query):
     The benefits of using an approach like this become obvious when the RRD
     file has multiple DSs and RRAs.
 
-    >>> os.unlink(filename)
     """
     output = fetchRaw(filename, concat(query))
     lines = [line for line in output.split('\n') if line]
@@ -159,28 +154,27 @@ def fetch(filename, query):
 
 def dump(filename, outfile="", parameters=""):
     """
-    >>> rrdfile = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(rrdfile, parameters)
+    >>> create(rrdfile.name, parameters)
 
-    >>> xml = dump(rrdfile)
+    >>> xml = dump(rrdfile.name)
     >>> len(xml)
     3724
     >>> xml[0:30]
     '<!-- Round Robin Database Dump'
 
-    >>> xmlfile = '/tmp/test.xml'
-    >>> dump(rrdfile, xmlfile)
+    >>> xmlfile = tempfile.NamedTemporaryFile()
+    >>> dump(rrdfile, xmlfile.name)
 
     >>> import os
-    >>> os.path.exists(xmlfile)
+    >>> os.path.exists(xmlfile.name)
     True
 
-    >>> os.unlink(rrdfile)
-    >>> os.unlink(xmlfile)
     """
     parameters = "%s %s %s" % (filename, outfile, concat(parameters))
     output = _cmd('dump', parameters)
@@ -192,13 +186,14 @@ def load(filename):
     """
     Load RRD data via the RRDtool XML dump into an ElementTree.
 
-    >>> filename = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
-    >>> create(filename, parameters)
-    >>> tree = load(filename)
+    >>> create(rrdfile.name, parameters)
+    >>> tree = load(rrdfile.name)
     >>> [x.tag for x in tree]
     ['version', 'step', 'lastupdate', 'ds', 'rra', 'rra']
     """
@@ -217,8 +212,9 @@ def info(filename, obj):
 
 def graph(filename, parameters):
     """
-    >>> filename = '/tmp/speed.png'
-    >>> rrdfile = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
+    >>> graphfile = tempfile.NamedTemporaryFile()
     >>> parameters = ' --start 920804400'
     >>> parameters += ' DS:speed:COUNTER:600:U:U'
     >>> parameters += ' RRA:AVERAGE:0.5:1:24'
@@ -226,14 +222,14 @@ def graph(filename, parameters):
     >>> create(rrdfile, parameters)
 
     >>> import os
-    >>> os.path.exists(rrdfile)
+    >>> os.path.exists(rrdfile.name)
     True
 
-    >>> update('/tmp/test.rrd', '920804700:12345 920805000:12357 920805300:12363')
-    >>> update('/tmp/test.rrd', '920805600:12363 920805900:12363 920806200:12373')
-    >>> update('/tmp/test.rrd', '920806500:12383 920806800:12393 920807100:12399')
-    >>> update('/tmp/test.rrd', '920807400:12405 920807700:12411 920808000:12415')
-    >>> update('/tmp/test.rrd', '920808300:12420 920808600:12422 920808900:12423')
+    >>> update(rrdfile.name, '920804700:12345 920805000:12357 920805300:12363')
+    >>> update(rrdfile.name, '920805600:12363 920805900:12363 920806200:12373')
+    >>> update(rrdfile.name, '920806500:12383 920806800:12393 920807100:12399')
+    >>> update(rrdfile.name, '920807400:12405 920807700:12411 920808000:12415')
+    >>> update(rrdfile.name, '920808300:12420 920808600:12422 920808900:12423')
 
     >>> parameters = ' --start 920804400 --end 920808000'
     >>> parameters += ' --vertical-label km/h'
@@ -246,14 +242,10 @@ def graph(filename, parameters):
     >>> parameters += ' AREA:good#00FF00:"Good speed"'
     >>> parameters += ' AREA:fast#00FFFF:"Too fast"'
     >>> parameters += ' LINE2:realspeed#FF0000:Unadjusted'
-    >>> if os.path.exists(filename):
-    ...   os.unlink(filename)
-    >>> graph(filename, parameters)
-    >>> os.path.exists(filename)
+    >>> graph(graphfile.name, parameters)
+    >>> os.path.exists(graphfile.name)
     True
 
-    >>> os.unlink(rrdfile)
-    >>> os.unlink(filename)
     """
     parameters = "%s %s" % (filename, concat(parameters))
     _cmd('graph', parameters)

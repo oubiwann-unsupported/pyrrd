@@ -674,10 +674,12 @@ class Graph(object):
     to graph it (or print it). This ends the rrdtool graph sequence.
 
     # Let's create and RRD file and dump some data in it
+    >>> import tempfile
     >>> from rrd import RRD, RRA, DS
     >>> dss = []
     >>> rras = []
-    >>> filename = '/tmp/test.rrd'
+    >>> tfile = tempfile.NamedTemporaryFile()
+    >>> filename = tfile.name
     >>> ds1 = DS(dsName='speed', dsType='COUNTER', heartbeat=600)
     >>> dss.append(ds1)
     >>> rra1 = RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24)
@@ -729,16 +731,14 @@ class Graph(object):
     >>> ca.arrow = '#FFFFFF'
 
     # Now that we've got everything set up, let's make a graph
-    >>> graphfile = '/tmp/myspeed.png'
-    >>> g = Graph(graphfile, start=920805000, end=920810000,
-    ...   vertical_label='km/h', color=ca)
+    >>> graphfile = tempfile.NamedTemporaryFile()
+    >>> g = Graph(graphfile.name, start=920805000, end=920810000,
+    ...   vertical_label='km/h', color=ca, imgformat='png')
     >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1,
     ...   area1, area2, line2, gprint1])
     >>> g.write()
-    >>> os.path.exists(graphfile)
+    >>> os.path.exists(graphfile.name)
     True
-    >>> os.unlink(filename)
-    >>> os.unlink(graphfile)
     '''
     # Note that we don't use the Twisted camel case convention for the
     # parameters in the following method signature due to the fact that these

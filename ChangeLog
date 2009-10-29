@@ -1,6 +1,9 @@
 2009.10.29
 
 * Added a first draft of a NaN fix for Windows users.
+* Applied partial patch from Denis Fortin (the part of the patch not included
+was a Linux-incompatible change for NaNs).
+* Changed a filename check in the doctest, due to the patch.
 
 2009.10.27
 

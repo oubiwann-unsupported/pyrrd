@@ -68,14 +68,15 @@ class RRD(mapper.RRDMapper):
     """
     >>> dss = []
     >>> rras = []
-    >>> filename = '/tmp/test.rrd'
+    >>> import tempfile
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> dss.append(DataSource(dsName='speed', dsType='COUNTER', heartbeat=600))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
-    >>> rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
+    >>> rrd = RRD(rrdfile.name, ds=dss, rra=rras, start=920804400)
     >>> rrd.create()
     >>> import os
-    >>> os.path.exists(filename)
+    >>> os.path.exists(rrdfile.name)
     True
     >>> rrd.bufferValue('920805600', '12363')
     >>> rrd.bufferValue('920805900', '12363')
@@ -93,9 +94,6 @@ class RRD(mapper.RRDMapper):
     >>> rrd.update()
     >>> len(rrd.values)
     0
-    >>> os.unlink(filename)
-    >>> os.path.exists(filename)
-    False
     """
     def __init__(self, filename=None, start=None, step=300, ds=[], rra=[],
                  mode="w", backend=external):
@@ -233,12 +231,13 @@ class RRD(mapper.RRDMapper):
         # Create an empty file:
         >>> dss = []
         >>> rras = []
-        >>> filename = '/tmp/test.rrd'
+        >>> import tempfile
+        >>> rrdfile = tempfile.NamedTemporaryFile()
         >>> dss.append(DataSource(dsName='speed', dsType='COUNTER',
         ...   heartbeat=600))
         >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
         >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
-        >>> rrd = RRD(filename, ds=dss, rra=rras, start=920804400)
+        >>> rrd = RRD(rrdfile.name, ds=dss, rra=rras, start=920804400)
         >>> rrd.create()
 
         # Add some values:
@@ -252,14 +251,14 @@ class RRD(mapper.RRDMapper):
         # that by passing the "read" mode, were letting the RRD class know that
         # it should call load() immediately, thus giving us read-access to the
         # file's data.
-        >>> rrd2 = RRD(filename, mode="r")
+        >>> rrd2 = RRD(rrdfile.name, mode="r")
 
         # Now let's load the data from self.filename:
         >>> top_level_attrs = rrd2.getData()
         >>> top_level_attrs["lastupdate"]
         920806500
-        >>> top_level_attrs["filename"]
-        '/tmp/test.rrd'
+        >>> top_level_attrs["filename"] == rrdfile.name
+        True
         >>> top_level_attrs["step"]
         300
         >>> len(rrd2.ds)
@@ -279,9 +278,6 @@ class RRD(mapper.RRDMapper):
         >>> rrd.step == rrd2.step
         True
 
-        # Cleanup:
-        >>> import os
-        >>> os.unlink(filename)
         """
         # XXX this should only be enabled once we have the data from the loaded
         # RRD file updating the RRD object
