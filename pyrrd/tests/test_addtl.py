@@ -120,7 +120,7 @@ class AddtlRRDTestCase(unittest.TestCase):
     #
                 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(PyRRDTests)
+    suite = unittest.TestLoader().loadTestsFromTestCase(AddtlRRDTestCase)
     unittest.TextTestRunner(verbosity=2).run(suite)
     nuke_base_rrd()
 
