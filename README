@@ -111,7 +111,7 @@ Let's check to see that the file exists::
 Let's see how big it is::
 
     >>> len(open(filename).read())
-    1008
+    1064
 
 In order to save writes to disk, PyRRD buffers values and then writes the
 values to the RRD file at one go::

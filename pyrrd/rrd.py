@@ -239,6 +239,9 @@ class RRD(mapper.RRDMapper):
         >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
         >>> rrd = RRD(rrdfile.name, ds=dss, rra=rras, start=920804400)
         >>> rrd.create()
+        >>> import os
+        >>> os.path.exists(rrdfile.name)
+        True
 
         # Add some values:
         >>> rrd.bufferValue('920805600', '12363')
