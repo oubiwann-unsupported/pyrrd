@@ -9,6 +9,7 @@ was a Linux-incompatible change for NaNs).
 test skipping.
 * Added an option parser to the test running so that users may not indicate
 verbosity level and skip files from the command line.
+* Added a base unittest test case.
 
 2009.10.27
 
