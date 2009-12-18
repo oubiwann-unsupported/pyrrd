@@ -1,3 +1,7 @@
+2009.12.21
+
+* Added a placeholder for native Python parsing of RRD file data.
+
 2009.10.29
 
 * Added a first draft of a NaN fix for Windows users.
