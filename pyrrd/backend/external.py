@@ -157,12 +157,13 @@ def dump(filename, outfile="", parameters=""):
     >>> parameters += ' RRA:AVERAGE:0.5:6:10'
     >>> create(rrdfile.name, parameters)
 
-    # is this really a valid test? very RRD version specific...
     >>> xml = dump(rrdfile.name)
-    >>> len(xml)
-    3826
-    >>> xml[0:30]
-    '<?xml version="1.0" encoding="'
+    >>> xmlBytes = len(xml)
+    >>> 3300 < xmlBytes < 4000
+    True
+    >>> xmlCommentCheck = '<!-- Round Robin Database Dump'
+    >>> xmlCommentCheck in xml[0:200]
+    True
 
     >>> xmlfile = tempfile.NamedTemporaryFile()
     >>> dump(rrdfile.name, xmlfile.name)

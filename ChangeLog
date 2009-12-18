@@ -1,3 +1,8 @@
+2009.12.18
+
+* Added a placeholder for native Python parsing of RRD file data.
+* Added a sandbox with some files for exploring Python-native RRD-read support.
+
 2009.10.29
 
 * Added a first draft of a NaN fix for Windows users.
@@ -9,6 +14,7 @@ was a Linux-incompatible change for NaNs).
 test skipping.
 * Added an option parser to the test running so that users may not indicate
 verbosity level and skip files from the command line.
+* Added a base unittest test case.
 
 2009.10.27
 
