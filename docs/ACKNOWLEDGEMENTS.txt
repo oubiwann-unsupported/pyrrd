@@ -15,4 +15,6 @@ this project:
 
 * Mladen Milankovic, Denis Fortin
 
+* Joseph Heck, Jean-Baptiste Quenot
+
 Thanks!
