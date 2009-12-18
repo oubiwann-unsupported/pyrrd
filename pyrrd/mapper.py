@@ -166,11 +166,11 @@ class RRDMapper(Mapper):
         for subNode in node.ds:
             ds = DSMapper()
             ds.map(subNode)
-            self.ds.append(ds)
+            self.ds.extend(ds)
         for subNode in node.rra:
             rra = RRAMapper()
             rra.map(subNode)
-            self.rra.append(rra)
+            self.rra.extend(rra)
 
 
 def _test():
