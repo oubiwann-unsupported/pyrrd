@@ -108,10 +108,12 @@ Let's check to see that the file exists::
     >>> os.path.isfile(filename)
     True
 
-Let's see how big it is::
+Let's see how big it is (depending upon RRDTool version, the byte count can
+change, so we'll just get a general sense)::
 
-    >>> len(open(filename).read())
-    1008
+    >>> bytes = len(open(filename).read())
+    >>> 800 < bytes < 1200
+    True
 
 In order to save writes to disk, PyRRD buffers values and then writes the
 values to the RRD file at one go::

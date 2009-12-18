@@ -161,10 +161,12 @@ def dump(filename, outfile="", parameters=""):
     >>> create(rrdfile.name, parameters)
 
     >>> xml = dump(rrdfile.name)
-    >>> len(xml)
-    3724
-    >>> xml[0:30]
-    '<!-- Round Robin Database Dump'
+    >>> xmlBytes = len(xml)
+    >>> 3300 < xmlBytes < 4000
+    True
+    >>> xmlCommentCheck = '<!-- Round Robin Database Dump'
+    >>> xmlCommentCheck in xml[0:200]
+    True
 
     >>> xmlfile = tempfile.NamedTemporaryFile()
     >>> dump(rrdfile.name, xmlfile.name)
