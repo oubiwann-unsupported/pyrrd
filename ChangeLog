@@ -2,6 +2,12 @@
 
 * Added a placeholder for native Python parsing of RRD file data.
 * Added a sandbox with some files for exploring Python-native RRD-read support.
+* Updated some doctests that were too sensive to version differences (point
+brought up by Joseph Heck).
+* Added more checks for existence in the doctests (Joseph Heck).
+* Updated acknowledgements.
+* Changed the DSs and RRAs in the mapper to extend, not append (Fix provided by
+Joseph Heck).
 
 2009.10.29
 
