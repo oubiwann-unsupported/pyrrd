@@ -66,18 +66,19 @@ def validateRRACF(consolidationFunction):
 
 class RRD(mapper.RRDMapper):
     """
+    >>> import os, tempfile
+    >>>
     >>> dss = []
     >>> rras = []
-    >>> import tempfile
     >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> dss.append(DataSource(dsName='speed', dsType='COUNTER', heartbeat=600))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
     >>> rrd = RRD(rrdfile.name, ds=dss, rra=rras, start=920804400)
     >>> rrd.create()
-    >>> import os
     >>> os.path.exists(rrdfile.name)
     True
+
     >>> rrd.bufferValue('920805600', '12363')
     >>> rrd.bufferValue('920805900', '12363')
     >>> rrd.bufferValue('920806200', '12373')
@@ -229,9 +230,10 @@ class RRD(mapper.RRDMapper):
     def load(self, filename=None, include_data=False):
         """
         # Create an empty file:
+        >>> import os, tempfile
+        >>>
         >>> dss = []
         >>> rras = []
-        >>> import tempfile
         >>> rrdfile = tempfile.NamedTemporaryFile()
         >>> dss.append(DataSource(dsName='speed', dsType='COUNTER',
         ...   heartbeat=600))
@@ -239,6 +241,8 @@ class RRD(mapper.RRDMapper):
         >>> rras.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
         >>> rrd = RRD(rrdfile.name, ds=dss, rra=rras, start=920804400)
         >>> rrd.create()
+        >>> os.path.exists(rrdfile.name)
+        True
 
         # Add some values:
         >>> rrd.bufferValue('920805600', '12363')
