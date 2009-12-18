@@ -67,3 +67,7 @@ VERSION2 = "0002"
 VERSION3 = "0003"
 VERSION4 = "0004"
 FLOAT_COOKIE = 8.642135e130
+
+# It looks like some of the header delimited with "\x00"
+#   - splitting on that gives the RRD_COOKIE at index 0
+#   - an the VERSION at index 1

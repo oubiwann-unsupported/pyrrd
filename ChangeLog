@@ -1,6 +1,7 @@
-2009.12.21
+2009.12.18
 
 * Added a placeholder for native Python parsing of RRD file data.
+* Added a sandbox with some files for exploring Python-native RRD-read support.
 
 2009.10.29
 
