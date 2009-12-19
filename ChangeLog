@@ -1,7 +1,30 @@
+2009.12.19
+
+* Updated the mapper map function to check for the mode: in read mode, it sucks
+in XML data; in write mode, it uses what's already been written to the objects.
+This fixes issue #18.
+
 2009.12.18
 
 * Added a placeholder for native Python parsing of RRD file data.
 * Added a sandbox with some files for exploring Python-native RRD-read support.
+* Updated some doctests that were too sensive to version differences (point
+brought up by Joseph Heck).
+* Added more checks for existence in the doctests (Joseph Heck).
+* Updated acknowledgements.
+* Changed the DSs and RRAs in the mapper to extend, not append (Fix provided by
+Joseph Heck).
+* Updated the mappers to not use class attributes for lists (should fix issue
+#18, but that still needs to be tested).
+* Reverted the append->extend change.
+* Changed the way that the mappers stored their ds and rra data.
+* Added an XML dump file for testing.
+* Added unit tests for the XML dumps.
+* Enabled the RRA XML node to get the xff value by name.
+* Added unit tests for the RRD Mapper.
+* Moved the NaN class into the util module.
+* Moved a chunk of the logic from the external backend info function into the
+RRDMapper.printInfo method.
 
 2009.10.29
 

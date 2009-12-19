@@ -1,9 +1,7 @@
 import re
 
-class NaN(float):
+from pyrrd.util import NaN
 
-    def __repr__(self):
-        return "nan"
 
 def coerce(value):
     """

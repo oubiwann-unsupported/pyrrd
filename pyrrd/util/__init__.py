@@ -1,6 +1,14 @@
 from time import mktime
 from datetime import datetime
 
+try:
+    from xml.etree import ElementTree
+except ImportError:
+    from elementtree import ElementTree
+
+
+XML = ElementTree.XML
+
 
 def epoch(dt_obj=None):
     '''
@@ -20,3 +28,11 @@ class Attributes(object):
     """
     A simple object for storing attributes.
     """
+
+
+class NaN(float):
+
+    def __repr__(self):
+        return "nan"
+
+    __str__ = __repr__
