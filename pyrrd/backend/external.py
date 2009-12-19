@@ -200,14 +200,10 @@ def load(filename):
     return ElementTree.fromstring(xml)
 
 
-def info(filename, obj):
+def info(filename, obj, **kwargs):
     """
     """
     obj.printInfo()
-    for ds in obj.ds:
-        ds.printInfo()
-    for index, rra in enumerate(obj.rra):
-        rra.printInfo(index)
 
 def graph(filename, parameters):
     """

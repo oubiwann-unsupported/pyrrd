@@ -18,13 +18,12 @@ class XMLNode(object):
             if not value:
                 value = default
             self.attributes[name] = value
-        
 
     def getAttribute(self, attrName):
         """
         """
         node = self.tree.find(attrName)
-        if node!=None:
+        if node != None:
             return node.text.strip()
         raise ValueError()
 
@@ -34,7 +33,7 @@ class DSXMLNode(XMLNode):
     An object abstraction for the <ds> node in the XML RRD export. This is a
     child of the <rrd> node, and thus this class is used in the RRDXMLNode
     class.
-    
+
     Currently provides no featres beyond those of the base XML node class.
     """
 
@@ -44,7 +43,7 @@ class CDPPrepXMLNode(XMLNode):
     An object abstraction for the <cd_prep> node in the XML RRD export. The
     <cd_prep> nodes are children node of an <rra> node.
     """
-    def __init__(self, tree):
+    def __init__(self, node):
         self.ds = []
         dsAttributes = [
             ("primary_value", float, 0.0),
@@ -52,8 +51,18 @@ class CDPPrepXMLNode(XMLNode):
             ("value", float, 0.0),
             ("unknown_datapoints", int, 0),
             ]
-        for ds in tree.findall("ds"):
+        for ds in node.findall("ds"):
             self.ds.append(DSXMLNode(ds, dsAttributes))
+
+
+class DatabaseNode(XMLNode):
+    """
+    An object abstraction for the <database> node in the XML RRD export.
+    Currently unimplemented.
+    """
+    def __init__(self, node):
+        super(DatabaseNode, self).__init__(node, [])
+        self.row = []
 
 
 class RRAXMLNode(XMLNode):
@@ -61,7 +70,7 @@ class RRAXMLNode(XMLNode):
     An object abstraction for the <rra> node in the XML RRD export. The <rra>
     nodes are children of the <rrd> node.
     """
-    def __init__(self, tree, attributes, include_data=False):
+    def __init__(self, tree, attributes, includeData=False):
         super(RRAXMLNode, self).__init__(tree, attributes)
         self.database = None
         xff = self.tree.find('params').find('xff')
@@ -70,9 +79,17 @@ class RRAXMLNode(XMLNode):
             self.attributes["xff"] = xff
 
         self.cdp_prep = CDPPrepXMLNode(self.tree.find("cdp_prep"))
-        if include_data:
+        if includeData:
             db = self.tree.get("database")
             self.database = DatabaseNode(db)
+
+    def getAttribute(self, attrName):
+        """
+        """
+        if attrName.lower() == "xff":
+            return self.tree.findtext("params/xff").strip()
+        else:
+            return super(RRAXMLNode, self).getAttribute(attrName)
 
 
 class RRDXMLNode(XMLNode):
@@ -80,7 +97,7 @@ class RRDXMLNode(XMLNode):
     An object abstraction for the <rrd> node in the XML RRD export. This is the
     top-level node in the XML RRD export.
     """
-    def __init__(self, tree, include_data=False):
+    def __init__(self, tree, includeData=False):
         attributes = [
             ("version", int, 0),
             ("step", int, 300),
@@ -106,7 +123,7 @@ class RRDXMLNode(XMLNode):
         for ds in self.getDataSources():
             self.ds.append(DSXMLNode(ds, dsAttributes))
         for rra in self.getRRAs():
-            self.rra.append(RRAXMLNode(rra, rraAttributes, include_data))
+            self.rra.append(RRAXMLNode(rra, rraAttributes, includeData))
 
     def getDataSources(self):
         """

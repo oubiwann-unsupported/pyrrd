@@ -3,10 +3,11 @@ The following exercises the RRD class with this backend:
 
 Create an RRD file programmatically::
 
+    >>> import tempfile
     >>> from pyrrd.rrd import DataSource, RRA, RRD
     >>> from pyrrd.backend import bindings
 
-    >>> filename = '/tmp/test.rrd'
+    >>> rrdfile = tempfile.NamedTemporaryFile()
     >>> dataSources = []
     >>> roundRobinArchives = []
     >>> dataSource = DataSource(
@@ -15,20 +16,21 @@ Create an RRD file programmatically::
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
 
-    >>> myRRD = RRD(filename, ds=dataSources, rra=roundRobinArchives, 
+    >>> myRRD = RRD(rrdfile.name, ds=dataSources, rra=roundRobinArchives, 
     ...     start=920804400, backend=bindings)
     >>> myRRD.create()
 
 Let's check to see that the file exists::
 
     >>> import os
-    >>> os.path.isfile(filename)
+    >>> os.path.isfile(rrdfile.name)
     True
 
 Let's see how big it is::
 
-    >>> len(open(filename).read())
-    1008
+    >>> bytes = len(open(rrdfile.name).read())
+    >>> 800 < bytes < 1200
+    True
 
 In order to save writes to disk, PyRRD buffers values and then writes the
 values to the RRD file at one go::
@@ -51,74 +53,70 @@ Let's add some more data::
     >>> myRRD.bufferValue('920808900', '12423')
     >>> myRRD.update()
 
-Info checks::
+Info checks when the RRD object is in write mode::
 
-    >>> myRRD.info()
+    >>> myRRD.info() # doctest:+ELLIPSIS
     lastupdate = 920808900
-    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}], 'gamma': None, 'rra_num': None}]
-    filename = /tmp/test.rrd
+    rra = [{'rows': 24, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 1, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}, {'rows': 10, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': 6, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': None, 'xff': 0.5, 'ds': [], 'gamma': None, 'rra_num': None}]
+    filename = /tmp/...
     start = 920804400
     step = 300
-    version = None
     values = []
     ds = [{'name': 'speed', 'min': 'U', 'max': 'U', 'unknown_sec': None, 'minimal_heartbeat': 600, 'value': None, 'rpn': None, 'type': 'COUNTER', 'last_ds': None}]
     ds[speed].name = speed
     ds[speed].min = U
     ds[speed].max = U
-    ds[speed].unknown_sec = None
     ds[speed].minimal_heartbeat = 600
-    ds[speed].value = None
-    ds[speed].rpn = None
     ds[speed].type = COUNTER
-    ds[speed].last_ds = None
     rra[0].rows = 24
-    rra[0].database = None
     rra[0].cf = AVERAGE
-    rra[0].cdp_prep = None
-    rra[0].beta = None
-    rra[0].seasonal_period = None
     rra[0].steps = 1
-    rra[0].window_length = None
-    rra[0].threshold = None
-    rra[0].alpha = None
-    rra[0].pdp_per_row = None
     rra[0].xff = 0.5
-    rra[0].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}]
-    rra[0].gamma = None
-    rra[0].rra_num = None
+    rra[0].ds = []
+    rra[1].rows = 10
+    rra[1].cf = AVERAGE
+    rra[1].steps = 6
+    rra[1].xff = 0.5
+    rra[1].ds = []
+
+Info checks when the RRD object is in read mode::
+
+    >>> myRRD2 = RRD(rrdfile.name, mode="r")
+    >>> myRRD2.info() # doctest:+ELLIPSIS
+    lastupdate = 920808900
+    rra = [{'rows': None, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': None, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': 1, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.0033333333333, 'value': nan}], 'gamma': None, 'rra_num': None}, {'rows': None, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': None, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': 6, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': 0.013333333333, 'primary_value': 0.023333333333, 'value': 0.026666666666999999}], 'gamma': None, 'rra_num': None}]
+    filename = /tmp/...
+    start = ...
+    step = 300
+    version = 3
+    values = []
+    ds = [{'name': 'speed', 'min': 'NaN', 'max': 'NaN', 'unknown_sec': 0, 'minimal_heartbeat': 600, 'value': 0.0, 'rpn': None, 'type': 'COUNTER', 'last_ds': 12423}]
+    ds[speed].name = speed
+    ds[speed].min = NaN
+    ds[speed].max = NaN
+    ds[speed].unknown_sec = 0
+    ds[speed].minimal_heartbeat = 600
+    ds[speed].value = 0.0
+    ds[speed].type = COUNTER
+    ds[speed].last_ds = 12423
+    rra[0].cf = AVERAGE
+    rra[0].pdp_per_row = 1
+    rra[0].xff = 0.5
+    rra[0].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.0033333333333, 'value': nan}]
     rra[0].cdp_prep[0].unknown_datapoints = 0
     rra[0].cdp_prep[0].secondary_value = nan
-    rra[0].cdp_prep[0].primary_value = 0.033333333333
+    rra[0].cdp_prep[0].primary_value = 0.0033333333333
     rra[0].cdp_prep[0].value = nan
-    rra[0].cdp_prep[1].unknown_datapoints = 0
-    rra[0].cdp_prep[1].secondary_value = 0.033333333333
-    rra[0].cdp_prep[1].primary_value = nan
-    rra[0].cdp_prep[1].value = 0.033333333333
-    rra[1].rows = 10
-    rra[1].database = None
     rra[1].cf = AVERAGE
-    rra[1].cdp_prep = None
-    rra[1].beta = None
-    rra[1].seasonal_period = None
-    rra[1].steps = 6
-    rra[1].window_length = None
-    rra[1].threshold = None
-    rra[1].alpha = None
-    rra[1].pdp_per_row = None
+    rra[1].pdp_per_row = 6
     rra[1].xff = 0.5
-    rra[1].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.033333333333000002, 'value': nan}, {'unknown_datapoints': 0, 'secondary_value': 0.033333333333000002, 'primary_value': nan, 'value': 0.033333333333000002}]
-    rra[1].gamma = None
-    rra[1].rra_num = None
+    rra[1].ds = [{'unknown_datapoints': 0, 'secondary_value': 0.013333333333, 'primary_value': 0.023333333333, 'value': 0.026666666666999999}]
     rra[1].cdp_prep[0].unknown_datapoints = 0
-    rra[1].cdp_prep[0].secondary_value = nan
-    rra[1].cdp_prep[0].primary_value = 0.033333333333
-    rra[1].cdp_prep[0].value = nan
-    rra[1].cdp_prep[1].unknown_datapoints = 0
-    rra[1].cdp_prep[1].secondary_value = 0.033333333333
-    rra[1].cdp_prep[1].primary_value = nan
-    rra[1].cdp_prep[1].value = 0.033333333333
+    rra[1].cdp_prep[0].secondary_value = 0.013333333333
+    rra[1].cdp_prep[0].primary_value = 0.023333333333
+    rra[1].cdp_prep[0].value = 0.026666666667
 
-    >>> myRRD.info(useBindings=True)
+    >>> myRRD.info(useBindings=True) # doctest:+ELLIPSIS
     {'ds': {'speed': {'ds_name': 'speed',
                       'last_ds': '12423',
                       'max': None,
@@ -127,7 +125,7 @@ Info checks::
                       'type': 'COUNTER',
                       'unknown_sec': 0,
                       'value': 0.0}},
-     'filename': '/tmp/test.rrd',
+     'filename': '/tmp/...
      'last_update': 920808900,
      'rra': [{'cdp_prep': [{'unknown_datapoints': 0, 'value': None}],
               'cf': 'AVERAGE',
@@ -180,8 +178,8 @@ Color is the spice of life. Let's spice it up a little::
 Now we can create a graph for the data in our RRD file::
 
     >>> from pyrrd.graph import Graph
-    >>> graphfile = "/tmp/rrdgraph.png"
-    >>> g = Graph(graphfile, start=920805000, end=920810000,
+    >>> graphfile = tempfile.NamedTemporaryFile(suffix=".png")
+    >>> g = Graph(graphfile.name, start=920805000, end=920810000,
     ...     vertical_label='km/h', color=ca, backend=bindings)
     >>> g.data.extend([def1, cdef1, cdef2, cdef3, vdef1, vdef2, line1, area1,
     ...     area2, line2, gprint1])
@@ -189,22 +187,17 @@ Now we can create a graph for the data in our RRD file::
 
 Let's make sure it's there::
 
-    >>> os.path.isfile(graphfile)
+    >>> os.path.isfile(graphfile.name)
     True
 
 Let's see how big it is::
 
-    >>> bytes = len(open(graphfile).read())
+    >>> bytes = len(open(graphfile.name).read())
     >>> 10300 < bytes < 10700
     True
 
 Open that up in your favorite image browser and confirm that the appropriate
 RRD graph is generated.
-
-Let's clean up the files we've put in the temp directory::
-
-    >>> os.unlink(filename)
-    >>> os.unlink(graphfile)
 """
 import rrdtool
 
@@ -359,10 +352,12 @@ def dump(filename, outfile="", parameters=[]):
     >>> create(rrdfile, parameters)
 
     >>> xml = dump(rrdfile)
-    >>> len(xml)
-    3724
-    >>> xml[0:30]
-    '<!-- Round Robin Database Dump'
+    >>> xmlBytes = len(xml)
+    >>> 3300 < xmlBytes < 4000
+    True
+    >>> xmlCommentCheck = '<!-- Round Robin Database Dump'
+    >>> xmlCommentCheck in xml[0:200]
+    True
 
     >>> xmlfile = '/tmp/test.xml'
     >>> dump(rrdfile, xmlfile)
@@ -422,6 +417,8 @@ def info(filename, obj=None, useBindings=False):
 
 def graph(filename, parameters):
     """
+    >>> import tempfile
+    >>>
     >>> rrdfile = '/tmp/test.rrd'
     >>> parameters = [
     ...   '--start',
@@ -462,14 +459,12 @@ def graph(filename, parameters):
     ...   'AREA:good#00FF00:"Good speed"',
     ...   'AREA:fast#00FFFF:"Too fast"',
     ...   'LINE2:realspeed#FF0000:Unadjusted']
-    >>> graphfile = '/tmp/speed.png'
-    >>> graph(graphfile, parameters)
+    >>> graphfile = tempfile.NamedTemporaryFile()
+    >>> graph(graphfile.name, parameters)
 
-    >>> os.path.exists(graphfile)
+    >>> os.path.exists(graphfile.name)
     True
 
-    >>> os.unlink(rrdfile)
-    >>> os.unlink(graphfile)
     """
     parameters.insert(0, filename)
     output = _cmd('graph', parameters)

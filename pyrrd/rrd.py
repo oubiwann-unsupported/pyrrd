@@ -55,7 +55,7 @@ def validateRRACF(consolidationFunction):
     """
     cf = consolidationFunction.upper()
     valid = ['AVERAGE', 'MIN', 'MAX', 'LAST', 'HWPREDICT', 'SEASONAL',
-        'DEVSEASONAL', 'DEVPREDICT', 'FAILURES']
+             'DEVSEASONAL', 'DEVPREDICT', 'FAILURES']
     if cf in valid:
         return cf
     else:
@@ -96,8 +96,9 @@ class RRD(mapper.RRDMapper):
     >>> len(rrd.values)
     0
     """
-    def __init__(self, filename=None, start=None, step=300, ds=[], rra=[],
+    def __init__(self, filename=None, start=None, step=300, ds=None, rra=None,
                  mode="w", backend=external):
+        super(RRD, self).__init__()
         if filename == None:
             raise ValueError, "You must provide a filename."
         self.filename = filename
@@ -105,15 +106,20 @@ class RRD(mapper.RRDMapper):
             self.start = util.epoch(start)
         else:
             self.start = start
+        if not ds:
+            ds = []
+        if not rra:
+            rra = []
         self.ds = ds
         self.rra = rra
         self.values = []
         self.step = step
         self.lastupdate = None
+        self.mode = mode
         # the backend attribute needs to be defined before the load call, since
         # the load method (super class) expects the backend attribute
         self.backend = backend
-        if mode == "r":
+        if self.mode == "r":
             self.load()
 
     def bufferValue(self, timeOrData, *values):
@@ -227,7 +233,7 @@ class RRD(mapper.RRDMapper):
         kwds = {"useBindings": useBindings}
         self.backend.info(*data, **kwds)
 
-    def load(self, filename=None, include_data=False):
+    def load(self, filename=None, includeData=False):
         """
         # Create an empty file:
         >>> import os, tempfile
@@ -296,7 +302,7 @@ class RRD(mapper.RRDMapper):
         # is implemented, we will also need to come up with the best way to
         # write this data back to disk (write the individual rows of data that
         # get read in, that is)
-        if include_data:
+        if includeData:
             pass
 
 
@@ -328,7 +334,8 @@ class DataSource(mapper.DSMapper):
     DS:speed:COUNTER:600:U:U
     """
     def __init__(self, dsName=None, dsType=None, heartbeat=None, minval='U',
-        maxval='U', rpn=None):
+                 maxval='U', rpn=None):
+        super(DataSource, self).__init__()
         if dsName == None:
             raise ValueError, "You must provide a name for the data source."
         if dsType == None:
@@ -399,9 +406,9 @@ class RRA(mapper.RRAMapper):
     RRA:AVERAGE:0.5:6:10
     """
     def __init__(self, cf=None, xff=None, steps=None, rows=None, alpha=None,
-        beta=None, seasonal_period=None, rra_num=None, gamma=None,
-        threshold=None, window_length=None, cdpPrepObject=None,
-        databaseObject=None):
+                 beta=None, seasonal_period=None, rra_num=None, gamma=None,
+                 threshold=None, window_length=None, cdpPrepObject=None,
+                 databaseObject=None):
         super(RRA, self).__init__()
         if cf == None:
             msg = "You must provide a value for the consolidation function."
