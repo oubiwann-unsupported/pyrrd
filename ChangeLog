@@ -5,6 +5,7 @@ in XML data; in write mode, it uses what's already been written to the objects.
 This fixes issue #18.
 * Added support for catching command-line errors (Modified fix from Joseph
 Heck). This fixes issue #19.
+* Added missing exceptions module as well as backend tests.
 
 2009.12.18
 
