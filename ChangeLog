@@ -7,6 +7,8 @@ This fixes issue #18.
 Heck). This fixes issue #19.
 * Added missing exceptions module as well as backend tests.
 * Moved the error unit test into the external test case, where it belongs.
+* Removed redunant ElementTree import check, pulling instead from the util
+module.
 
 2009.12.18
 

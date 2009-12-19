@@ -1,12 +1,9 @@
 import sys
 from subprocess import Popen, PIPE
-try:
-    from xml.etree import ElementTree
-except ImportError:
-    from elementtree import ElementTree
 
 from pyrrd.backend import common
 from pyrrd.exceptions import ExternalCommandError
+from pyrrd.util import XML
 
 
 def _cmd(command, args):
@@ -195,8 +192,7 @@ def load(filename):
     >>> [x.tag for x in tree]
     ['version', 'step', 'lastupdate', 'ds', 'rra', 'rra']
     """
-    xml = dump(filename)
-    return ElementTree.fromstring(xml)
+    return XML(dump(filename))
 
 
 def info(filename, obj, **kwargs):
