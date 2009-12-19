@@ -6,6 +6,7 @@ except ImportError:
     from elementtree import ElementTree
 
 from pyrrd.backend import common
+from pyrrd.exceptions import ExternalCommandError
 
 
 def _cmd(command, args):
@@ -14,18 +15,16 @@ def _cmd(command, args):
     else:
         close_fds = True
     command = "rrdtool %s %s" % (command, args)
-    process = Popen(command, shell=True, stdin=PIPE, stdout=PIPE,
+    process = Popen(command, shell=True, stdout=PIPE, stderr=PIPE,
                     close_fds=close_fds)
-    stdout, stderr = (process.stdout, process.stderr)
-    err = output = None
-    try:
-        err = stderr.read()
-    except:
-        output = stdout.read()
-    if err:
-        raise Exception, err
-    else:
-        return output
+    (stdout, stderr) = process.communicate()
+    if stderr:
+        raise ExternalCommandError(stderr.strip())
+    if process.returncode != 0:
+        errmsg = "Return code from '%s' was %s." % (
+            command, process.returncode)
+        raise ExternalCommandError(errmsg)
+    return stdout
 
 
 def concat(args):

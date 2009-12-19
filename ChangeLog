@@ -3,6 +3,8 @@
 * Updated the mapper map function to check for the mode: in read mode, it sucks
 in XML data; in write mode, it uses what's already been written to the objects.
 This fixes issue #18.
+* Added support for catching command-line errors (Modified fix from Joseph
+Heck). This fixes issue #19.
 
 2009.12.18
 
