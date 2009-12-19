@@ -4,6 +4,7 @@ import sys
 import tempfile
 from unittest import TestCase
 
+from pyrrd.exceptions import ExternalCommandError
 from pyrrd.rrd import DataSource, RRA, RRD
 
 
@@ -18,6 +19,17 @@ class ExternalBackendTestCase(TestCase):
         self.rrdfile = tempfile.NamedTemporaryFile()
         self.rrd = RRD(self.rrdfile.name, ds=ds, rra=rra, start=920804400)
         self.rrd.create()
+
+    def test_updateError(self):
+        self.rrd.bufferValue(1261214678, 612)
+        self.rrd.bufferValue(1261214678, 612)
+        self.assertRaises(ExternalCommandError, self.rrd.update)
+        try:
+            self.rrd.update()
+        except ExternalCommandError, error:
+            self.assertEquals(str(error), 
+            ("ERROR: illegal attempt to update using time 1261214678 "
+             "when last update time is 1261214678 (minimum one second step)"))
 
     def test_infoWriteMode(self):
         expectedOutput = """

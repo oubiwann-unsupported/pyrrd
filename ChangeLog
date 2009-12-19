@@ -6,6 +6,7 @@ This fixes issue #18.
 * Added support for catching command-line errors (Modified fix from Joseph
 Heck). This fixes issue #19.
 * Added missing exceptions module as well as backend tests.
+* Moved the error unit test into the external test case, where it belongs.
 
 2009.12.18
 
