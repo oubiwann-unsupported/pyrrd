@@ -520,7 +520,7 @@ def prepareObject(function, obj):
             'alt_autoscale_max', 'no_gridfit', 'x_grid', 'y_grid',
             'alt_y_grid', 'logarithmic', 'units_exponent', 'zoom',
             'font', 'font_render_mode', 'interlaced', 'no_legend',
-            'force_rules_legend', 'tabwidth', 'base', 'color']
+            'force_rules_legend', 'tabwidth', 'base', 'color', 'imgformat']
         params = buildParameters(obj, validParams)
         params += [str(x) for x in obj.data]
         return (obj.filename, params)
