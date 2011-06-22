@@ -441,8 +441,10 @@ class RRA(mapper.RRAMapper):
         if self.cf in ['AVERAGE', 'MIN', 'MAX', 'LAST']:
             tail += ':%s:%s:%s' % (self.xff, self.steps, self.rows)
         elif self.cf == 'HWPREDICT':
-            tail += ':%s:%s:%s' % (self.rows, self.alpha, self.beta)
-            tail += ':%s:%s' % (self.seasonal_period, self.rra_num)
+            tail += ':%s:%s:%s:%s' % (
+                self.rows, self.alpha, self.beta, self.seasonal_period))
+            if self.rra_num != None:
+                tail += ':%s' % (self.rra_num)
         elif self.cf == 'SEASONAL':
             tail += ':%s:%s:%s' % (
                 self.seasonal_period, self.gamma, self.rra_num)
@@ -452,8 +454,8 @@ class RRA(mapper.RRAMapper):
         elif self.cf == 'DEVPREDICT':
             tail += ':%s:%s' % (self.rows, self.rra_num)
         elif self.cf == 'FAILURES':
-            tail += ':%s:%s' % (self.rows, self.threshold)
-            tail += ':%s:%s' % (self.window_length, self.rra_num)
+            tail += ':%s:%s:%s:%s' % (
+                self.rows, self.threshold, self.window_length, self.rra_num)
         return main+tail
 
 
