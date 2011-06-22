@@ -796,7 +796,7 @@ class Graph(object):
         zoom=None, font=None, font_render_mode=None,
         font_smoothing_threshold=None, slope_mode=None,
         imgformat='', interlaced=False, no_legend=False,
-        force_rules_legend=False, tabwidth=None, base=None, slope_mode=None,
+        force_rules_legend=False, tabwidth=None, base=None,
         backend=external):
 
         self.filename = filename
