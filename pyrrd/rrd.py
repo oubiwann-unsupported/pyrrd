@@ -442,7 +442,7 @@ class RRA(mapper.RRAMapper):
             tail += ':%s:%s:%s' % (self.xff, self.steps, self.rows)
         elif self.cf == 'HWPREDICT':
             tail += ':%s:%s:%s:%s' % (
-                self.rows, self.alpha, self.beta, self.seasonal_period))
+                self.rows, self.alpha, self.beta, self.seasonal_period)
             if self.rra_num != None:
                 tail += ':%s' % (self.rra_num)
         elif self.cf == 'SEASONAL':
