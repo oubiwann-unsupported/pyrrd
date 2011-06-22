@@ -757,7 +757,8 @@ class Graph(object):
 
         self.filename = filename
         if not imgformat:
-            fn, ext = filename.split(os.extsep)
+            fn, ext = os.path.splitext(filename)
+            ext = ext.strip(os.extsep)
             imgformat = ext
         self.imgformat = validateImageFormat(imgformat)
 
