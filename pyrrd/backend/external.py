@@ -258,8 +258,8 @@ def prepareObject(function, obj):
     if function == 'create':
         validParams = ['start', 'step']
         params = common.buildParameters(obj, validParams)
-        data = [ str(x) for x in obj.ds ]
-        data += [ str(x) for x in obj.rra ]
+        data = [unicode(x) for x in obj.ds]
+        data += [unicode(x) for x in obj.rra]
         return (obj.filename, params + data)
 
     if function == 'update':
@@ -292,7 +292,7 @@ def prepareObject(function, obj):
             'font', 'font_render_mode', 'interlaced', 'no_legend',
             'force_rules_legend', 'tabwidth', 'base', 'color', 'imgformat']
         params = common.buildParameters(obj, validParams)
-        data = [ str(x) for x in obj.data ]
+        data = [unicode(x) for x in obj.data]
         return (obj.filename, params + data)
 
 

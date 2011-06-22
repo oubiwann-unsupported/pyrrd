@@ -161,9 +161,9 @@ class RRD(mapper.RRDMapper):
         ('somefile', ['--template', 'ds0', '1000000:value', '1000001:anothervalue'])
         >>> my_rrd.values = []
         """
-        values = ':'.join([ str(x) for x in values ])
+        values = ':'.join([unicode(x) for x in values])
         self.values.append((timeOrData, values))
-        self.lastupdate = int(str(timeOrData).split(":")[0])
+        self.lastupdate = int(unicode(timeOrData).split(":")[0])
 
     # for backwards compatibility
     bufferValues = bufferValue

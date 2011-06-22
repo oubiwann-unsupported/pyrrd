@@ -21,7 +21,7 @@ def coerce(value):
     try:
         return float(value)
     except ValueError:
-        value = str(value).lower()
+        value = unicode(value).lower()
         if value in ["unkn", "u"]:
             return None
         elif value == "nan":
@@ -90,7 +90,7 @@ def buildParameters(obj, validList):
             param = param.replace("_", "-")
             if isinstance(attr, bool):
                 attr = ""
-            params.extend(["--%s" % param, str(attr)])
+            params.extend(["--%s" % param, unicode(attr)])
     return [x for x in params if x]
 
 

@@ -549,7 +549,7 @@ class Line(object):
         '''
         main = self.abbr
         if self.width:
-            main += str(self.width)
+            main += unicode(self.width)
         main += ':%s' % self.vname
         if self.color:
             main += self.color
