@@ -425,60 +425,6 @@ class GraphVerticalLine(object):
     # XXX TODO
 VRULE = GraphVerticalLine
 
-class GraphTick(object):
-    '''
-    Plot a tick mark (a vertical line) for each value of vname that
-    is non-zero and not *UNKNOWN*. The fraction argument specifies
-    the length of the tick mark as a fraction of the y-axis; the
-    default value is 0.1 (10% of the axis). Note that the color
-    specification is not optional.
-
-    >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
-    ...   vname='ds0a', dsName='ds0')
-
-    >>> GraphTick(def1,'#ffffff',0.3,'Alarm!')
-    TICK:ds0a#ffffff:0.3:"Alarm!"
-    '''
-    def __init__(self, defObj=None, color=None, fraction=None, legend=''):
-        if not defObj:
-            raise Exception, "You must provide either a value " + \
-                "or a definition object."
-        else:
-            value1 = defObj.vname
-
-        if fraction:
-            if not (isinstance(fraction, float) or isinstance(fraction, int)):
-                raise TypeError, "The parameter 'fraction' must" + \
-                        "be a float value between 0 and 1."
-            else:
-                if 0 <= fraction <= 1:
-                    value2 = fraction
-                else:
-                    raise ValueError, "The parameter 'fraction' must" + \
-                        "be a value between 0 and 1."
-        if not color:
-            raise ValueError, "Missing required parameter color"
-
-
-        self.vname = value1
-        self.color = color
-        self.fraction = value2
-        self.legend = legend
-        self.abbr = 'TICK'
-
-    def __repr__(self):
-        main = self.abbr
-        main += ':%s' % self.vname
-        if self.color:
-            main += self.color
-        if self.fraction:
-            main += ':%s' % self.fraction
-        if self.legend:
-            main += ':"%s"' % self.legend
-        return main
-
-TICK = GraphTick
-
 class Line(object):
     '''
     Draw a line of the specified width onto the graph.
@@ -596,8 +542,51 @@ class GraphTick(object):
     the length of the tick mark as a fraction of the y-axis; the
     default value is 0.1 (10% of the axis). Note that the color
     specification is not optional.
+
+    >>> def1 = DEF(rrdfile='/home/rrdtool/data/router1.rrd',
+    ...   vname='ds0a', dsName='ds0')
+
+    >>> GraphTick(def1,'#ffffff',0.3,'Alarm!')
+    TICK:ds0a#ffffff:0.3:"Alarm!"
     '''
-    # XXX TODO
+    def __init__(self, defObj=None, color=None, fraction=None, legend=''):
+        if not defObj:
+            raise Exception, "You must provide either a value " + \
+                "or a definition object."
+        else:
+            value1 = defObj.vname
+
+        if fraction:
+            if not (isinstance(fraction, float) or isinstance(fraction, int)):
+                raise TypeError, "The parameter 'fraction' must" + \
+                        "be a float value between 0 and 1."
+            else:
+                if 0 <= fraction <= 1:
+                    value2 = fraction
+                else:
+                    raise ValueError, "The parameter 'fraction' must" + \
+                        "be a value between 0 and 1."
+        if not color:
+            raise ValueError, "Missing required parameter color"
+
+
+        self.vname = value1
+        self.color = color
+        self.fraction = value2
+        self.legend = legend
+        self.abbr = 'TICK'
+
+    def __repr__(self):
+        main = self.abbr
+        main += ':%s' % self.vname
+        if self.color:
+            main += self.color
+        if self.fraction:
+            main += ':%s' % self.fraction
+        if self.legend:
+            main += ':"%s"' % self.legend
+        return main
+
 TICK = GraphTick
 
 class GraphShift(object):
