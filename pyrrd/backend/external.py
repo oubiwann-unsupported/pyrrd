@@ -6,7 +6,7 @@ from pyrrd.exceptions import ExternalCommandError
 from pyrrd.util import XML
 
 
-def _cmd(command, args):
+def _cmd(command, args=""):
     if sys.platform == 'win32':
         close_fds = False
     else:
@@ -114,7 +114,7 @@ def fetch(filename, query):
 
     # accessing a DS entry like this gives of a (time, data) tuple:
     >>> results["ds"]["speed"][0]
-    (920805000, 0.040000000000000001)
+    (920805000, 0.04)
 
     # The other way of accessing the results data is by data source time
     # entries:
@@ -124,7 +124,7 @@ def fetch(filename, query):
     >>> keys[0:6]
     [920805000, 920805300, 920805600, 920805900, 920806200, 920806500]
     >>> results["time"][920805000]
-    {'speed': 0.040000000000000001}
+    {'speed': 0.04}
 
     The benefits of using an approach like this become obvious when the RRD
     file has multiple DSs and RRAs.

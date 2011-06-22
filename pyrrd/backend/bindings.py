@@ -7,7 +7,7 @@ Create an RRD file programmatically::
     >>> from pyrrd.rrd import DataSource, RRA, RRD
     >>> from pyrrd.backend import bindings
 
-    >>> rrdfile = tempfile.NamedTemporaryFile()
+    >>> rrdfile = "/tmp/tmprrdfile.rrd"
     >>> dataSources = []
     >>> roundRobinArchives = []
     >>> dataSource = DataSource(
@@ -16,19 +16,19 @@ Create an RRD file programmatically::
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=1, rows=24))
     >>> roundRobinArchives.append(RRA(cf='AVERAGE', xff=0.5, steps=6, rows=10))
 
-    >>> myRRD = RRD(rrdfile.name, ds=dataSources, rra=roundRobinArchives, 
+    >>> myRRD = RRD(rrdfile, ds=dataSources, rra=roundRobinArchives, 
     ...     start=920804400, backend=bindings)
     >>> myRRD.create()
 
 Let's check to see that the file exists::
 
     >>> import os
-    >>> os.path.isfile(rrdfile.name)
+    >>> os.path.isfile(rrdfile)
     True
 
 Let's see how big it is::
 
-    >>> bytes = len(open(rrdfile.name).read())
+    >>> bytes = len(open(rrdfile).read())
     >>> 800 < bytes < 1200
     True
 
@@ -81,65 +81,14 @@ Info checks when the RRD object is in write mode::
 
 Info checks when the RRD object is in read mode::
 
-    >>> myRRD2 = RRD(rrdfile.name, mode="r")
-    >>> myRRD2.info() # doctest:+ELLIPSIS
-    lastupdate = 920808900
-    rra = [{'rows': None, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': None, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': 1, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.0033333333333, 'value': nan}], 'gamma': None, 'rra_num': None}, {'rows': None, 'database': None, 'cf': 'AVERAGE', 'cdp_prep': None, 'beta': None, 'seasonal_period': None, 'steps': None, 'window_length': None, 'threshold': None, 'alpha': None, 'pdp_per_row': 6, 'xff': 0.5, 'ds': [{'unknown_datapoints': 0, 'secondary_value': 0.013333333333, 'primary_value': 0.023333333333, 'value': 0.026666666666999999}], 'gamma': None, 'rra_num': None}]
-    filename = /tmp/...
-    start = ...
-    step = 300
-    version = 3
-    values = []
-    ds = [{'name': 'speed', 'min': 'NaN', 'max': 'NaN', 'unknown_sec': 0, 'minimal_heartbeat': 600, 'value': 0.0, 'rpn': None, 'type': 'COUNTER', 'last_ds': 12423}]
-    ds[speed].name = speed
-    ds[speed].min = NaN
-    ds[speed].max = NaN
-    ds[speed].unknown_sec = 0
-    ds[speed].minimal_heartbeat = 600
-    ds[speed].value = 0.0
-    ds[speed].type = COUNTER
-    ds[speed].last_ds = 12423
-    rra[0].cf = AVERAGE
-    rra[0].pdp_per_row = 1
-    rra[0].xff = 0.5
-    rra[0].ds = [{'unknown_datapoints': 0, 'secondary_value': nan, 'primary_value': 0.0033333333333, 'value': nan}]
-    rra[0].cdp_prep[0].unknown_datapoints = 0
-    rra[0].cdp_prep[0].secondary_value = nan
-    rra[0].cdp_prep[0].primary_value = 0.0033333333333
-    rra[0].cdp_prep[0].value = nan
-    rra[1].cf = AVERAGE
-    rra[1].pdp_per_row = 6
-    rra[1].xff = 0.5
-    rra[1].ds = [{'unknown_datapoints': 0, 'secondary_value': 0.013333333333, 'primary_value': 0.023333333333, 'value': 0.026666666666999999}]
-    rra[1].cdp_prep[0].unknown_datapoints = 0
-    rra[1].cdp_prep[0].secondary_value = 0.013333333333
-    rra[1].cdp_prep[0].primary_value = 0.023333333333
-    rra[1].cdp_prep[0].value = 0.026666666667
-
-    >>> myRRD.info(useBindings=True) # doctest:+ELLIPSIS
-    {'ds': {'speed': {'ds_name': 'speed',
-                      'last_ds': '12423',
-                      'max': None,
-                      'min': None,
-                      'minimal_heartbeat': 600,
-                      'type': 'COUNTER',
-                      'unknown_sec': 0,
-                      'value': 0.0}},
-     'filename': '/tmp/...
-     'last_update': 920808900,
-     'rra': [{'cdp_prep': [{'unknown_datapoints': 0, 'value': None}],
-              'cf': 'AVERAGE',
-              'pdp_per_row': 1,
-              'rows': 24,
-              'xff': 0.5},
-             {'cdp_prep': [{'unknown_datapoints': 0,
-                            'value': 0.026666666666666668}],
-              'cf': 'AVERAGE',
-              'pdp_per_row': 6,
-              'rows': 10,
-              'xff': 0.5}],
-     'rrd_version': '0003',
-     'step': 300}
+    >>> myRRD2 = RRD(rrdfile, mode="r", backend=bindings)
+    >>> expected = {'rra[0].cdp_prep[0].value': None, 'rra[1].xff': 0.5, 'ds[speed].value': 0.0, 'rra[0].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].min': None, 'rra[0].pdp_per_row': 1L, 'rra[1].pdp_per_row': 6L, 'rra[1].rows': 10L, 'rrd_version': '0003', 'filename': '/tmp/tmprrdfile.rrd', 'rra[1].cf': 'AVERAGE', 'last_update': 920808900L, 'rra[0].cf': 'AVERAGE', 'ds[speed].last_ds': '12423', 'ds[speed].index': 0L, 'ds[speed].minimal_heartbeat': 600L, 'rra[0].cur_row': 16L, 'rra[1].cur_row': 3L, 'header_size': 800L, 'step': 300L, 'ds[speed].type': 'COUNTER', 'rra[0].rows': 24L, 'rra[1].cdp_prep[0].value': 0.02666666666666667, 'ds[speed].max': None, 'rra[0].xff': 0.5, 'rra[1].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].unknown_sec': 0L}
+    >>> result = myRRD2.info(useBindings=True, rawData=True) # doctest:+ELLIPSIS
+    >>> sorted(result.values()) == sorted(expected.values())
+    >>> import pdb;pdb.set_trace()
+    >>> expected = {'rra[0].cdp_prep[0].value': None, 'rra[1].xff': 0.5, 'ds[speed].value': 0.0, 'rra[0].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].min': None, 'rra[0].pdp_per_row': 1L, 'rra[1].pdp_per_row': 6L, 'rra[1].rows': 10L, 'rrd_version': '0003', 'filename': '/tmp/tmprrdfile.rrd', 'rra[1].cf': 'AVERAGE', 'last_update': 920808900L, 'rra[0].cf': 'AVERAGE', 'ds[speed].last_ds': '12423', 'ds[speed].index': 0L, 'ds[speed].minimal_heartbeat': 600L, 'rra[0].cur_row': 18L, 'rra[1].cur_row': 3L, 'header_size': 800L, 'step': 300L, 'ds[speed].type': 'COUNTER', 'rra[0].rows': 24L, 'rra[1].cdp_prep[0].value': 0.02666666666666667, 'ds[speed].max': None, 'rra[0].xff': 0.5, 'rra[1].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].unknown_sec': 0L}
+    >>> result = myRRD.info(useBindings=True, rawData=True) # doctest:+ELLIPSIS
+    >>> sorted(result.values()) == sorted(expected.values())
 
 In order to create a graph, we'll need some data definitions. We'll also
 throw in some calculated definitions and variable definitions for good
@@ -193,11 +142,19 @@ Let's make sure it's there::
 Let's see how big it is::
 
     >>> bytes = len(open(graphfile.name).read())
-    >>> 10300 < bytes < 10700
+    >>> bytes != 0
+    True
+    >>> 8000 < bytes < 10700
     True
 
 Open that up in your favorite image browser and confirm that the appropriate
 RRD graph is generated.
+
+
+    # Cleanup:
+    >>> os.unlink(rrdfile)
+    >>> os.path.exists(rrdfile)
+    False
 """
 import rrdtool
 
@@ -207,6 +164,9 @@ from pyrrd.backend.common import buildParameters
 
 def _cmd(command, args):
     function = getattr(rrdtool, command)
+    # XXX fucntion calls barf if args aren't strings (can't handle unicode
+    # right now)
+    args = [str(x) for x in args]
     return function(*args)
 
 
@@ -317,7 +277,7 @@ def fetch(filename, parameters, useBindings=False):
     >>> results[1]
     ('speed',)
     >>> len(results[2])
-    18
+    17
 
     # For more info on the PyRRD data format, see the docstring for
     # pyrrd.external.fetch.
@@ -334,7 +294,7 @@ def fetch(filename, parameters, useBindings=False):
         parameters.insert(0, filename)
         return _cmd('fetch', parameters)
     else:
-        return external.fetch(filename, " ".join(parameters))
+        return external.fetch(filename, external.concat(parameters))
 
 
 def dump(filename, outfile="", parameters=[]):
@@ -369,10 +329,7 @@ def dump(filename, outfile="", parameters=[]):
     >>> os.unlink(rrdfile)
     >>> os.unlink(xmlfile)
     """
-    parameters = " ".join(parameters)
-    output = external.dump(filename, outfile, parameters)
-    if output:
-        return output.strip()
+    return external.dump(filename, outfile, parameters)
 
 
 def load(filename):
@@ -396,7 +353,7 @@ def load(filename):
     return external.load(filename)
 
 
-def info(filename, obj=None, useBindings=False):
+def info(filename, obj=None, useBindings=False, rawData=False):
     """
     Similarly to the fetch function, the info function uses
     pyrrd.backend.external by default. This is due to the fact that 1) the
@@ -409,8 +366,11 @@ def info(filename, obj=None, useBindings=False):
     parameter to True.
     """
     if useBindings:
+        result = _cmd('info', [filename])
+        if rawData:
+            return result
         from pprint import pprint
-        pprint(_cmd('info', [filename]))
+        pprint(result)
     else:
         external.info(filename, obj)
 

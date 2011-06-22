@@ -24,12 +24,14 @@ class ExternalBackendTestCase(TestCase):
         self.rrd.bufferValue(1261214678, 612)
         self.rrd.bufferValue(1261214678, 612)
         self.assertRaises(ExternalCommandError, self.rrd.update)
+        expected = ("illegal attempt to update using time 1261214678 "
+                    "when last update time is 1261214678 (minimum one second "
+                    "step)")
         try:
             self.rrd.update()
         except ExternalCommandError, error:
-            self.assertEquals(str(error), 
-            ("ERROR: illegal attempt to update using time 1261214678 "
-             "when last update time is 1261214678 (minimum one second step)"))
+            self.assertTrue(str(error).startswith("ERROR:"))
+            self.assertTrue(str(error).endswith(expected))
 
     def test_infoWriteMode(self):
         expectedOutput = """

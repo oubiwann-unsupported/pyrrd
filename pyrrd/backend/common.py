@@ -51,7 +51,7 @@ def iterParse(lines):
     >>> g.next()
     (920804700, nan)
     >>> g.next()
-    (920805000, 0.040000000000000001)
+    (920805000, 0.04)
     >>> len(list(g)) == len(lines) - 2
     True
     """
@@ -71,17 +71,17 @@ def buildParameters(obj, validList):
     >>> testClass.c = 3
     >>> testClass.d = True
     >>> buildParameters(testClass, ["a", "b"])
-    ['--a', '1', '--b', '2']
+    ['--a', u'1', '--b', u'2']
 
     >>> testClass.b = None
     >>> buildParameters(testClass, ["a", "b"])
-    ['--a', '1']
+    ['--a', u'1']
 
     The following shows support for boolean flags that don't have a value
     associated with them:
 
     >>> buildParameters(testClass, ["a", "d"])
-    ['--a', '1', '--d']
+    ['--a', u'1', '--d']
     """
     params = []
     for param in validList:

@@ -133,24 +133,24 @@ class RRD(mapper.RRDMapper):
         >>> my_rrd = RRD('somefile')
         >>> my_rrd.bufferValue('1000000', 'value')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ['1000000:value'])
+        ('somefile', [u'1000000:value'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', ['--template', 'ds0', '1000000:value'])
+        ('somefile', ['--template', u'ds0', u'1000000:value'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
         >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ['1000000:value'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', ['--template', 'ds0', '1000000:value'])
+        ('somefile', ['--template', u'ds0', '1000000:value'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000', 'value1', 'value2')
         >>> my_rrd.bufferValue('1000001', 'value3', 'value4')
         >>> my_rrd.update(debug=True, dryRun=True)
-        ('somefile', ['1000000:value1:value2', '1000001:value3:value4'])
-        >>> my_rrd.update(template='ds1:ds0', debug=True, dryRun=True)
-        ('somefile', ['--template', 'ds1:ds0', '1000000:value1:value2', '1000001:value3:value4'])
+        ('somefile', [u'1000000:value1:value2', u'1000001:value3:value4'])
+        >>> my_rrd.update(template=u'ds1:ds0', debug=True, dryRun=True)
+        ('somefile', ['--template', u'ds1:ds0', u'1000000:value1:value2', u'1000001:value3:value4'])
         >>> my_rrd.values = []
 
         >>> my_rrd.bufferValue('1000000:value')
@@ -158,7 +158,7 @@ class RRD(mapper.RRDMapper):
         >>> my_rrd.update(debug=True, dryRun=True)
         ('somefile', ['1000000:value', '1000001:anothervalue'])
         >>> my_rrd.update(template='ds0', debug=True, dryRun=True)
-        ('somefile', ['--template', 'ds0', '1000000:value', '1000001:anothervalue'])
+        ('somefile', ['--template', u'ds0', '1000000:value', '1000001:anothervalue'])
         >>> my_rrd.values = []
         """
         values = ':'.join([unicode(x) for x in values])
@@ -225,13 +225,16 @@ class RRD(mapper.RRDMapper):
             return self.backend.fetch(*data, **kwds)
         return self.backend.fetch(*data)[returnStyle]
 
-    def info(self, useBindings=False):
+    def info(self, useBindings=False, rawData=False):
         """
-        For this method, the info is rendered to stdout.
+        For this method, the info is rendered to stdout, unless rawData is set
+        to True.
         """
         data = self.backend.prepareObject('info', self)
-        kwds = {"useBindings": useBindings}
-        self.backend.info(*data, **kwds)
+        kwds = {"useBindings": useBindings, "rawData": rawData}
+        result = self.backend.info(*data, **kwds)
+        if rawData:
+            return result
 
     def load(self, filename=None, includeData=False):
         """
