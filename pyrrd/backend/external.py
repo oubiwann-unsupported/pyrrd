@@ -16,6 +16,8 @@ def _cmd(command, args=""):
                     close_fds=close_fds)
     (stdout, stderr) = process.communicate()
     if stderr:
+        print command
+        #import pdb;pdb.set_trace()
         raise ExternalCommandError(stderr.strip())
     if process.returncode != 0:
         errmsg = "Return code from '%s' was %s." % (

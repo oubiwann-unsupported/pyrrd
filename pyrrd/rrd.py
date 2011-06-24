@@ -225,13 +225,14 @@ class RRD(mapper.RRDMapper):
             return self.backend.fetch(*data, **kwds)
         return self.backend.fetch(*data)[returnStyle]
 
-    def info(self, useBindings=False, rawData=False):
+    def info(self, useBindings=False, rawData=False, stream=None):
         """
         For this method, the info is rendered to stdout, unless rawData is set
         to True.
         """
         data = self.backend.prepareObject('info', self)
-        kwds = {"useBindings": useBindings, "rawData": rawData}
+        kwds = {
+            "useBindings": useBindings, "rawData": rawData, "stream": stream}
         result = self.backend.info(*data, **kwds)
         if rawData:
             return result

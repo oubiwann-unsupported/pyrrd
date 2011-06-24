@@ -79,17 +79,6 @@ Info checks when the RRD object is in write mode::
     rra[1].xff = 0.5
     rra[1].ds = []
 
-Info checks when the RRD object is in read mode::
-
-    >>> myRRD2 = RRD(rrdfile, mode="r", backend=bindings)
-    >>> expected = {'rra[0].cdp_prep[0].value': None, 'rra[1].xff': 0.5, 'ds[speed].value': 0.0, 'rra[0].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].min': None, 'rra[0].pdp_per_row': 1L, 'rra[1].pdp_per_row': 6L, 'rra[1].rows': 10L, 'rrd_version': '0003', 'filename': '/tmp/tmprrdfile.rrd', 'rra[1].cf': 'AVERAGE', 'last_update': 920808900L, 'rra[0].cf': 'AVERAGE', 'ds[speed].last_ds': '12423', 'ds[speed].index': 0L, 'ds[speed].minimal_heartbeat': 600L, 'rra[0].cur_row': 16L, 'rra[1].cur_row': 3L, 'header_size': 800L, 'step': 300L, 'ds[speed].type': 'COUNTER', 'rra[0].rows': 24L, 'rra[1].cdp_prep[0].value': 0.02666666666666667, 'ds[speed].max': None, 'rra[0].xff': 0.5, 'rra[1].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].unknown_sec': 0L}
-    >>> result = myRRD2.info(useBindings=True, rawData=True) # doctest:+ELLIPSIS
-    >>> sorted(result.values()) == sorted(expected.values())
-    >>> import pdb;pdb.set_trace()
-    >>> expected = {'rra[0].cdp_prep[0].value': None, 'rra[1].xff': 0.5, 'ds[speed].value': 0.0, 'rra[0].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].min': None, 'rra[0].pdp_per_row': 1L, 'rra[1].pdp_per_row': 6L, 'rra[1].rows': 10L, 'rrd_version': '0003', 'filename': '/tmp/tmprrdfile.rrd', 'rra[1].cf': 'AVERAGE', 'last_update': 920808900L, 'rra[0].cf': 'AVERAGE', 'ds[speed].last_ds': '12423', 'ds[speed].index': 0L, 'ds[speed].minimal_heartbeat': 600L, 'rra[0].cur_row': 18L, 'rra[1].cur_row': 3L, 'header_size': 800L, 'step': 300L, 'ds[speed].type': 'COUNTER', 'rra[0].rows': 24L, 'rra[1].cdp_prep[0].value': 0.02666666666666667, 'ds[speed].max': None, 'rra[0].xff': 0.5, 'rra[1].cdp_prep[0].unknown_datapoints': 0L, 'ds[speed].unknown_sec': 0L}
-    >>> result = myRRD.info(useBindings=True, rawData=True) # doctest:+ELLIPSIS
-    >>> sorted(result.values()) == sorted(expected.values())
-
 In order to create a graph, we'll need some data definitions. We'll also
 throw in some calculated definitions and variable definitions for good
 meansure::
@@ -162,11 +151,14 @@ from pyrrd.backend import external
 from pyrrd.backend.common import buildParameters
 
 
-def _cmd(command, args):
+def _cmd(command, args, debug=False):
     function = getattr(rrdtool, command)
     # XXX fucntion calls barf if args aren't strings (can't handle unicode
     # right now)
     args = [str(x) for x in args]
+    if debug:
+        print "function:", function
+        print "args:", args
     return function(*args)
 
 
@@ -192,7 +184,7 @@ def create(filename, parameters):
     False
     """
     parameters.insert(0, filename)
-    output = _cmd('create', parameters)
+    output = _cmd('create', parameters, debug=True)
 
 
 def update(filename, parameters, debug=False):
@@ -353,7 +345,7 @@ def load(filename):
     return external.load(filename)
 
 
-def info(filename, obj=None, useBindings=False, rawData=False):
+def info(filename, obj=None, useBindings=False, rawData=False, stream=None):
     """
     Similarly to the fetch function, the info function uses
     pyrrd.backend.external by default. This is due to the fact that 1) the
@@ -370,7 +362,10 @@ def info(filename, obj=None, useBindings=False, rawData=False):
         if rawData:
             return result
         from pprint import pprint
-        pprint(result)
+        if stream:
+            pprint(result, stream=stream)
+        else:
+            pprint(result)
     else:
         external.info(filename, obj)
 
