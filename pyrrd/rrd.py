@@ -163,7 +163,7 @@ class RRD(mapper.RRDMapper):
         """
         values = ':'.join([unicode(x) for x in values])
         self.values.append((timeOrData, values))
-        self.lastupdate = int(unicode(timeOrData).split(":")[0])
+        self.lastupdate = float(unicode(timeOrData).split(":")[0])
 
     # for backwards compatibility
     bufferValues = bufferValue
