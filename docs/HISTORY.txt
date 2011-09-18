@@ -2,6 +2,28 @@
 Changes
 =======
 
+From 0.0.7 to 0.1.0
+-------------------
+
+This version marks a significant update to the code base. Some 70+ commits have
+been made to trunk since the last release in the period from March 2009 to
+September 2011. Some of the most signficant changes include the following:
+
+* Added a wrapper for the Python bindings.
+
+* Improvements in tests and testing infrastructure.
+
+* Improved exception handling.
+
+* Many changes and improvements to the RRD -> Python object mapper.
+
+* Improved support in Windows.
+
+* Graph formatting fixes.
+
+* Many bug fixes from community members.
+
+
 From 0.0.6 to 0.0.7
 -------------------
 

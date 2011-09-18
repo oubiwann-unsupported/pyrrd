@@ -5,9 +5,8 @@ Acknowledgements
 The following members of the community have provided valuable contributions to
 this project:
 
-* Ravi Bhalotia, Allen Lerner
-
-* Mike Carrick and the U.S. Department of Veterans Affairs
+* Ravi Bhalotia, Allen Lerner, Mike Carrick and the U.S. Department of Veterans
+  Affairs
 
 * AdytumSolutions, Inc., E-Secure Systems
 
@@ -17,6 +16,6 @@ this project:
 
 * Joseph Heck, Jean-Baptiste Quenot
 
-* Colin Horsington, Pavel Shramov
+* Pavel Shramov, Brad Beattie, Colin Horsington
 
 Thanks!
