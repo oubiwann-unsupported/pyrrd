@@ -17,4 +17,6 @@ this project:
 
 * Joseph Heck, Jean-Baptiste Quenot
 
+* Colin Horsington, Pavel Shramov
+
 Thanks!
