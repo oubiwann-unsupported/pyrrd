@@ -1,0 +1,45 @@
+= PyRRD Installation =
+
+== Standard Python Install ==
+
+If you have downloaded the tarball from http://cheeseshop.python.org/pypi/PyRRD/ and you have root privs, you can just do the regular:
+{{{
+$ sudo python setup.py install
+}}}
+
+== Setuptools Install ==
+
+If you have {{{setuptools}}} installed and root privs, you can use {{{easy_install}}}, letting it find the latest release and downloading the file:
+{{{
+$ sudo easy_install PyRRD
+}}}
+
+If you want to upgrade, just add the {{{--upgrade}}} parameter:
+{{{
+$ sudo easy_install --upgrade PyRRD
+}}}
+
+== Local Install ==
+
+If you don't have root privs, the easiest thing to do is to use the {{{.egg}}} file:
+{{{
+$ wget http://cheeseshop.python.org/packages/2.4/P/PyRRD/PyRRD-W.X.Y-py2.Z.egg
+$ mv PyRRD-W.X.Y-py2.Z.egg ~/mypython/libs
+$ export PYTHONPATH=~/mypython/libs
+}}}
+
+Note that the {{{export VARNAME}}} is {{{bash}}} syntax. See your shell documentation if you aren't using a {{{bash}}}-compatible shell.
+
+You can now use PyRRD in the following manner:
+{{{
+$ python
+>>> from pkg_resources import require
+>>> require('PyRRD')
+>>> from pyrrd.rrd import RRD, RRA, DS
+>>> from pyrrd.graph import DEF, CDEF, VDEF
+>>> from pyrrd.graph import LINE, AREA, GPRINT
+>>> from pyrrd.graph import ColorAttributes, Graph
+[etc]
+}}}
+
+Note that using {{{.egg}}} files requires that you have {{{setuptools}}} installed (either system-wide, or in your local python path).

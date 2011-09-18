@@ -1,0 +1,52 @@
+For some of the example images on this page, LargeExampleImages are available for your viewing pleasure.
+
+==== Example 1 ====
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example1.png
+
+Some simple data from the [http://people.ee.ethz.ch/~oetiker/webtools/rrdtool/tut/rrdtutorial.en.html RRDTool Tutorial]. View the python code that generated this graph:
+  [http://code.google.com/p/pyrrd/source/browse/trunk/examples/example1.py example1.py source]
+
+==== Example 2 ====
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example2.png
+
+Here's the same data, but this time we've instantiated a pyrrd.graph.!ColorAttributes class, assigned some color values to various attributes, and passed the instance to our graph.Graph() instance. Here's the code:
+  [http://code.google.com/p/pyrrd/source/browse/trunk/examples/example2.py example2.py source]
+
+==== Example 3 ====
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example3.png
+
+This is a graph of periodic numbers pumped through the {{{sin()}}} function, showing the ease of dumping arbitrary data into an RRD using this python interface. Here's the code:
+  [http://code.google.com/p/pyrrd/source/browse/trunk/examples/example3.py example3.py source]
+
+==== Example 4 ====
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example4.png
+
+This is the same thing as the prior graph, but slightly different permutations of the arbitrary data and some randomness thrown in. Again, the ease with which this data is generated and added to the RRDs is a testament to the power of finally being able to use RRDTool with a sane programming interface ;-) Here's the code:
+  [http://code.google.com/p/pyrrd/source/browse/trunk/examples/example4.py example4.py source]
+
+==== Example 5 ====
+
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example5-10800.png
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example5-43200.png
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example5-86400.png
+
+http://pyrrd.googlecode.com/svn/trunk/examples/example5-259200.png
+
+
+This is a real-live example from actual router data collected via flow-tools and processed with [http://projects.adytum.us/tracs/PyFlowCatch PyFlowCatch]. The images you see above are (in order) the following:
+ * Three-hour view
+ * 12-hour view
+ * 24-hour view
+ * Three-day view
+
+The data is the total of router-crossing www, ssh, domain, ftp, and smtp traffic on my local LAN. The "In Bits" are actually mildly fictitious, as I multiplied the byte counts by 100, just so they could be seen on the graph.
+
+Here's the code:
+  [http://code.google.com/p/pyrrd/source/browse/trunk/examples/example5.py example5.py source]

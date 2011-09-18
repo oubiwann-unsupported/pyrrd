@@ -1,0 +1,86 @@
+= PyRRD = 
+
+PyRRD is an OO wrapper for the RRDTool (round-robin database tool). The idea is to make [http://oss.oetiker.ch/rrdtool/ RRDTool] insanely easy to use and to be aesthically pleasing for python programmers. Below is an example of what you have to do if want to use the python bindings that come with RRDTool. Following that is a quick snippet that accomplishes the same thing with PyRRD. There are also [FullWorkingExamples more detailed examples] you can look at.
+
+There's a link to code examples at the bottom of the page...
+
+== History ==
+
+The original efforts on this were made in 2004 while working on [http://code.google.com/p/coymon/ CoyoteMonitoring]. When it became clear that we did not have the time nor the budget to put this into effect, the project got scooted to the back burner. Furthermore, we were excited about using a [http://projects.adytum.us/tracs/PyRRS python implementation of RRS] ([http://rrs.decibel.org/ Round-Robin SQL]), but in the end that too got axed.
+
+Since then, we've had time to put more thought into PyRRD; the code was moved out of !CoyoteMonitoring, and this is the result.
+
+== Download ==
+
+You can get the latest release here:
+
+http://cheeseshop.python.org/pypi/PyRRD
+
+== Installation ==
+
+There are many ways you can run and install python libraries. A few examples are presented on the [InstallPyRRD installation page].
+
+== rrdtool Example ==
+
+The python bindings for RRDTool are almost as much a pain to use as RRDTool itself. Here is an example of the standard approach used by the rrdtool python bindings:
+{{{
+rrdtool.graph(path,
+             '--imgformat', 'PNG',
+             '--width', '540',
+             '--height', '100',
+             '--start', "-%i" % YEAR,
+             '--end', "-1",
+             '--vertical-label', 'Downloads/Day',
+             '--title', 'Annual downloads',
+             '--lower-limit', '0',
+             'DEF:downloads=downloads.rrd:downloads:AVERAGE',
+             'AREA:downloads#990033:Downloads')
+
+info = rrdtool.info('downloads.rrd')
+print info['last_update']
+print info['ds']['downloads']['minimal_heartbeat']
+}}}
+
+== pyrrd Example ==
+
+Now, compare that to what this project lets you do:
+{{{
+from pyrrd import graph
+
+def1 = graph.DataDefinition(vname='downloads', rrdfile='downloads.rrd',
+    ds_name='downloads', cdef='AVERAGE')
+
+area1 = graph.Area(value=def1.vname, color='#990033',
+    legend='Downloads', stack=True)
+
+g = graph.Graph(path, imgformat='PNG', width=540, height=100,
+    start="-%i" % YEAR, end=-1, vertical_label='Downloads/Day',
+    title='Annual downloads', lower_limit=0)
+g.data.append(def1)
+g.data.append(area1)
+g.write()
+}}}
+
+or this:
+{{{
+g = graph.Graph(path)
+g.imgformat = 'PNG'
+g.width = 540
+g.height=100
+g.start = "-%i" % YEAR
+g.end=-1
+g.vertical_label = "Downloads/Day"
+g.title = "Annual downloads"
+g.lower_limit = 0
+g.data.append(def1)
+g.data.append(area1)
+g.write()
+}}}
+
+You can use this attribute approach with any of the classes in PyRRD, if that's how you like to do things.
+
+== More Usage Details ==
+
+MoreDetails - For a more in-depth look at this pythonic way or working with RRD files and data.
+
+FullWorkingExamples - For a look at some graphs and the code that created them.
