@@ -146,7 +146,7 @@ command.
 
 In order to create a graph, we'll need some data definitions. We'll also
 throw in some calculated definitions and variable definitions for good
-meansure::
+measure::
 
     >>> from pyrrd.graph import DEF, CDEF, VDEF, LINE, AREA, GPRINT
     >>> def1 = DEF(rrdfile=myRRD.filename, vname='myspeed',
