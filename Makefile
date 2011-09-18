@@ -52,18 +52,22 @@ build-docs:
 
 commit: check
 	bzr commit --show-diff
+	git commit -a -v
 
 
 commit-msg: check
 	bzr commit --file=MSG
+	git commit -a -F MSG
 
 
 push: commit clean
 	bzr push lp:pyrrd
+	git push https://code.google.com/p/pyrrd
 
 
 push-msg: commit-msg clean
 	bzr push lp:pyrrd
+	git push https://code.google.com/p/pyrrd
 	mv MSG MSG.backup
 	touch MSG
 
