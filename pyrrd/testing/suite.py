@@ -1,9 +1,12 @@
 """
 Utility functions for testing.
 """
-import os
-import unittest
 import doctest
+import glob
+import os
+import tempfile
+import unittest
+from StringIO import StringIO
 
 
 def importModule(name):
@@ -14,39 +17,14 @@ def importModule(name):
     return mod
 
 
-def fileCheck(path, skipFiles=[]):
+def fileIsTest(path, skipFiles=[]):
     if not os.path.isfile(path):
         return False
     filename = os.path.basename(path)
     if filename in skipFiles:
         return False
-    if path in skipFiles:
-        print "skip it!"
-        return False
-    return True
-
-
-def fileIsTest(path, skipFiles=[]):
-    result = fileCheck(path, skipFiles)
-    if not result:
-        return False
-    filename = os.path.basename(path)
     if filename.startswith('test') and filename.endswith('.py'):
         return True
-
-
-def fileHasDoctests(path, skipFiles=[]):
-    result = fileCheck(path, skipFiles)
-    if result and path.endswith('.py'):
-        fh = open(path)
-        if '>>>' in fh.read():
-            result = True
-        else:
-            result = False
-        fh.close()
-    else:
-        result = False
-    return result
 
 
 def find(start, func, skip=[]):
@@ -62,52 +40,13 @@ def findTests(startDir, skipFiles=[]):
     return find(startDir, fileIsTest, skipFiles)
 
 
-def findDoctests(startDir, skipFiles=[]):
-    return find(startDir, fileHasDoctests, skipFiles)
-
-
-def _buildDoctestSuiteFromModules(modules, skip):
+def buildDoctestSuite(modules):
     suite = unittest.TestSuite()
     for modname in modules:
         mod = importModule(modname)
-        if mod not in skip:
-            suite.addTest(doctest.DocTestSuite(mod))
+        suite.addTest(doctest.DocTestSuite(mod))
     return suite
 
-
-def _buildDoctestSuiteFromFiles(files, skip):
-    suite = []
-    for file in files:
-        if file not in skip:
-            suite.append(DocFileSuite(file))
-    return suite
-
-def _buildDoctestSuiteFromPaths(paths=[], skip=[]):
-    """
-    paths: a list of directories to search
-    skip: a list of file names to skip
-    """
-    suite = unittest.TestSuite()
-    loader = unittest.TestLoader()
-    for startDir in paths:
-        for testFile in findDoctests(startDir, skip):
-            modBase = os.path.splitext(testFile)[0]
-            name = modBase.replace(os.path.sep, '.')
-            if name in skip:
-                continue
-            mod = importModule(name)
-            suite.addTest(doctest.DocTestSuite(mod))
-    return suite
-
-def buildDoctestSuites(modules=[], files=[], paths=[], skip=[]):
-    suite = []
-    if modules:
-        suite.extend(_buildDoctestSuiteFromModules(modules, skip))
-    if files:
-        suite.extend(_buildDoctestSuiteFromFiles(files, skip))
-    if paths:
-        suite.extend(_buildDoctestSuiteFromPaths(paths, skip))
-    return suite
 
 def buildUnittestSuites(paths=[], skip=[]):
     """
@@ -134,3 +73,33 @@ def buildUnittestSuites(paths=[], skip=[]):
                 # append to suites list
                 suites.append(suite)
     return suites
+
+
+def runDocTests(path):
+    paths = glob.glob(path)
+    suites = []
+    for path in paths:
+        path = os.path.abspath(path)
+        suites.extend(doctest.DocFileSuite(
+            path, module_relative=False, optionflags=doctest.ELLIPSIS))
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(unittest.TestSuite(suites))
+
+
+def assembleAndRunDocTests(path):
+    """
+    This function assembles all the pattern files together into a single
+    temporary file. This is done in order to avoide entering duplicate code in
+    each pattern file.
+    """
+    filenames = sorted(glob.glob(path))
+    text = StringIO()
+    [text.write(open(filename).read()) for filename in filenames]
+    fileHandle, tempFilename = tempfile.mkstemp(
+        suffix=".txt", prefix="assembled-patterns-doctests-tmp", text=True)
+    os.write(fileHandle, text.getvalue())
+    suites = [doctest.DocFileSuite(
+        tempFilename, module_relative=False, optionflags=doctest.ELLIPSIS)]
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(unittest.TestSuite(suites))
+    os.unlink(tempFilename)
