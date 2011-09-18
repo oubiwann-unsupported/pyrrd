@@ -1,6 +1,6 @@
 display_name = "PyRRD"
 library_name = "pyrrd"
-version = "0.0.7"
+version = "0.1.0"
 author = "Duncan McGreggor"
 author_email = "duncan@canonical.com"
 license = "BSD"
