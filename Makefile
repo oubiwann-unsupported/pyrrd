@@ -50,24 +50,26 @@ check: build check-docs check-examples
 build-docs:
 	cd docs/sphinx; make html
 
-commit: check
+#commit: check
+commit:
 	bzr commit --show-diff
 	git commit -a -v
 
 
-commit-msg: check
+#commit-msg: check
+commit-msg:
 	bzr commit --file=MSG
 	git commit -a -F MSG
 
 
 push: commit clean
 	bzr push lp:pyrrd
-	git push https://code.google.com/p/pyrrd
+	git push origin master
 
 
 push-msg: commit-msg clean
 	bzr push lp:pyrrd
-	git push https://code.google.com/p/pyrrd
+	git push origin master
 	mv MSG MSG.backup
 	touch MSG
 
