@@ -42,7 +42,6 @@ check-examples:
 check-dist:
 	@echo "Need to fill this in ..."
 
-
 check: build check-docs check-examples
 	@python -c \
 	"from pyrrd.testing import runner;runner.main();"
@@ -55,9 +54,11 @@ commit:
 	bzr commit --show-diff
 	git commit -a -v
 
+msg-file:
+	git diff ChangeLog|egrep '^\+'|egrep -v '^\+{3}'|sed -e 's/^\+//'> MSG
 
 #commit-msg: check
-commit-msg:
+commit-msg: msg-file
 	bzr commit --file=MSG
 	git commit -a -F MSG
 

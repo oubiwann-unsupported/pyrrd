@@ -1,6 +1,8 @@
 2011.10.18
 
 * Added missing entries to ChangeLog.
+* Removed debug info from external backend module.
+* Added new make target for creating the MSG files from the ChangeLog.
 
 2011.09.18
 
