@@ -3,6 +3,8 @@
 * Added missing entries to ChangeLog.
 * Removed debug info from external backend module.
 * Added new make target for creating the MSG files from the ChangeLog.
+* Applied Casey's fix for http://code.google.com/p/pyrrd/issues/detail?id=26.
+Note that this hasn't been tested yet, so I'm not closing the ticket.
 
 2011.09.18
 
