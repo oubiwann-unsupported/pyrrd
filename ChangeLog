@@ -1,3 +1,57 @@
+2011.10.18
+
+* Added missing entries to ChangeLog.
+
+2011.09.18
+
+* Changed the git push commands to point to origin master.
+* Temporarily disabled the test/check targets.
+* Updated ignore files.
+* Added git commands to the Makefile.
+* Added a git ignore file (for simultaneous use of dir as git repo).
+* Added an ignore file.
+* Removed the admin dir and replaced all those scripts with a Makefile.
+* Removed old upload setup.py file.
+* Removed old test runner.
+* Added code for a custom runner.
+* Made some new changes to the suite.py testing module.
+* Added old wiki pages from Google Code svn repo.
+* Fixed PyPI trove categories.
+* Updated history, todo.
+* Added Pavel Shramov and Colin Horsington to the acknowledgements file.
+* Updated the version number in preparation for a release.
+
+2011.06.24
+
+* Fixed admin script to no longer push to Google.
+* Merged fix from Colin Horsington.
+* Working on the unit tests for bindgins. There still seems to be an issue.
+Haven't tested this on real data/files yet to see if there's a larger problem
+at play. That's the next step.
+
+2011.06.22
+
+* Fixed up some of the doctests.
+* Added a "rawResults" parameter to the info method and function to assist with
+testing.
+* Removed extra closing parens.
+* Added a fix for HWPREDICT, provided by Brad Beattie. This commit addresses this
+issue:
+    http://code.google.com/p/pyrrd/issues/detail?id=24
+* Added slop_mode parameter for graphs. This fixes the following issue:
+    http://code.google.com/p/pyrrd/issues/detail?id=25
+* Moved the graph tick implementation to the original, stubbed out location (and,
+of course, removed the stub).
+* Changed str() calls to unicode() calls. Fixes this issue:
+    http://code.google.com/p/pyrrd/issues/detail?id=27
+* Colin Horsington provided a patch for graph tick support:
+    http://code.google.com/p/pyrrd/issues/detail?id=29
+* The following were provided by Pavel Shramov:
+  - Fix incorrect extension split. Use os.path.splitext so paths with dots
+    may be used.
+  - Allow generation of svg/pdf/eps graph files. Added imgformat to the list
+    of allowed parameters.
+
 2009.12.19
 
 * Updated the mapper map function to check for the mode: in read mode, it sucks
