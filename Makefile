@@ -66,11 +66,13 @@ commit-msg: msg-file
 push: commit clean
 	bzr push lp:pyrrd
 	git push origin master
+	git push git@github.com:oubiwann/pyrrd.git
 
 
 push-msg: commit-msg clean
 	bzr push lp:pyrrd
 	git push origin master
+	git push git@github.com:oubiwann/pyrrd.git
 	mv MSG MSG.backup
 	touch MSG
 
